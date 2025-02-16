@@ -80,10 +80,10 @@ export default function Home() {
             href="https://x.com/fabdarice"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-card/80 backdrop-blur-sm  hover:bg-[hsl(var(--primary))/0.1] transition-colors"
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-lg bg-card/80 backdrop-blur-sm  hover:bg-[hsl(var(--primary))/0.1] transition-colors"
           >
             <span className="text-[hsl(var(--primary))] neon-glow">built by</span>
-            <span className="text-[hsl(var(--primary))] neon-glow">@fabdarice</span>
+            <span className="text-[hsl(var(--primary))] neon-glow">fabda.eth</span>
           </a>
         </footer>
       </div>
