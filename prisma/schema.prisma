@@ -1,0 +1,32 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  category        String   // L2, Appchain, Infrastructure
+  description     String
+  commitmentPercentage Float
+  currentReserve  Float   // Current ETH holdings
+  addresses       String[] // Array of Ethereum addresses
+  dateCommitment  DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Influencer {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  avatar      String?  // URL to avatar image
+  description String
+  commitment  String   // Description of their commitment
+  twitter     String?  // Twitter handle
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
