@@ -15,6 +15,7 @@ model Company {
   commitmentPercentage Float
   currentReserve  Float   // Current ETH holdings
   addresses       String[] // Array of Ethereum addresses
+  logo            String   // URL to company logo
   dateCommitment  DateTime @default(now())
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

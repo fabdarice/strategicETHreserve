@@ -4,27 +4,25 @@ import { z } from "zod";
 
 const prisma = new PrismaClient();
 
-const CompanySchema = z.object({
+const InfluencerSchema = z.object({
   name: z.string().min(1),
-  category: z.string().min(1),
+  avatar: z.string().url().optional(),
   description: z.string().min(1),
-  commitmentPercentage: z.number().min(0).max(100),
-  currentReserve: z.number().min(0),
-  addresses: z.array(z.string()),
-  logo: z.string().url(),
+  commitment: z.string().min(1),
+  twitter: z.string().optional(),
 });
 
 export async function GET() {
   try {
-    const companies = await prisma.company.findMany({
+    const influencers = await prisma.influencer.findMany({
       orderBy: {
-        currentReserve: "desc",
+        createdAt: "desc",
       },
     });
-    return NextResponse.json(companies);
+    return NextResponse.json(influencers);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch companies" },
+      { error: "Failed to fetch influencers" },
       { status: 500 }
     );
   }
@@ -33,19 +31,19 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const validatedData = CompanySchema.parse(body);
+    const validatedData = InfluencerSchema.parse(body);
 
-    const company = await prisma.company.create({
+    const influencer = await prisma.influencer.create({
       data: validatedData,
     });
 
-    return NextResponse.json(company, { status: 201 });
+    return NextResponse.json(influencer, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 });
     }
     return NextResponse.json(
-      { error: "Failed to create company" },
+      { error: "Failed to create influencer" },
       { status: 500 }
     );
   }
