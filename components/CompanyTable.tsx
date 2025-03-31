@@ -59,9 +59,6 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell">
               CATEGORY
             </TableHead>
-            <TableHead className="text-[hsl(var(--primary))]">
-              ALLOCATION
-            </TableHead>
             <TableHead className="text-right text-[hsl(var(--primary))]">
               RESERVE
             </TableHead>
@@ -107,9 +104,6 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
               </TableCell>
               <TableCell className="hidden sm:table-cell">
                 {company.category}
-              </TableCell>
-              <TableCell className="text-center md:text-left">
-                {company.commitmentPercentage}%
               </TableCell>
               <TableCell className="text-right">
                 {company.currentReserve.toLocaleString()} ETH
