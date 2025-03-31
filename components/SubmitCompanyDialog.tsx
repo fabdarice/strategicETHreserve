@@ -226,7 +226,7 @@ export default function SubmitCompanyDialog({
                     name="commitmentPercentage"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Commitment Percentage</FormLabel>
+                        <FormLabel>Commitment Pct</FormLabel>
                         <FormControl>
                           <Input
                             {...field}

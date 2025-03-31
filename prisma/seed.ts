@@ -4,36 +4,32 @@ const prisma = new PrismaClient();
 
 const mockCompanies = [
   {
-    name: "Optimism",
-    category: "L2",
-    description: "Leading Ethereum L2 solution",
-    commitmentPercentage: 20,
-    currentReserve: 50000,
-    logo: "https://cryptologos.cc/logos/optimism-ethereum-op-logo.png",
-    dateCommitment: new Date("2024-01-01"),
-    addresses: ["0x4200000000000000000000000000000000000006"],
+    name: "Ethereum Foundation",
+    category: "L1",
+    description: "",
+    currentReserve: 250000,
+    commitmentPercentage: 0,
+    logo: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Eth-diamond-rainbow.png",
+    dateCommitment: new Date("2015-07-30"),
+    status: "ACTIVE",
+    website: "https://ethereum.org/",
+    addresses: [],
   },
   {
     name: "Arbitrum",
     category: "L2",
-    description: "Scaling solution for Ethereum",
-    commitmentPercentage: 15,
-    currentReserve: 45000,
+    description: "",
+    currentReserve: 20000,
+    commitmentPercentage: 0,
     logo: "https://cryptologos.cc/logos/arbitrum-arb-logo.png",
-    dateCommitment: new Date("2024-02-01"),
-    addresses: ["0x912CE59144191C1204E64559FE8253a0e49E6548"],
+    dateCommitment: new Date("2021-08-31"),
+    addresses: [],
+    status: "ACTIVE",
+    website: "https://arbitrum.io/",
   },
 ];
 
 const mockInfluencers = [
-  {
-    name: "Vitalik Buterin",
-    avatar:
-      "https://images.unsplash.com/photo-1602992708529-c9fdb12905c9?auto=format&fit=crop&w=150&h=150",
-    description: "Ethereum co-founder and researcher",
-    commitment: "Building for the decentralized future",
-    twitter: "vitalikbuterin",
-  },
   {
     name: "Brantly Millegan",
     avatar:
