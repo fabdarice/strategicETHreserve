@@ -31,7 +31,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             className="mb-2"
           />
           <p className="text-sm text-center">
-            Companies allocating a portion of their revenue to SER.
+            Entities allocating a portion of their revenue to SER.
           </p>
         </div>
         <div className="mt-2 md:mt-0 text-center md:text-left">
@@ -54,7 +54,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
         <TableHeader>
           <TableRow className="border-[hsl(var(--primary))]">
             <TableHead className="text-[hsl(var(--primary))]">
-              COMPANY
+              ENTITIES
             </TableHead>
             <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell">
               CATEGORY
@@ -79,24 +79,28 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                     href={company.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex gap-2 hover:text-[hsl(var(--primary))] transition-colors"
+                    className="flex items-center gap-2 hover:text-[hsl(var(--primary))] transition-colors"
                   >
-                    <Image
-                      src={company.logo}
-                      alt={company.name}
-                      width={20}
-                      height={20}
-                    />
+                    <div className="w-[20px] h-[20px] relative flex-shrink-0">
+                      <Image
+                        src={company.logo}
+                        alt={company.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                     {company.name}
                   </a>
                 ) : (
-                  <div className="flex gap-2">
-                    <Image
-                      src={company.logo}
-                      alt={company.name}
-                      width={20}
-                      height={20}
-                    />
+                  <div className="flex items-center gap-2">
+                    <div className="w-[20px] h-[20px] relative flex-shrink-0">
+                      <Image
+                        src={company.logo}
+                        alt={company.name}
+                        fill
+                        className="object-contain"
+                      />
+                    </div>
                     {company.name}
                   </div>
                 )}

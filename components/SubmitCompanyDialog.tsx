@@ -41,19 +41,27 @@ const formSchema = z.object({
     .url("Please enter a valid URL")
     .optional()
     .or(z.literal("")),
-  commitmentPercentage: z.string().transform((val) => {
-    const num = parseFloat(val);
-    if (isNaN(num)) throw new Error("Must be a number");
-    if (num < 0 || num > 100) throw new Error("Must be between 0 and 100");
-    return num;
-  }),
-  currentReserve: z.string().transform((val) => {
-    const num = parseFloat(val);
-    if (isNaN(num)) throw new Error("Must be a number");
-    if (num < 0) throw new Error("Must be a positive number");
-    return num;
-  }),
-  addresses: z.string(),
+  commitmentPercentage: z
+    .string()
+    .transform((val) => {
+      if (!val) return undefined;
+      const num = parseFloat(val);
+      if (isNaN(num)) throw new Error("Must be a number");
+      if (num < 0 || num > 100) throw new Error("Must be between 0 and 100");
+      return num;
+    })
+    .optional(),
+  currentReserve: z
+    .string()
+    .transform((val) => {
+      if (!val) return undefined;
+      const num = parseFloat(val);
+      if (isNaN(num)) throw new Error("Must be a number");
+      if (num < 0) throw new Error("Must be a positive number");
+      return num;
+    })
+    .optional(),
+  addresses: z.string().optional(),
 });
 
 export default function SubmitCompanyDialog({
@@ -71,9 +79,6 @@ export default function SubmitCompanyDialog({
       category: "",
       logoUrl: "",
       website: "",
-      commitmentPercentage: 0,
-      currentReserve: 0,
-      addresses: "",
     },
   });
 
