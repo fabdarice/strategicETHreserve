@@ -4,9 +4,14 @@ export interface Company {
   category: string;
   description: string;
   commitmentPercentage: number;
-  logo: string;
   currentReserve: number;
-  dateCommitment: Date;
+  addresses: string[];
+  logo: string;
+  website: string | null;
+  status: "PENDING" | "ACTIVE" | "INACTIVE";
+  dateCommitment: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Influencer {

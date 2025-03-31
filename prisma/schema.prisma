@@ -8,26 +8,32 @@ datasource db {
 }
 
 model Company {
-  id              String   @id @default(cuid())
-  name            String   @unique
-  category        String   // L2, Appchain, Infrastructure
-  description     String
+  id                   String   @id @default(cuid())
+  name                 String   @unique
+  category             String
+  description          String
   commitmentPercentage Float
-  currentReserve  Float   // Current ETH holdings
-  addresses       String[] // Array of Ethereum addresses
-  logo            String   // URL to company logo
-  dateCommitment  DateTime @default(now())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  currentReserve       Float
+  addresses            String[]
+  logo                 String
+  website              String?
+  status               String   @default("PENDING")
+  dateCommitment       DateTime @default(now())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("companies")
 }
 
 model Influencer {
   id          String   @id @default(cuid())
   name        String   @unique
-  avatar      String?  // URL to avatar image
+  avatar      String?
   description String
-  commitment  String   // Description of their commitment
-  twitter     String?  // Twitter handle
+  commitment  String
+  twitter     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@map("influencers")
 }

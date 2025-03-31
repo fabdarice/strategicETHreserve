@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // List of paths that need API key authentication
-const PROTECTED_PATHS = ["/api/companies"];
+const PROTECTED_PATHS = ["/api/companies", "/api/influencers"];
 
 export function middleware(request: NextRequest) {
   // Only protect POST requests to specific paths

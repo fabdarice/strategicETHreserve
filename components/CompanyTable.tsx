@@ -15,6 +15,10 @@ import Image from "next/image";
 import { Company } from "@/app/interfaces/interface";
 
 export default function CompanyTable({ companies }: { companies: Company[] }) {
+  const activeCompanies = companies.filter(
+    (company) => company.status === "ACTIVE"
+  );
+
   return (
     <div className="rounded-lg border border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden flex-1">
       <div className="p-6 md:flex md:justify-between gap-2">
@@ -64,16 +68,38 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {companies.map((company) => (
+          {activeCompanies.map((company) => (
             <TableRow
               key={company.id}
               className="border-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1] transition-colors"
             >
               <TableCell className="font-medium">
-                <div className="flex gap-2">
-                  <Image src={company.logo} alt="OP" width={20} height={20} />
-                  {company.name}
-                </div>
+                {company.website ? (
+                  <a
+                    href={company.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-2 hover:text-[hsl(var(--primary))] transition-colors"
+                  >
+                    <Image
+                      src={company.logo}
+                      alt={company.name}
+                      width={20}
+                      height={20}
+                    />
+                    {company.name}
+                  </a>
+                ) : (
+                  <div className="flex gap-2">
+                    <Image
+                      src={company.logo}
+                      alt={company.name}
+                      width={20}
+                      height={20}
+                    />
+                    {company.name}
+                  </div>
+                )}
               </TableCell>
               <TableCell className="hidden sm:table-cell">
                 {company.category}
