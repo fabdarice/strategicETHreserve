@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET() {
@@ -34,6 +37,11 @@ export async function POST(request: Request) {
       addresses,
     } = body;
 
+    // Ensure addresses is an array and filter out empty strings
+    const addressesArray = Array.isArray(addresses)
+      ? addresses.filter((addr) => addr.trim() !== "")
+      : [];
+
     const company = await prisma.company.create({
       data: {
         name,
@@ -42,7 +50,7 @@ export async function POST(request: Request) {
         website,
         commitmentPercentage,
         currentReserve,
-        addresses,
+        addresses: addressesArray,
         status: "PENDING",
         description: `${name} is committed to holding ${commitmentPercentage}% of their treasury in ETH.`,
       },
@@ -51,7 +59,7 @@ export async function POST(request: Request) {
     // Send email notification
     await resend.emails.send({
       from: "Strategic Ethereum Reserve <noreply@strategicethreserve.xyz>",
-      to: process.env.ADMIN_EMAIL || "admin@strategicethreserve.xyz",
+      to: process.env.ADMIN_EMAIL || "fabrice.cheng@gmail.com",
       subject: "New Company Submission",
       html: `
         <h2>New Company Submission</h2>
@@ -62,7 +70,7 @@ export async function POST(request: Request) {
           <li><strong>Website:</strong> ${website || "Not provided"}</li>
           <li><strong>Commitment:</strong> ${commitmentPercentage}%</li>
           <li><strong>Current Reserve:</strong> ${currentReserve} ETH</li>
-          <li><strong>Addresses:</strong> ${addresses.join(", ")}</li>
+          <li><strong>Addresses:</strong> ${addressesArray.join(", ")}</li>
         </ul>
         <p>Please review and update their status in the admin panel.</p>
       `,

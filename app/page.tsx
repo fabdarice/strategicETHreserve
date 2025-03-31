@@ -43,7 +43,9 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const recentPledges = companies.slice(0, 3);
+  const recentPledges = companies
+    .filter((company: Company) => company.status == "ACTIVE")
+    .slice(0, 3);
 
   if (isLoading) {
     return (

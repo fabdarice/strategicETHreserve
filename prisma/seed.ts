@@ -35,12 +35,13 @@ const mockInfluencers = [
     twitter: "vitalikbuterin",
   },
   {
-    name: "Justin Drake",
+    name: "Brantly Millegan",
     avatar:
-      "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&h=150",
-    description: "Ethereum researcher",
-    commitment: "Committed to Ethereum's scaling journey",
-    twitter: "drakefjustin",
+      "https://pbs.twimg.com/profile_images/1583892551102251009/LMdBZzVS_400x400.png",
+    description: "Building @efp & @ethidkit",
+    commitment:
+      "SERs with staking are inevitable for both companies and countries.",
+    twitter: "BrantlyMillegan",
   },
 ];
 

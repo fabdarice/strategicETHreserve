@@ -53,9 +53,7 @@ const formSchema = z.object({
     if (num < 0) throw new Error("Must be a positive number");
     return num;
   }),
-  addresses: z
-    .string()
-    .min(42, "Please enter at least one valid Ethereum address"),
+  addresses: z.string(),
 });
 
 export default function SubmitCompanyDialog({
@@ -65,6 +63,7 @@ export default function SubmitCompanyDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -80,6 +79,7 @@ export default function SubmitCompanyDialog({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
+      setError(null);
       const response = await fetch("/api/companies", {
         method: "POST",
         headers: {
@@ -87,7 +87,12 @@ export default function SubmitCompanyDialog({
         },
         body: JSON.stringify({
           ...values,
-          addresses: values.addresses.split(",").map((addr) => addr.trim()),
+          addresses: values.addresses
+            ? values.addresses
+                .split(",")
+                .map((addr) => addr.trim())
+                .filter(Boolean)
+            : [],
           website: values.website || null,
         }),
       });
@@ -99,11 +104,14 @@ export default function SubmitCompanyDialog({
           setOpen(false);
         }, 3000);
       } else {
-        const error = await response.json();
-        throw new Error(error.message);
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to submit company");
       }
     } catch (error) {
       console.error("Failed to submit company:", error);
+      setError(
+        error instanceof Error ? error.message : "Failed to submit company"
+      );
     }
   }
 
@@ -130,6 +138,11 @@ export default function SubmitCompanyDialog({
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <p className="text-red-500 text-sm">{error}</p>
+                </div>
+              )}
               <div className="space-y-4">
                 <FormField
                   control={form.control}

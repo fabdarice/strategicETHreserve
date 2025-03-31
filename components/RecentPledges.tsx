@@ -22,10 +22,26 @@ export default function RecentPledges({ pledges }: { pledges: Company[] }) {
         {pledges.map((pledge) => (
           <Card
             key={pledge.id}
-            className="border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border"
+            className={`border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border ${
+              pledge.website
+                ? "cursor-pointer hover:bg-[hsl(var(--primary))/0.1] transition-colors"
+                : ""
+            }`}
+            onClick={() => {
+              if (pledge.website) {
+                window.open(pledge.website, "_blank", "noopener,noreferrer");
+              }
+            }}
           >
             <CardHeader>
-              <CardTitle className="text-[hsl(var(--primary))]">
+              <CardTitle className="text-[hsl(var(--primary))] flex items-center gap-2">
+                <Image
+                  src={pledge.logo}
+                  alt={`${pledge.name} logo`}
+                  width={24}
+                  height={24}
+                  className="rounded-sm"
+                />
                 {pledge.name}
               </CardTitle>
             </CardHeader>
