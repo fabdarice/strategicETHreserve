@@ -18,8 +18,8 @@ export default function Home() {
     async function fetchData() {
       try {
         const [companiesRes, influencersRes] = await Promise.all([
-          fetch(`${process.env.VERCEL_URL}/api/companies`),
-          fetch(`${process.env.VERCEL_URL}/api/influencers`),
+          fetch(`/api/companies`),
+          fetch(`/api/influencers`),
         ]);
 
         if (!companiesRes.ok || !influencersRes.ok) {
