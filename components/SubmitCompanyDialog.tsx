@@ -174,10 +174,13 @@ export default function SubmitCompanyDialog({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="L2">Layer 2</SelectItem>
-                          <SelectItem value="Appchain">AppChain</SelectItem>
+                          <SelectItem value="L2">Layer 2/AppChain</SelectItem>
+                          <SelectItem value="Institution">
+                            Institution
+                          </SelectItem>
+                          <SelectItem value="Web3 App">DAOs</SelectItem>
+                          <SelectItem value="Company">Company</SelectItem>
                           <SelectItem value="Tooling">Tooling</SelectItem>
-                          <SelectItem value="DeFi">Application</SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
