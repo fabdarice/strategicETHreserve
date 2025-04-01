@@ -57,6 +57,7 @@ export default function AdminPage() {
     description: "",
     commitment: "",
     twitter: "",
+    avatar: "",
   });
 
   useEffect(() => {
@@ -168,6 +169,7 @@ export default function AdminPage() {
         description: "",
         commitment: "",
         twitter: "",
+        avatar: "",
       });
       fetchData();
     } catch (error) {
@@ -305,6 +307,19 @@ export default function AdminPage() {
                         setNewInfluencer({
                           ...newInfluencer,
                           name: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="avatar">Avatar URL</Label>
+                    <Input
+                      id="avatar"
+                      value={newInfluencer.avatar}
+                      onChange={(e) =>
+                        setNewInfluencer({
+                          ...newInfluencer,
+                          avatar: e.target.value,
                         })
                       }
                     />
