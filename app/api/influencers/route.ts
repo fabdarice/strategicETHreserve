@@ -28,6 +28,13 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const token = req.headers.get("Authorization")?.split("Bearer ")?.[1];
+
+    // If there's no token, redirect to login
+    if (!token || token !== process.env.ADMIN_PASSWORD) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
     const body = await req.json();
     const validatedData = InfluencerSchema.parse(body);
 
