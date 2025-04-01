@@ -2,7 +2,6 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { TwitterIcon } from "lucide-react";
 import Image from "next/image";
 import { Influencer } from "@/app/interfaces/interface";
 
@@ -52,8 +51,7 @@ export default function InfluencerSection({
                     rel="noopener noreferrer"
                     className="flex items-center text-sm text-muted-foreground hover:text-[hsl(var(--primary))] transition-colors"
                   >
-                    <TwitterIcon className="mr-1 h-3 w-3" />@
-                    {influencer.twitter}
+                    @{influencer.twitter}
                   </a>
                 )}
               </div>
