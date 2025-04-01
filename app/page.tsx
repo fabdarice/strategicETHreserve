@@ -92,8 +92,8 @@ export default function Home() {
             />
           </div>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto backdrop-blur-sm bg-background/50 p-4 rounded-lg">
-            &ldquo;Ethereum security is a shared responsibility.&rdquo; - Justin
-            Drake
+            &ldquo;Ethereum&apos;s unmatched security makes ETH special.&rdquo;
+            - Justin Drake
           </p>
         </div>
 
