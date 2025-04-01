@@ -374,6 +374,7 @@ export default function AdminPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Avatar URL</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Commitment</TableHead>
                 <TableHead>Twitter</TableHead>
@@ -391,6 +392,19 @@ export default function AdminPage() {
                           "influencer",
                           influencer.id,
                           "name",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      value={influencer.avatar || ""}
+                      onChange={(e) =>
+                        handleUpdate(
+                          "influencer",
+                          influencer.id,
+                          "avatar",
                           e.target.value
                         )
                       }
