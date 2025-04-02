@@ -53,7 +53,7 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen">
+      <main className="min-h-screen cyber-grid">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center">Loading...</div>
         </div>
@@ -63,7 +63,7 @@ export default function Home() {
 
   if (error) {
     return (
-      <main className="min-h-screen">
+      <main className="min-h-screen cyber-grid">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-red-500">Error: {error}</div>
         </div>
@@ -71,10 +71,8 @@ export default function Home() {
     );
   }
 
-  console.log({ companies, influencers });
-
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen cyber-grid">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="text-center mb-10 relative">
           <div className="flex justify-center items-center mb-4">
