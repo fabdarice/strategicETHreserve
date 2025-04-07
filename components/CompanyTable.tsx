@@ -112,13 +112,13 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
               <TableCell className="text-right">
                 {company.currentReserve.toLocaleString()} ETH
               </TableCell>
-              <TableCell className="hidden sm:table-cell">
+              <TableCell className="hidden sm:table-cell text-center">
                 {company.news ? (
                   <a
                     href={company.news}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-[hsl(var(--primary))] hover:underline"
+                    className="inline-flex justify-center text-[hsl(var(--primary))] hover:underline"
                   >
                     <Newspaper className="w-4 h-4" />
                   </a>
