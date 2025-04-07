@@ -7,6 +7,7 @@ export async function GET(request: Request) {
 
     // If there's no token, redirect to login
     if (!token || token !== process.env.ADMIN_PASSWORD) {
+      console.log("No token or invalid token");
       return NextResponse.redirect(new URL("/", request.url));
     }
 

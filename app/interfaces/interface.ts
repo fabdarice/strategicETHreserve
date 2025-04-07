@@ -10,8 +10,9 @@ export interface Company {
   website: string | null;
   status: "PENDING" | "ACTIVE" | "INACTIVE";
   dateCommitment: string;
-  createdAt: string;
-  updatedAt: string;
+  news?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Influencer {

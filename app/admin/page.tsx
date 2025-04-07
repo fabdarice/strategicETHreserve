@@ -21,29 +21,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-
-interface Company {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  commitmentPercentage: number;
-  currentReserve: number;
-  addresses: string[];
-  logo: string;
-  website: string | null;
-  status: string;
-  dateCommitment: string;
-}
-
-interface Influencer {
-  id: string;
-  name: string;
-  avatar: string | null;
-  description: string;
-  commitment: string;
-  twitter: string | null;
-}
+import { MarketingModal } from "@/components/MarketingModal";
+import { InfluencerMarketingModal } from "@/components/InfluencerMarketingModal";
+import { Company, Influencer } from "@/app/interfaces/interface";
 
 export default function AdminPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -54,10 +34,10 @@ export default function AdminPage() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newInfluencer, setNewInfluencer] = useState({
     name: "",
+    avatar: "",
     description: "",
     commitment: "",
     twitter: "",
-    avatar: "",
   });
 
   useEffect(() => {
@@ -166,10 +146,10 @@ export default function AdminPage() {
       setIsCreateDialogOpen(false);
       setNewInfluencer({
         name: "",
+        avatar: "",
         description: "",
         commitment: "",
         twitter: "",
-        avatar: "",
       });
       fetchData();
     } catch (error) {
@@ -200,11 +180,13 @@ export default function AdminPage() {
                 <TableHead>Commitment %</TableHead>
                 <TableHead>Current Reserve</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>News</TableHead>
+                <TableHead>Marketing</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {editedCompanies.map((company) => (
+              {companies.map((company) => (
                 <TableRow key={company.id}>
                   <TableCell>
                     <Input
@@ -272,6 +254,26 @@ export default function AdminPage() {
                         )
                       }
                     />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      value={company.news}
+                      onChange={(e) =>
+                        handleUpdate(
+                          "company",
+                          company.id,
+                          "news",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <MarketingModal company={company}>
+                      <Button variant="outline" size="sm">
+                        Share
+                      </Button>
+                    </MarketingModal>
                   </TableCell>
                   <TableCell>
                     <Button onClick={() => handleSave("company", company.id)}>
@@ -378,6 +380,7 @@ export default function AdminPage() {
                 <TableHead>Description</TableHead>
                 <TableHead>Commitment</TableHead>
                 <TableHead>Twitter</TableHead>
+                <TableHead>Marketing</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
@@ -448,6 +451,13 @@ export default function AdminPage() {
                         )
                       }
                     />
+                  </TableCell>
+                  <TableCell>
+                    <InfluencerMarketingModal influencer={influencer}>
+                      <Button variant="outline" size="sm">
+                        Share
+                      </Button>
+                    </InfluencerMarketingModal>
                   </TableCell>
                   <TableCell>
                     <Button

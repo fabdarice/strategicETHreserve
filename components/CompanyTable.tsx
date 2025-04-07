@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import SubmitCompanyDialog from "@/components/SubmitCompanyDialog";
 import Image from "next/image";
 import { Company } from "@/app/interfaces/interface";
+import { ExternalLink, Newspaper } from "lucide-react";
 
 export default function CompanyTable({ companies }: { companies: Company[] }) {
   const activeCompanies = companies.filter(
@@ -62,6 +63,9 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             <TableHead className="text-right text-[hsl(var(--primary))]">
               RESERVE
             </TableHead>
+            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell">
+              NEWS
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -107,6 +111,20 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
               </TableCell>
               <TableCell className="text-right">
                 {company.currentReserve.toLocaleString()} ETH
+              </TableCell>
+              <TableCell className="hidden sm:table-cell">
+                {company.news ? (
+                  <a
+                    href={company.news}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-[hsl(var(--primary))] hover:underline"
+                  >
+                    <Newspaper className="w-4 h-4" />
+                  </a>
+                ) : (
+                  <span className="text-muted-foreground">-</span>
+                )}
               </TableCell>
             </TableRow>
           ))}
