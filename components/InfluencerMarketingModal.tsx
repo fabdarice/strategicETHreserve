@@ -47,7 +47,7 @@ export function InfluencerMarketingModal({
             <div className="relative mb-8">
               <div className="relative">
                 <p className="text-2xl leading-relaxed text-center font-serif italic text-foreground/90">
-                  "{influencer.commitment}"
+                  &quot;{influencer.commitment}&quot;
                 </p>
               </div>
             </div>
