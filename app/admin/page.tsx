@@ -176,6 +176,7 @@ export default function AdminPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
+                <TableHead>Logo URL</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Commitment %</TableHead>
                 <TableHead>Current Reserve</TableHead>
@@ -196,6 +197,19 @@ export default function AdminPage() {
                           "company",
                           company.id,
                           "name",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Input
+                      value={company.logo}
+                      onChange={(e) =>
+                        handleUpdate(
+                          "company",
+                          company.id,
+                          "logo",
                           e.target.value
                         )
                       }
