@@ -66,29 +66,33 @@ export default function AdminPage() {
     }
   };
 
-  const handleUpdate = async (
+  const handleUpdate = (
     type: "company" | "influencer",
     id: string,
     field: string,
     value: any
   ) => {
     if (type === "company") {
-      setEditedCompanies(
-        companies.map((company) => {
-          if (company.id === id) {
-            return { ...company, [field]: value };
-          }
-          return company;
-        })
+      setCompanies((prevCompanies) =>
+        prevCompanies.map((company) =>
+          company.id === id ? { ...company, [field]: value } : company
+        )
+      );
+      setEditedCompanies((prevCompanies) =>
+        prevCompanies.map((company) =>
+          company.id === id ? { ...company, [field]: value } : company
+        )
       );
     } else {
-      setEditedInfluencers(
-        influencers.map((influencer) => {
-          if (influencer.id === id) {
-            return { ...influencer, [field]: value };
-          }
-          return influencer;
-        })
+      setInfluencers((prevInfluencers) =>
+        prevInfluencers.map((influencer) =>
+          influencer.id === id ? { ...influencer, [field]: value } : influencer
+        )
+      );
+      setEditedInfluencers((prevInfluencers) =>
+        prevInfluencers.map((influencer) =>
+          influencer.id === id ? { ...influencer, [field]: value } : influencer
+        )
       );
     }
   };
@@ -98,8 +102,8 @@ export default function AdminPage() {
       const adminToken = localStorage.getItem("admin_token");
       const itemToUpdate =
         type === "company"
-          ? editedCompanies.find((c) => c.id === id)
-          : editedInfluencers.find((i) => i.id === id);
+          ? companies.find((c) => c.id === id)
+          : influencers.find((i) => i.id === id);
 
       if (!itemToUpdate) return;
 
@@ -257,17 +261,21 @@ export default function AdminPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Input
+                    <select
                       value={company.status}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         handleUpdate(
                           "company",
                           company.id,
                           "status",
                           e.target.value
-                        )
-                      }
-                    />
+                        );
+                      }}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2"
+                    >
+                      <option value="PENDING">PENDING</option>
+                      <option value="ACTIVE">ACTIVE</option>
+                    </select>
                   </TableCell>
                   <TableCell>
                     <Input

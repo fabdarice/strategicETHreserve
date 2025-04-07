@@ -63,7 +63,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             <TableHead className="text-right text-[hsl(var(--primary))]">
               RESERVE
             </TableHead>
-            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell">
+            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
               NEWS
             </TableHead>
           </TableRow>
