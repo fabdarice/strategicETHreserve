@@ -7,6 +7,7 @@ import { EthereumLogo } from "@/components/icons/EthereumLogo";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Company, Influencer } from "./interfaces/interface";
+import CircleLoader from "react-spinners/ClipLoader";
 
 export default function Home() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -58,16 +59,6 @@ export default function Home() {
   const targetGoal = 1000000; // 1 million ETH target
   const progressPercentage = Math.min((totalReserve / targetGoal) * 100, 100);
 
-  if (isLoading) {
-    return (
-      <main className="min-h-screen cyber-grid">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center">Loading...</div>
-        </div>
-      </main>
-    );
-  }
-
   if (error) {
     return (
       <main className="min-h-screen cyber-grid">
@@ -97,43 +88,50 @@ export default function Home() {
             />
           </div>
 
-          {/* Total Reserve Display */}
-          <div className="mt-8 mb-2">
-            <div className="inline-block p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border">
-              <div className="flex flex-col items-center gap-2">
-                <p className="text-sm uppercase tracking-wider text-muted-foreground">
-                  Total Strategic ETH Reserve
-                </p>
-                <div className="flex items-center gap-2">
-                  <EthereumLogo className="w-6 h-6 text-[hsl(var(--primary))]" />
-                  <p className="text-3xl font-bold text-[hsl(var(--primary))]">
-                    {totalReserve.toLocaleString(undefined, {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}
+          {isLoading && (
+            <div className="mt-8 mb-2">
+              <div className="inline-block p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border">
+                <div className="flex flex-col items-center gap-2">
+                  <p className="text-sm uppercase tracking-wider text-muted-foreground">
+                    Total Strategic ETH Reserve
                   </p>
-                </div>
-                {/* Target Display */}
-                <div className="mt-2 flex items-center justify-center gap-2 text-xs">
-                  <span className="text-muted-foreground">Target:</span>
-                  <span className="font-medium text-[hsl(var(--primary))]">
-                    1,000,000 ETH
-                  </span>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="text-[hsl(var(--primary))] font-medium">
-                    {Math.round(totalReserve / 10000)}% achieved
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <EthereumLogo className="w-6 h-6 text-[hsl(var(--primary))]" />
+                    <p className="text-3xl font-bold text-[hsl(var(--primary))]">
+                      {totalReserve.toLocaleString(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </p>
+                  </div>
+                  {/* Target Display */}
+                  <div className="mt-2 flex items-center justify-center gap-2 text-xs">
+                    <span className="text-muted-foreground">Target:</span>
+                    <span className="font-medium text-[hsl(var(--primary))]">
+                      1,000,000 ETH
+                    </span>
+                    <span className="text-muted-foreground">•</span>
+                    <span className="text-[hsl(var(--primary))] font-medium">
+                      {Math.round(totalReserve / 10000)}% achieved
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="space-y-12">
-          <div className="flex flex-col gap-12 lg:flex-row">
-            <CompanyTable companies={companies} />
-            <RecentPledges pledges={recentPledges} />
-          </div>
+          {!isLoading ? (
+            <div className="text-center">
+              <CircleLoader color="#00FFAA" size={80} speedMultiplier={0.5} />
+            </div>
+          ) : (
+            <div className="flex flex-col gap-12 lg:flex-row">
+              <CompanyTable companies={companies} />
+              <RecentPledges pledges={recentPledges} />
+            </div>
+          )}
           <InfluencerSection influencers={influencers} />
         </div>
         <footer className="mt-24 text-center">
