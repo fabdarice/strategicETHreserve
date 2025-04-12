@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   description:
     "Join the Strategic Ethereum Reserve (SER) movement. Companies pledging to maintain ETH reserves for a sustainable Ethereum ecosystem.",
   icons: {
-    icon: "/images/ethereum_favicon.svg",
-    shortcut: "/images/ethereum_favicon.svg",
+    icon: "/images/ethereum_favicon.ico",
+    shortcut: "/images/ethereum_favicon.ico",
   },
 };
 
