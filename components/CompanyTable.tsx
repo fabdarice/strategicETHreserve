@@ -32,7 +32,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             className="mb-2"
           />
           <p className="text-sm text-center">
-            Entities allocating a portion of their revenue to SER.
+            Entities allocating a portion of their treasury to ETH.
           </p>
         </div>
         <div className="mt-2 md:mt-0 text-center md:text-left">
@@ -110,7 +110,9 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                 {company.category}
               </TableCell>
               <TableCell className="text-right">
-                {company.currentReserve.toLocaleString()} ETH
+                {company.currentReserve === 0
+                  ? "-"
+                  : `${company.currentReserve.toLocaleString()} ETH`}
               </TableCell>
               <TableCell className="hidden sm:table-cell text-center">
                 {company.news ? (
