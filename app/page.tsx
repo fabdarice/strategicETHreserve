@@ -122,7 +122,7 @@ export default function Home() {
         </div>
 
         <div className="space-y-12">
-          {!isLoading ? (
+          {isLoading ? (
             <div className="text-center">
               <CircleLoader color="#00FFAA" size={80} speedMultiplier={0.5} />
             </div>
