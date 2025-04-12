@@ -132,7 +132,7 @@ export default function Home() {
               <RecentPledges pledges={recentPledges} />
             </div>
           )}
-          <InfluencerSection influencers={influencers} />
+          {!isLoading && <InfluencerSection influencers={influencers} />}
         </div>
         <footer className="mt-24 text-center">
           <a
