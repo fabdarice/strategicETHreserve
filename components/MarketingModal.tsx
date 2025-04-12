@@ -66,34 +66,20 @@ export function MarketingModal({ company, children }: MarketingModalProps) {
               </div>
 
               {/* Stats Section */}
-              {(company.commitmentPercentage > 0 ||
-                company.currentReserve > 0) && (
+              {company.currentReserve > 0 && (
                 <div className="flex gap-4 w-full max-w-2xl pl-24">
-                  {company.commitmentPercentage > 0 && (
-                    <div className="flex-1 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
-                      <p className="text-sm uppercase tracking-wider text-muted-foreground mb-1">
-                        Treasury Commitment
-                      </p>
-                      <p className="text-2xl font-bold text-[hsl(var(--primary))]">
-                        {company.commitmentPercentage}%
-                      </p>
-                    </div>
-                  )}
-
-                  {company.currentReserve > 0 && (
-                    <div className="flex-1 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
-                      <p className="text-sm uppercase tracking-wider text-muted-foreground mb-1">
-                        Current Reserve
-                      </p>
-                      <p className="text-2xl font-bold text-[hsl(var(--primary))]">
-                        {company.currentReserve.toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}{" "}
-                        ETH
-                      </p>
-                    </div>
-                  )}
+                  <div className="flex-1 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
+                    <p className="text-sm uppercase tracking-wider text-muted-foreground mb-1">
+                      Current Reserve
+                    </p>
+                    <p className="text-2xl font-bold text-[hsl(var(--primary))]">
+                      {company.currentReserve.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}{" "}
+                      ETH
+                    </p>
+                  </div>
                 </div>
               )}
 

@@ -41,16 +41,6 @@ const formSchema = z.object({
     .url("Please enter a valid URL")
     .optional()
     .or(z.literal("")),
-  commitmentPercentage: z
-    .string()
-    .transform((val) => {
-      if (!val) return undefined;
-      const num = parseFloat(val);
-      if (isNaN(num)) throw new Error("Must be a number");
-      if (num < 0 || num > 100) throw new Error("Must be between 0 and 100");
-      return num;
-    })
-    .optional(),
   currentReserve: z
     .string()
     .transform((val) => {
@@ -179,11 +169,10 @@ export default function SubmitCompanyDialog({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="L2">Layer 2/AppChain</SelectItem>
-                          <SelectItem value="Institution">
-                            Institution
-                          </SelectItem>
-                          <SelectItem value="Web3 App">DAOs</SelectItem>
+                          <SelectItem value="L2/L3">Layer 2/L3</SelectItem>
+                          <SelectItem value="TradFi">TradFi</SelectItem>
+                          <SelectItem value="Government">Government</SelectItem>
+                          <SelectItem value="DAO">DAOs</SelectItem>
                           <SelectItem value="Company">Company</SelectItem>
                           <SelectItem value="Tooling">Tooling</SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
@@ -228,30 +217,7 @@ export default function SubmitCompanyDialog({
               </div>
 
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="commitmentPercentage"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Commitment Pct</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="number"
-                            min="0"
-                            max="100"
-                            step="0.1"
-                            className="bg-background"
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          % of treasury committed to ETH
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className="grid grid-cols-1 gap-4">
                   <FormField
                     control={form.control}
                     name="currentReserve"
