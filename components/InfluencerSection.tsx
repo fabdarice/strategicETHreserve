@@ -54,9 +54,9 @@ export default function InfluencerSection({
           {influencers.map((influencer) => (
             <CarouselItem
               key={influencer.id}
-              className="md:basis-1/2 lg:basis-1/3"
+              className="md:basis-1/2 lg:basis-1/3 h-full"
             >
-              <Card className="border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden">
+              <Card className="border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden h-full flex flex-col">
                 <CardHeader className="flex flex-row items-center gap-4 p-6">
                   <Avatar className="h-12 w-12 ring-2 ring-[hsl(var(--primary))] ring-offset-2 ring-offset-background">
                     <AvatarImage
@@ -83,7 +83,7 @@ export default function InfluencerSection({
                     )}
                   </div>
                 </CardHeader>
-                <CardContent className="p-6 pt-0">
+                <CardContent className="p-6 pt-0 flex-1">
                   <p className="text-sm text-muted-foreground mb-4">
                     {influencer.description}
                   </p>
