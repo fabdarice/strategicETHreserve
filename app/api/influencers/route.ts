@@ -14,7 +14,7 @@ export async function GET() {
   try {
     const influencers = await prisma.influencer.findMany({
       orderBy: {
-        createdAt: "desc",
+        createdAt: "asc",
       },
     });
     return NextResponse.json(influencers);
