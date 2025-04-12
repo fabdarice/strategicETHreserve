@@ -47,13 +47,19 @@ export default function AdminPage() {
   const fetchData = async () => {
     try {
       const adminToken = localStorage.getItem("admin_token");
-      console.log(adminToken);
       const response = await fetch("/api/admin", {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${adminToken}`,
         },
       });
+
+      // Check if response is a redirect
+      if (response.redirected) {
+        window.location.href = response.url;
+        return;
+      }
+
       const data = await response.json();
       setCompanies(data.companies);
       setEditedCompanies(data.companies);
@@ -61,6 +67,7 @@ export default function AdminPage() {
       setEditedInfluencers(data.influencers);
     } catch (error) {
       toast.error("Failed to fetch data");
+      window.location.href = "/";
     } finally {
       setLoading(false);
     }

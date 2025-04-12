@@ -50,11 +50,6 @@ export default function RecentPledges({ pledges }: { pledges: Company[] }) {
                 <div className="text-sm text-muted-foreground">
                   {pledge.category}
                 </div>
-                {pledge.commitmentPercentage > 0 && (
-                  <div className="font-semibold text-[hsl(var(--primary))]">
-                    {pledge.commitmentPercentage}% Commitment
-                  </div>
-                )}
                 {pledge.currentReserve > 0 && (
                   <div className="font-semibold text-[hsl(var(--primary))]">
                     {pledge.currentReserve.toLocaleString(undefined, {

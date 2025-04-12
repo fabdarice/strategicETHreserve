@@ -67,8 +67,8 @@ export function MarketingModal({ company, children }: MarketingModalProps) {
 
               {/* Stats Section */}
               {company.currentReserve > 0 && (
-                <div className="flex gap-4 w-full max-w-2xl pl-24">
-                  <div className="flex-1 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
+                <div className="flex justify-center w-full max-w-2xl pl-24">
+                  <div className="w-64 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
                     <p className="text-sm uppercase tracking-wider text-muted-foreground mb-1">
                       Current Reserve
                     </p>

@@ -51,6 +51,13 @@ export default function Home() {
     )
     .slice(0, 3);
 
+  const totalReserve = companies
+    .filter((company: Company) => company.status === "ACTIVE")
+    .reduce((sum, company) => sum + company.currentReserve, 0);
+
+  const targetGoal = 1000000; // 1 million ETH target
+  const progressPercentage = Math.min((totalReserve / targetGoal) * 100, 100);
+
   if (isLoading) {
     return (
       <main className="min-h-screen cyber-grid">
@@ -74,7 +81,7 @@ export default function Home() {
   return (
     <main className="min-h-screen cyber-grid">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="text-center mb-10 relative">
+        <div className="text-center mb-8 relative">
           <div className="flex justify-center items-center mb-4">
             <div className="relative">
               <EthereumLogo className="w-20 h-20 text-[hsl(var(--primary))] animate-pulse" />
@@ -89,9 +96,40 @@ export default function Home() {
               height={400}
             />
           </div>
+
+          {/* Total Reserve Display */}
+          <div className="mt-8 mb-2">
+            <div className="inline-block p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border">
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-sm uppercase tracking-wider text-muted-foreground">
+                  Total Strategic ETH Reserve
+                </p>
+                <div className="flex items-center gap-2">
+                  <EthereumLogo className="w-6 h-6 text-[hsl(var(--primary))]" />
+                  <p className="text-3xl font-bold text-[hsl(var(--primary))]">
+                    {totalReserve.toLocaleString(undefined, {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    })}
+                  </p>
+                </div>
+                {/* Target Display */}
+                <div className="mt-2 flex items-center justify-center gap-2 text-xs">
+                  <span className="text-muted-foreground">Target:</span>
+                  <span className="font-medium text-[hsl(var(--primary))]">
+                    1,000,000 ETH
+                  </span>
+                  <span className="text-muted-foreground">•</span>
+                  <span className="text-[hsl(var(--primary))] font-medium">
+                    {Math.round(totalReserve / 10000)}% achieved
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="space-y-16">
+        <div className="space-y-12">
           <div className="flex flex-col gap-12 lg:flex-row">
             <CompanyTable companies={companies} />
             <RecentPledges pledges={recentPledges} />

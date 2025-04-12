@@ -5,10 +5,9 @@ export async function GET(request: Request) {
   try {
     const token = request.headers.get("Authorization")?.split("Bearer ")?.[1];
 
-    // If there's no token, redirect to login
+    // If there's no token or invalid token, redirect to homepage
     if (!token || token !== process.env.ADMIN_PASSWORD) {
-      console.log("No token or invalid token");
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
     }
 
     const [companies, influencers] = await Promise.all([
@@ -19,10 +18,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ companies, influencers });
   } catch (error) {
     console.error("Error fetching admin data:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.redirect(new URL("/", request.url), { status: 302 });
   }
 }
 
@@ -30,18 +26,15 @@ export async function PUT(request: Request) {
   try {
     const token = request.headers.get("Authorization")?.split("Bearer ")?.[1];
 
-    // If there's no token, redirect to login
+    // If there's no token or invalid token, redirect to homepage
     if (!token || token !== process.env.ADMIN_PASSWORD) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
     }
 
     const { type, id, data } = await request.json();
 
     if (!type || !id || !data) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
     }
 
     let result;
@@ -56,16 +49,13 @@ export async function PUT(request: Request) {
         data,
       });
     } else {
-      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
     }
 
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error updating data:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.redirect(new URL("/", request.url), { status: 302 });
   }
 }
 
@@ -73,18 +63,15 @@ export async function POST(request: Request) {
   try {
     const token = request.headers.get("Authorization")?.split("Bearer ")?.[1];
 
-    // If there's no token, redirect to login
+    // If there's no token or invalid token, redirect to homepage
     if (!token || token !== process.env.ADMIN_PASSWORD) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
     }
 
     const { type, data } = await request.json();
 
     if (!type || !data) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      );
+      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
     }
 
     let result;
@@ -98,15 +85,12 @@ export async function POST(request: Request) {
         },
       });
     } else {
-      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
     }
 
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error creating data:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.redirect(new URL("/", request.url), { status: 302 });
   }
 }
