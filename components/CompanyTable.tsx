@@ -31,8 +31,8 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             height={50}
             className="mb-2"
           />
-          <p className="text-sm text-center">
-            Entities allocating a portion of their treasury to ETH.
+          <p className="text-sm text-center whitespace-nowrap">
+            Entities allocating part of their treasury to ETH
           </p>
         </div>
         <div className="mt-2 md:mt-0 text-center md:text-left">

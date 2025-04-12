@@ -50,7 +50,7 @@ export default function InfluencerSection({
         setApi={setApi}
         className="w-full"
       >
-        <CarouselContent>
+        <CarouselContent className="h-[300px]">
           {influencers.map((influencer) => (
             <CarouselItem
               key={influencer.id}
