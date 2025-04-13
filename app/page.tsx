@@ -88,7 +88,7 @@ export default function Home() {
             />
           </div>
 
-          {isLoading && (
+          {!isLoading && (
             <div className="mt-8 mb-2">
               <div className="inline-block p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border">
                 <div className="flex flex-col items-center gap-2">
@@ -106,7 +106,7 @@ export default function Home() {
                   </div>
                   {/* Target Display */}
                   <div className="mt-2 flex items-center justify-center gap-2 text-xs">
-                    <span className="text-muted-foreground">Target:</span>
+                    <span className="text-muted-foreground">Next Target:</span>
                     <span className="font-medium text-[hsl(var(--primary))]">
                       1,000,000 ETH
                     </span>
