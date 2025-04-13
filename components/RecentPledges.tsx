@@ -53,8 +53,8 @@ export default function RecentPledges({ pledges }: { pledges: Company[] }) {
                 {pledge.currentReserve > 0 && (
                   <div className="font-semibold text-[hsl(var(--primary))]">
                     {pledge.currentReserve.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
                     })}{" "}
                     ETH
                   </div>
