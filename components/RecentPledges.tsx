@@ -16,7 +16,7 @@ export default function RecentPledges({ pledges }: { pledges: Company[] }) {
           height={30}
           className="mb-2"
         />
-        <p className="text-sm">Latest companies joining the SER movement</p>
+        <p className="text-sm">Latest entities joining the SER movement</p>
       </div>
       <div className="grid gap-3 sm:grid-cols-1">
         {pledges.map((pledge) => (
