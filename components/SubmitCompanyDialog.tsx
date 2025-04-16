@@ -170,7 +170,7 @@ export default function SubmitCompanyDialog({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="DAO">DAOs</SelectItem>
+                          <SelectItem value="DAO">DAO</SelectItem>
                           <SelectItem value="Company">Company</SelectItem>
                           <SelectItem value="TradFi">TradFi</SelectItem>
                           <SelectItem value="Government">Government</SelectItem>
