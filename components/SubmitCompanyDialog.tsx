@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/select";
 
 const formSchema = z.object({
-  name: z.string().min(2, "Company name must be at least 2 characters"),
+  name: z.string().min(2, "Entity name must be at least 2 characters"),
   category: z.string().min(1, "Please select a category"),
   logoUrl: z.string().url("Please enter a valid URL"),
   website: z
@@ -52,6 +52,7 @@ const formSchema = z.object({
     })
     .optional(),
   addresses: z.string().optional(),
+  contact: z.string().optional(),
 });
 
 export default function SubmitCompanyDialog({
@@ -100,12 +101,12 @@ export default function SubmitCompanyDialog({
         }, 3000);
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to submit company");
+        throw new Error(errorData.message || "Failed to submit entity");
       }
     } catch (error) {
-      console.error("Failed to submit company:", error);
+      console.error("Failed to submit entity:", error);
       setError(
-        error instanceof Error ? error.message : "Failed to submit company"
+        error instanceof Error ? error.message : "Failed to submit entity"
       );
     }
   }
@@ -115,9 +116,9 @@ export default function SubmitCompanyDialog({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[90vw] max-w-[500px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Submit Your Company</DialogTitle>
+          <DialogTitle>Submit Your Entity</DialogTitle>
           <DialogDescription>
-            Add your company&apos;s commitment to SER.
+            Join the SER movement by submitting your entity.
           </DialogDescription>
         </DialogHeader>
         {isSuccess ? (
@@ -169,12 +170,10 @@ export default function SubmitCompanyDialog({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="L2/L3">Layer 2/L3</SelectItem>
-                          <SelectItem value="TradFi">TradFi</SelectItem>
-                          <SelectItem value="Government">Government</SelectItem>
                           <SelectItem value="DAO">DAOs</SelectItem>
                           <SelectItem value="Company">Company</SelectItem>
-                          <SelectItem value="Tooling">Tooling</SelectItem>
+                          <SelectItem value="TradFi">TradFi</SelectItem>
+                          <SelectItem value="Government">Government</SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
@@ -207,9 +206,19 @@ export default function SubmitCompanyDialog({
                       <FormControl>
                         <Input {...field} className="bg-background" />
                       </FormControl>
-                      <FormDescription>
-                        Your company&apos;s website (optional)
-                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="contact"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Submitter's Telegram/Email</FormLabel>
+                      <FormControl>
+                        <Input {...field} className="bg-background" />
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -217,31 +226,25 @@ export default function SubmitCompanyDialog({
               </div>
 
               <div className="space-y-4">
-                <div className="grid grid-cols-1 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="currentReserve"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Current ETH Reserve</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            className="bg-background"
-                          />
-                        </FormControl>
-                        <FormDescription>Amount in ETH</FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="currentReserve"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Current ETH Reserve</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          className="bg-background"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <FormField
                   control={form.control}
                   name="addresses"

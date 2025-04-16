@@ -12,8 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import SubmitCompanyDialog from "@/components/SubmitCompanyDialog";
 import Image from "next/image";
-import { Company } from "@/app/interfaces/interface";
+import { Company, AccountingType } from "@/app/interfaces/interface";
 import { ExternalLink, Newspaper } from "lucide-react";
+
+// Helper function to check if a date is within the last 7 days
+const isNew = (date: Date): boolean => {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  return new Date(date) > sevenDaysAgo;
+};
 
 export default function CompanyTable({ companies }: { companies: Company[] }) {
   const activeCompanies = companies.filter(
@@ -32,7 +39,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             className="mb-2"
           />
           <p className="text-xs text-center md:text-sm md:text-left">
-            Entities allocating part of their treasury to ETH
+            Entities holding $ETH in their treasury
           </p>
         </div>
         <div className="mt-2 md:mt-0 text-center md:text-left">
@@ -91,6 +98,11 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                       />
                     </div>
                     {company.name}
+                    {isNew(company.createdAt) && (
+                      <span className="ml-2 text-[hsl(var(--primary))] text-[10px] font-bold uppercase tracking-wider align-middle">
+                        New
+                      </span>
+                    )}
                   </a>
                 ) : (
                   <div className="flex items-center gap-2">
@@ -103,6 +115,11 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                       />
                     </div>
                     {company.name}
+                    {isNew(company.createdAt) && (
+                      <span className="ml-2 text-[hsl(var(--primary))] text-[10px] font-bold uppercase tracking-wider align-middle">
+                        New
+                      </span>
+                    )}
                   </div>
                 )}
               </TableCell>
@@ -113,6 +130,12 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                 {company.currentReserve === 0
                   ? "-"
                   : `${company.currentReserve.toLocaleString()} ETH`}
+                {company.accountingType === AccountingType.SELF_REPORTED && (
+                  <span className="ml-1 text-[hsl(var(--primary))]">*</span>
+                )}
+                {company.accountingType === AccountingType.PUBLIC_REPORT && (
+                  <span className="ml-1 text-[hsl(var(--primary))]">**</span>
+                )}
               </TableCell>
               <TableCell className="hidden sm:table-cell text-center">
                 {company.news ? (
@@ -132,6 +155,17 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
           ))}
         </TableBody>
       </Table>
+      {/* Legend for Accounting Types */}
+      <div className="p-4 text-xs text-muted-foreground border-t border-[hsl(var(--primary))]">
+        <p>
+          <span className="font-bold text-[hsl(var(--primary))]">*</span> Amount
+          self-reported by the entity.
+        </p>
+        <p>
+          <span className="font-bold text-[hsl(var(--primary))]">**</span>{" "}
+          Amount extracted from public filings or reports.
+        </p>
+      </div>
     </div>
   );
 }

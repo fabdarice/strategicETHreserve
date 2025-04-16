@@ -11,20 +11,43 @@ datasource db {
 model Company {
   id                   String   @id @default(cuid())
   name                 String   @unique
-  category             String
-  description          String
-  commitmentPercentage Float
+  category             String  
   currentReserve       Float
   addresses            String[]
   logo                 String
   website              String?
   status               String   @default("PENDING")
-  news                 String?
-  dateCommitment       DateTime @default(now())
+  news                 String?  
+  contact              String?
+  accountingType       String? @default("SELF_REPORTED")
+  wallets              CompanyWallet[]
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
   @@map("companies")
+}
+
+model CompanyWallet {
+  id                   String   @id @default(cuid())
+  companyId            String
+  company              Company  @relation(fields: [companyId], references: [id])
+  address              String
+  balance              Float
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("company_wallets")
+}
+
+model Snapshot {
+  id                   String   @id @default(cuid())
+  totalReserve         String
+  totalCompanies       Int
+  snapshotDate         DateTime @default(now())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("snapshots")
 }
 
 model Influencer {

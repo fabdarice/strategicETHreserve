@@ -61,7 +61,7 @@ export default function RecentPledges({ pledges }: { pledges: Company[] }) {
                 )}
                 <div className="text-sm text-muted-foreground">
                   Joined{" "}
-                  {formatDistanceToNow(new Date(pledge.dateCommitment), {
+                  {formatDistanceToNow(new Date(pledge.createdAt), {
                     addSuffix: true,
                   })}
                 </div>

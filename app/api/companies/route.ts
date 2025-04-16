@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
+import { CompanyStatus } from "@/app/interfaces/interface";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -32,9 +33,10 @@ export async function POST(request: Request) {
       category = "Other",
       logoUrl,
       website = null,
-      commitmentPercentage = 0,
       currentReserve = 0,
       addresses = [],
+      wallets = [],
+      contact = "",
     } = body;
 
     // Ensure addresses is an array and filter out empty strings
@@ -48,11 +50,10 @@ export async function POST(request: Request) {
         category,
         logo: logoUrl,
         website,
-        commitmentPercentage,
         currentReserve,
         addresses: addressesArray,
-        status: "PENDING",
-        description: `${name} is committed to holding ${commitmentPercentage}% of their treasury in ETH.`,
+        status: CompanyStatus.PENDING.toString(),
+        contact,
       },
     });
 
@@ -67,10 +68,10 @@ export async function POST(request: Request) {
         <ul>
           <li><strong>Name:</strong> ${name}</li>
           <li><strong>Category:</strong> ${category}</li>
-          <li><strong>Website:</strong> ${website || "Not provided"}</li>
-          <li><strong>Commitment:</strong> ${commitmentPercentage}%</li>
+          <li><strong>Website:</strong> ${website || "Not provided"}</li>          
           <li><strong>Current Reserve:</strong> ${currentReserve} ETH</li>
           <li><strong>Addresses:</strong> ${addressesArray.join(", ")}</li>
+          <li><strong>Contact:</strong> ${contact}</li>
         </ul>
         <p>Please review and update their status in the admin panel.</p>
       `,

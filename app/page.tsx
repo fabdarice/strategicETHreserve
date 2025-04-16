@@ -56,6 +56,10 @@ export default function Home() {
     .filter((company: Company) => company.status === "ACTIVE")
     .reduce((sum, company) => sum + company.currentReserve, 0);
 
+  const activeCompanyCount = companies.filter(
+    (company: Company) => company.status === "ACTIVE"
+  ).length;
+
   const targetGoal = 1000000; // 1 million ETH target
   const progressPercentage = Math.min((totalReserve / targetGoal) * 100, 100);
 
@@ -91,28 +95,45 @@ export default function Home() {
           {!isLoading && (
             <div className="mt-8 mb-2">
               <div className="inline-block p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border">
-                <div className="flex flex-col items-center gap-2">
+                <div className="flex flex-col items-center gap-3">
                   <p className="text-sm uppercase tracking-wider text-muted-foreground">
                     Total Strategic ETH Reserve
                   </p>
                   <div className="flex items-center gap-2">
                     <EthereumLogo className="w-6 h-6 text-[hsl(var(--primary))]" />
-                    <p className="text-3xl font-bold text-[hsl(var(--primary))]">
+                    <p className="text-3xl font-bold text-[hsl(var(--primary))] leading-none">
                       {totalReserve.toLocaleString(undefined, {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0,
                       })}
                     </p>
                   </div>
-                  {/* Target Display */}
-                  <div className="mt-2 flex items-center justify-center gap-2 text-xs">
-                    <span className="text-muted-foreground">Next Target:</span>
-                    <span className="font-medium text-[hsl(var(--primary))]">
-                      1,000,000 ETH
+
+                  {/* Progress Bar & Target */}
+                  <div className="w-full max-w-xs mt-2">
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-[hsl(var(--primary))] transition-all duration-500 ease-out"
+                        style={{ width: `${progressPercentage}%` }}
+                      />
+                    </div>
+                    <div className="mt-1 flex justify-between items-center text-xs">
+                      <span className="text-muted-foreground">
+                        Target: {targetGoal.toLocaleString()} ETH
+                      </span>
+                      <span className="font-medium text-[hsl(var(--primary))] ">
+                        {progressPercentage.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Active Companies Count */}
+                  <div className="mt-2 text-xs flex items-center gap-1">
+                    <span className="text-muted-foreground">
+                      Active Participants:
                     </span>
-                    <span className="text-muted-foreground">•</span>
-                    <span className="text-[hsl(var(--primary))] font-medium">
-                      {Math.round(totalReserve / 10000)}% achieved
+                    <span className="font-medium text-[hsl(var(--primary))] ">
+                      {activeCompanyCount}
                     </span>
                   </div>
                 </div>
