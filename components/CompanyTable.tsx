@@ -60,7 +60,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
       </div>
       <Table>
         <TableHeader>
-          <TableRow className="border-[hsl(var(--primary))]">
+          <TableRow className="border-green-400">
             <TableHead className="text-[hsl(var(--primary))]">
               ENTITIES
             </TableHead>
@@ -79,7 +79,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
           {activeCompanies.map((company) => (
             <TableRow
               key={company.id}
-              className="border-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1] transition-colors"
+              className="border-green-400 hover:bg-[hsl(var(--primary))/0.1] transition-colors"
             >
               <TableCell className="font-medium">
                 {company.website ? (
@@ -99,7 +99,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                     </div>
                     {company.name}
                     {isNew(company.createdAt) && (
-                      <span className="ml-2 text-[hsl(var(--primary))] text-[10px] font-bold uppercase tracking-wider align-middle">
+                      <span className="ml-2 text-orange-500 text-[10px] font-bold uppercase tracking-wider align-middle">
                         New
                       </span>
                     )}
@@ -116,7 +116,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                     </div>
                     {company.name}
                     {isNew(company.createdAt) && (
-                      <span className="ml-2 text-[hsl(var(--primary))] text-[10px] font-bold uppercase tracking-wider align-middle">
+                      <span className="ml-2 text-orange-500 text-[10px] font-bold uppercase tracking-wider align-middle">
                         New
                       </span>
                     )}
@@ -164,7 +164,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
         </TableBody>
       </Table>
       {/* Legend for Accounting Types */}
-      <div className="p-4 text-xs text-muted-foreground border-t border-[hsl(var(--primary))]">
+      <div className="p-4 text-xs text-muted-foreground border-t border-green-400">
         <p>
           <span className="font-bold text-[hsl(var(--primary))]">*</span> Amount
           self-reported by the entity.
