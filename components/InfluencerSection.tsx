@@ -87,7 +87,7 @@ export default function InfluencerSection({
                   <p className="text-sm text-muted-foreground mb-4">
                     {influencer.description}
                   </p>
-                  <p className="text-sm font-medium text-[hsl(var(--primary))]">
+                  <p className="text-sm font-medium text-white">
                     &quot;{influencer.commitment}&quot;
                   </p>
                 </CardContent>

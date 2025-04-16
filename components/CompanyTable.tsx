@@ -60,7 +60,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
       </div>
       <Table>
         <TableHeader>
-          <TableRow className="border-green-400">
+          <TableRow className="border-[hsl(var(--primary)/0.3)]">
             <TableHead className="text-[hsl(var(--primary))]">
               ENTITIES
             </TableHead>
@@ -79,7 +79,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
           {activeCompanies.map((company) => (
             <TableRow
               key={company.id}
-              className="border-green-400 hover:bg-[hsl(var(--primary))/0.1] transition-colors"
+              className="border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors"
             >
               <TableCell className="font-medium">
                 {company.website ? (
@@ -164,7 +164,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
         </TableBody>
       </Table>
       {/* Legend for Accounting Types */}
-      <div className="p-4 text-xs text-muted-foreground border-t border-green-400">
+      <div className="p-4 text-xs text-muted-foreground border-t border-[hsl(var(--primary)/0.3)]">
         <p>
           <span className="font-bold text-[hsl(var(--primary))]">*</span> Amount
           self-reported by the entity.
