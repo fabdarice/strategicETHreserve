@@ -249,7 +249,7 @@ export default function AdminInfluencersPage() {
                 <Label htmlFor="create-avatar">Avatar URL</Label>
                 <Input
                   id="create-avatar"
-                  value={newInfluencer.avatar}
+                  value={newInfluencer.avatar ?? ""}
                   onChange={(e) =>
                     setNewInfluencer({
                       ...newInfluencer,
