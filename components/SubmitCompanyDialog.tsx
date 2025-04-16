@@ -215,7 +215,7 @@ export default function SubmitCompanyDialog({
                   name="contact"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Submitter's Telegram/Email</FormLabel>
+                      <FormLabel>Submitter&apos;s Telegram/Email</FormLabel>
                       <FormControl>
                         <Input {...field} className="bg-background" />
                       </FormControl>
