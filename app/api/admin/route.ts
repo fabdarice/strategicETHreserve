@@ -11,8 +11,16 @@ export async function GET(request: Request) {
     }
 
     const [companies, influencers] = await Promise.all([
-      prisma.company.findMany(),
-      prisma.influencer.findMany(),
+      prisma.company.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.influencer.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
     ]);
 
     return NextResponse.json({ companies, influencers });

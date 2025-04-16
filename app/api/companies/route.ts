@@ -14,6 +14,20 @@ export async function GET() {
       orderBy: {
         currentReserve: "desc",
       },
+      select: {
+        id: true,
+        name: true,
+        category: true,
+        currentReserve: true,
+        logo: true,
+        website: true,
+        status: true,
+        contact: true,
+        accountingType: true,
+        news: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return NextResponse.json(companies);
   } catch (error) {
