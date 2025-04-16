@@ -127,14 +127,22 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                 {company.category}
               </TableCell>
               <TableCell className="text-right">
-                {company.currentReserve === 0
-                  ? "-"
-                  : `${company.currentReserve.toLocaleString()} ETH`}
-                {company.accountingType === AccountingType.SELF_REPORTED && (
-                  <span className="ml-1 text-[hsl(var(--primary))]">*</span>
-                )}
-                {company.accountingType === AccountingType.PUBLIC_REPORT && (
-                  <span className="ml-1 text-[hsl(var(--primary))]">**</span>
+                {company.currentReserve === 0 ? (
+                  "-"
+                ) : (
+                  <>
+                    {company.accountingType ===
+                      AccountingType.SELF_REPORTED && (
+                      <span className="mr-1 text-[hsl(var(--primary))]">*</span>
+                    )}
+                    {company.accountingType ===
+                      AccountingType.PUBLIC_REPORT && (
+                      <span className="mr-1 text-[hsl(var(--primary))]">
+                        **
+                      </span>
+                    )}
+                    {`${company.currentReserve.toLocaleString()} ETH`}
+                  </>
                 )}
               </TableCell>
               <TableCell className="hidden sm:table-cell text-center">
