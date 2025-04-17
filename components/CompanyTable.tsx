@@ -68,7 +68,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
               CATEGORY
             </TableHead>
             <TableHead className="text-right text-[hsl(var(--primary))]">
-              RESERVE
+              RESERVE <span className="sm:hidden ml-1">ETH</span>
             </TableHead>
             <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
               NEWS
@@ -141,7 +141,8 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                         **
                       </span>
                     )}
-                    {`${company.currentReserve.toLocaleString()} ETH`}
+                    <span>{company.currentReserve.toLocaleString()}</span>
+                    <span className="hidden sm:inline ml-1">ETH</span>
                   </>
                 )}
               </TableCell>
