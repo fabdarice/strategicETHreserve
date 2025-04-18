@@ -95,8 +95,20 @@ export default function AdminCompaniesPage() {
       return;
     }
 
+    // Check if status is changing from PENDING to ACTIVE and set createdAt if needed
+    if (
+      originalCompany.status === CompanyStatus.PENDING &&
+      companyUpdates.status === CompanyStatus.ACTIVE &&
+      !companyUpdates.createdAt // Only set if not already explicitly set in this edit session
+    ) {
+      // Set createdAt to the current time ISO string directly in updates
+      // Assuming the API expects an ISO string format for dates
+      companyUpdates.createdAt = new Date().toISOString() as any; // Use 'as any' if Company interface expects Date
+    }
+
     const payloadData = { ...originalCompany, ...companyUpdates };
 
+    // Ensure addresses are handled correctly
     if (payloadData.addresses && !Array.isArray(payloadData.addresses)) {
       payloadData.addresses = String(payloadData.addresses)
         .split(",")
