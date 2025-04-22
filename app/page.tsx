@@ -109,22 +109,6 @@ export default function Home() {
                     </p>
                   </div>
 
-                  {/* Progress Bar & Target */}
-                  <div className="w-full max-w-xs mt-2">
-                    <div className="h-2 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[hsl(var(--primary))] transition-all duration-500 ease-out"
-                        style={{ width: `${progressPercentage}%` }}
-                      />
-                    </div>
-                    <div className="mt-1 flex justify-between items-center text-xs">
-                      <span className="">Michael Saylor&apos;s Target </span>
-                      <span className="font-medium text-[hsl(var(--primary))] ">
-                        {progressPercentage.toFixed(1)}%
-                      </span>
-                    </div>
-                  </div>
-
                   {/* Active Companies Count */}
                   <div className="mt-2 text-xs flex items-center gap-1">
                     <span className="text-muted-foreground">
