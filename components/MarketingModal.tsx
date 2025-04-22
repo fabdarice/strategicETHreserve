@@ -17,10 +17,10 @@ export function MarketingModal({
   children,
   totalReserve,
 }: MarketingModalProps) {
-  const oldReserve = totalReserve - company.currentReserve;
+  // const oldReserve = totalReserve - company.currentReserve;
   const newTotalReserve = totalReserve;
-  const remainingToTarget = Math.max(0, targetGoal - newTotalReserve);
-  const oldProgressPercentage = Math.min((oldReserve / targetGoal) * 100, 100);
+  // const remainingToTarget = Math.max(0, targetGoal - newTotalReserve);
+  // const oldProgressPercentage = Math.min((oldReserve / targetGoal) * 100, 100);
   const newProgressPercentage = Math.min(
     (newTotalReserve / targetGoal) * 100,
     100
@@ -56,9 +56,9 @@ export function MarketingModal({
 
             {/* Company Section */}
             <div className="flex flex-col gap-4">
-              <div className="flex items-center gap-4 w-full max-w-2xl pl-24">
+              <div className="flex items-center justify-center gap-6 w-full max-w-3xl mx-auto">
                 {company.logo && (
-                  <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-card/80 backdrop-blur-sm border border-border/30 shadow-lg">
+                  <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-card/80 backdrop-blur-sm border border-border/30 shadow-lg flex-shrink-0">
                     <Image
                       src={company.logo}
                       alt={`${company.name} logo`}
@@ -79,7 +79,7 @@ export function MarketingModal({
                   </p>
                 </div>
               </div>
-              <div className="w-full max-w-xl mx-auto mt-0 flex flex-col items-center gap-6">
+              <div className="w-full max-w-xl mx-auto mt-4 flex flex-col items-center gap-6">
                 {/* Company Contribution - Moved Up */}
                 <p className="text-muted-foreground text-lg mt-2">
                   Contributing{" "}
