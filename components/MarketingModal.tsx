@@ -55,7 +55,7 @@ export function MarketingModal({
             </div>
 
             {/* Company Section */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               <div className="flex items-center justify-center gap-6 w-full max-w-3xl mx-auto">
                 {company.logo && (
                   <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-card/80 backdrop-blur-sm border border-border/30 shadow-lg flex-shrink-0">
@@ -79,7 +79,7 @@ export function MarketingModal({
                   </p>
                 </div>
               </div>
-              <div className="w-full max-w-xl mx-auto mt-4 flex flex-col items-center gap-6">
+              <div className="w-full max-w-xl mx-auto mt-0 flex flex-col items-center gap-6">
                 {/* Company Contribution - Moved Up */}
                 <p className="text-muted-foreground text-lg mt-2">
                   Contributing{" "}
