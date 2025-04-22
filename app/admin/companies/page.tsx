@@ -184,6 +184,11 @@ export default function AdminCompaniesPage() {
     );
   }
 
+  const totalReserve = companies.reduce(
+    (sum, company) => sum + (company.currentReserve || 0),
+    0
+  );
+
   return (
     <div className="container mx-auto p-8">
       <nav className="mb-4">
@@ -359,7 +364,10 @@ export default function AdminCompaniesPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <MarketingModal company={displayCompany as Company}>
+                    <MarketingModal
+                      company={displayCompany as Company}
+                      totalReserve={totalReserve}
+                    >
                       <Button variant="outline" size="sm">
                         Share
                       </Button>

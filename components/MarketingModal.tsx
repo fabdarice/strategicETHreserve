@@ -4,13 +4,28 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
 import { Company } from "@/app/interfaces/interface";
 import { EthereumLogo } from "@/components/icons/EthereumLogo";
+import { targetGoal } from "@/lib/constants";
 
 interface MarketingModalProps {
   company: Company;
   children: React.ReactNode;
+  totalReserve: number;
 }
 
-export function MarketingModal({ company, children }: MarketingModalProps) {
+export function MarketingModal({
+  company,
+  children,
+  totalReserve,
+}: MarketingModalProps) {
+  const oldReserve = totalReserve - company.currentReserve;
+  const newTotalReserve = totalReserve;
+  const remainingToTarget = Math.max(0, targetGoal - newTotalReserve);
+  const oldProgressPercentage = Math.min((oldReserve / targetGoal) * 100, 100);
+  const newProgressPercentage = Math.min(
+    (newTotalReserve / targetGoal) * 100,
+    100
+  );
+
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -64,29 +79,65 @@ export function MarketingModal({ company, children }: MarketingModalProps) {
                   </p>
                 </div>
               </div>
+              <div className="w-full max-w-xl mx-auto mt-0 flex flex-col items-center gap-6">
+                {/* Company Contribution - Moved Up */}
+                <p className="text-muted-foreground text-lg mt-2">
+                  Contributing{" "}
+                  <span className="font-bold text-foreground text-xl">
+                    {company.currentReserve.toLocaleString()} ETH
+                  </span>
+                </p>
+              </div>
 
-              {/* Stats Section */}
-              {company.currentReserve > 0 && (
-                <div className="flex justify-center w-full max-w-2xl pl-24">
-                  <div className="w-64 p-4 rounded-xl bg-card/50 backdrop-blur-sm border border-border/30">
-                    <p className="text-sm uppercase tracking-wider text-muted-foreground mb-1">
-                      Current Reserve
+              {/* Impact & Progress Section - Reverted to Homepage Style */}
+              <div className="w-full max-w-xl mx-auto mt-8 flex flex-col items-center gap-8">
+                {/* Homepage Total Reserve Block */}
+                <div className="inline-block p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border">
+                  <div className="flex flex-col items-center gap-3">
+                    <p className="text-sm uppercase tracking-wider text-muted-foreground">
+                      Total Strategic ETH Reserve
                     </p>
-                    <p className="text-2xl font-bold text-[hsl(var(--primary))]">
-                      {company.currentReserve.toLocaleString(undefined, {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      })}{" "}
-                      ETH
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <EthereumLogo className="w-6 h-6 text-[hsl(var(--primary))]" />
+                      <p className="text-3xl font-bold text-[hsl(var(--primary))] leading-none">
+                        {newTotalReserve.toLocaleString(undefined, {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
+                      </p>
+                    </div>
+
+                    {/* Progress Bar & Target */}
+                    <div className="w-full max-w-xs mt-2">
+                      <div className="h-2 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-[hsl(var(--primary))] transition-all duration-500 ease-out"
+                          style={{ width: `${newProgressPercentage}%` }}
+                        />
+                      </div>
+                      <div className="mt-1 flex justify-between items-center text-xs">
+                        <span className="">Michael Saylor&apos;s Target </span>
+                        <span className="font-medium text-[hsl(var(--primary))] ">
+                          {newProgressPercentage.toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
 
               {/* Footer */}
-              <div className="mt-6 pt-4 border-t border-border/30 w-full max-w-2xl">
+              <div className="mt-8 pt-6 border-t border-border/30 w-full max-w-2xl mx-auto">
                 <p className="text-sm text-muted-foreground text-center">
-                  Join the movement at StrategicETHReserve.xyz
+                  Join the movement at{" "}
+                  <a
+                    href="https://StrategicETHReserve.xyz"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-[hsl(var(--primary))] hover:underline underline-offset-2 neon-text-primary shadow-primary/50"
+                  >
+                    StrategicETHReserve.xyz
+                  </a>
                 </p>
               </div>
             </div>

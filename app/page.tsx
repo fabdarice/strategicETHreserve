@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Company, Influencer } from "./interfaces/interface";
 import CircleLoader from "react-spinners/ClipLoader";
+import { targetGoal } from "@/lib/constants";
 
 export default function Home() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -56,12 +57,11 @@ export default function Home() {
     .filter((company: Company) => company.status === "ACTIVE")
     .reduce((sum, company) => sum + company.currentReserve, 0);
 
+  const progressPercentage = Math.min((totalReserve / targetGoal) * 100, 100);
+
   const activeCompanyCount = companies.filter(
     (company: Company) => company.status === "ACTIVE"
   ).length;
-
-  const targetGoal = 1000000; // 1 million ETH target
-  const progressPercentage = Math.min((totalReserve / targetGoal) * 100, 100);
 
   if (error) {
     return (
@@ -96,7 +96,7 @@ export default function Home() {
             <div className="mt-8 mb-2">
               <div className="inline-block p-6 rounded-2xl bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border">
                 <div className="flex flex-col items-center gap-3">
-                  <p className="text-sm uppercase tracking-wider text-muted-foreground">
+                  <p className="text-sm uppercase tracking-wider">
                     Total Strategic ETH Reserve
                   </p>
                   <div className="flex items-center gap-2">
@@ -118,9 +118,7 @@ export default function Home() {
                       />
                     </div>
                     <div className="mt-1 flex justify-between items-center text-xs">
-                      <span className="text-muted-foreground">
-                        Target: {targetGoal.toLocaleString()} ETH
-                      </span>
+                      <span className="">Michael Saylor&apos;s Target </span>
                       <span className="font-medium text-[hsl(var(--primary))] ">
                         {progressPercentage.toFixed(1)}%
                       </span>
