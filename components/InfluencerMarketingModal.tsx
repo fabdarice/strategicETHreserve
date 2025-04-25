@@ -18,7 +18,7 @@ export function InfluencerMarketingModal({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden">
+      <DialogContent className="max-w-3xl p-0 overflow-hidden">
         <div className="relative">
           {/* Background with gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
@@ -44,7 +44,7 @@ export function InfluencerMarketingModal({
             </div>
 
             {/* Quote Section */}
-            <div className="relative mb-8">
+            <div className="relative mb-8 mx-12">
               <div className="relative">
                 <p className="text-2xl leading-relaxed text-center font-serif italic text-foreground/90">
                   &quot;{influencer.commitment}&quot;

@@ -72,21 +72,12 @@ export function MarketingModal({
                     {company.name}
                   </h2>
                   <p className="text-xl font-medium text-muted-foreground">
-                    Joins the{" "}
-                    <span className="text-[hsl(var(--primary))] font-semibold">
-                      Strategic ETH Reserve
+                    Contributing{" "}
+                    <span className="text-foreground font-semibold">
+                      {company.currentReserve.toLocaleString()} ETH
                     </span>
                   </p>
                 </div>
-              </div>
-              <div className="w-full max-w-xl mx-auto mt-0 flex flex-col items-center gap-6">
-                {/* Company Contribution - Moved Up */}
-                <p className="text-muted-foreground text-lg mt-2">
-                  Contributing{" "}
-                  <span className="font-bold text-foreground text-xl">
-                    {company.currentReserve.toLocaleString()} ETH
-                  </span>
-                </p>
               </div>
 
               {/* Impact & Progress Section - Reverted to Homepage Style */}
