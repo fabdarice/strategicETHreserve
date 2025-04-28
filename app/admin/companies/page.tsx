@@ -184,10 +184,9 @@ export default function AdminCompaniesPage() {
     );
   }
 
-  const totalReserve = companies.reduce(
-    (sum, company) => sum + (company.currentReserve || 0),
-    0
-  );
+  const totalReserve = companies
+    .filter((company) => company.status !== CompanyStatus.ACTIVE)
+    .reduce((sum, company) => sum + (company.currentReserve || 0), 0);
 
   return (
     <div className="container mx-auto p-8">
