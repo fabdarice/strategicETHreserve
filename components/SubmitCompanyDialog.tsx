@@ -35,7 +35,6 @@ import {
 const formSchema = z.object({
   name: z.string().min(2, "Entity name must be at least 2 characters"),
   category: z.string().min(1, "Please select a category"),
-  logoUrl: z.string().url("Please enter a valid URL"),
   website: z
     .string()
     .url("Please enter a valid URL")
@@ -69,7 +68,6 @@ export default function SubmitCompanyDialog({
     defaultValues: {
       name: "",
       category: "",
-      logoUrl: "",
       website: "",
       twitter: "",
     },
@@ -200,7 +198,12 @@ export default function SubmitCompanyDialog({
                       <FormItem>
                         <FormLabel>Website URL</FormLabel>
                         <FormControl>
-                          <Input {...field} className="bg-background" />
+                          <Input
+                            {...field}
+                            className="bg-background"
+                            placeholder="https://example.com"
+                            required
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -270,25 +273,36 @@ export default function SubmitCompanyDialog({
                     <FormItem>
                       <FormLabel>Wallet Addresses</FormLabel>
                       <FormControl>
-                        <Input {...field} className="bg-background" />
+                        <Input
+                          {...field}
+                          className="bg-background"
+                          placeholder="0xfoo,0xbar"
+                        />
                       </FormControl>
                       <FormDescription>
-                        Comma-separated list of wallet addresses holding the
-                        reserve
+                        Comma-separated list of wallet addresses
                       </FormDescription>
-                      <div className="mt-2 text-xs text-muted-foreground space-y-1 bg-gray-100 dark:bg-gray-800 p-2 rounded-md">
-                        <p className="font-medium">
-                          We track ETH assets across:
-                        </p>
-                        <p>
-                          • Networks: Ethereum, Base, Optimism, Arbitrum,
-                          zkSync, Linea, Gnosis
-                        </p>
-                        <p>
-                          • Assets: Native ETH, stETH, wstETH, rETH, WETH, oETH,
-                          ankrETH, ETHx, and Aave derivatives
-                        </p>
-                        <p>• Validator nodes using withdrawal credentials</p>
+                      <div className="mt-3 bg-gradient-to-r from-primary/10 to-primary/20 border border-primary/30 rounded-lg p-4 shadow-md space-y-2 backdrop-blur-sm relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[url('/images/eth-pattern.svg')] opacity-5"></div>
+                        <div className="relative z-10">
+                          <p className="text-sm font-medium text-primary-foreground/90 flex items-center">
+                            <span className="mr-2 text-primary">✦</span>
+                            We track ETH assets across:
+                          </p>
+                          <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1 mt-2">
+                            <li className="transition-colors duration-200 hover:text-primary">
+                              Networks: Ethereum, Base, Optimism, Arbitrum,
+                              zkSync, Linea, Gnosis
+                            </li>
+                            <li className="transition-colors duration-200 hover:text-primary">
+                              Assets: ETH, stETH, wstETH, rETH, WETH, oETH,
+                              ankrETH, ETHx, and Aave derivatives
+                            </li>
+                            <li className="transition-colors duration-200 hover:text-primary">
+                              Validator nodes using withdrawal credentials
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                       <FormMessage />
                     </FormItem>

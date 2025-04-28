@@ -105,12 +105,11 @@ export async function POST(request: Request) {
     const {
       name,
       category = "Other",
-      logoUrl,
+      logoUrl = "",
       website = null,
       twitter = null,
       currentReserve = 0,
       addresses = [],
-      wallets = [],
       contact = "",
     } = body;
 
