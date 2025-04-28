@@ -50,9 +50,9 @@ export default function RecentPledges({ pledges }: { pledges: Company[] }) {
                 <div className="text-sm text-muted-foreground">
                   {pledge.category}
                 </div>
-                {pledge.currentReserve > 0 && (
+                {pledge.reserve > 0 && (
                   <div className="font-semibold text-[hsl(var(--primary))]">
-                    {pledge.currentReserve.toLocaleString(undefined, {
+                    {pledge.reserve.toLocaleString(undefined, {
                       minimumFractionDigits: 0,
                       maximumFractionDigits: 0,
                     })}{" "}
