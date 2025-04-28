@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { MarketingModal } from "@/components/MarketingModal";
+import { ReserveIncreaseModal } from "@/components/ReserveIncreaseModal";
 import {
   Company,
   CompanyStatus,
@@ -228,6 +229,7 @@ export default function AdminCompaniesPage() {
               <TableHead className="w-[150px]">Addresses</TableHead>
               <TableHead className="w-[120px]">Contact</TableHead>
               <TableHead className="w-[80px]">Marketing</TableHead>
+              <TableHead className="w-[80px]">Growth</TableHead>
               <TableHead className="w-[60px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -407,6 +409,17 @@ export default function AdminCompaniesPage() {
                         Share
                       </Button>
                     </MarketingModal>
+                  </TableCell>
+                  <TableCell className="p-1">
+                    <ReserveIncreaseModal company={displayCompany as Company}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs px-2 py-1 h-7 bg-[hsl(var(--primary))/0.1] hover:bg-[hsl(var(--primary))/0.2] text-[hsl(var(--primary))]"
+                      >
+                        Growth
+                      </Button>
+                    </ReserveIncreaseModal>
                   </TableCell>
                   <TableCell className="p-1">
                     <Button
