@@ -74,7 +74,7 @@ export function MarketingModal({
                   <p className="text-xl font-medium text-muted-foreground">
                     Contributing{" "}
                     <span className="text-foreground font-semibold">
-                      {company.currentReserve.toLocaleString()} ETH
+                      {company.reserve.toLocaleString()} ETH
                     </span>
                   </p>
                 </div>
