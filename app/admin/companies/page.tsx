@@ -24,6 +24,7 @@ import Link from "next/link";
 export default function AdminCompaniesPage() {
   const [companies, setCompanies] = useState<AdminCompany[]>([]);
   const [loading, setLoading] = useState(true);
+  const [ethPrice, setEthPrice] = useState<number>(0);
   const [editedCompanies, setEditedCompanies] = useState<{
     [key: string]: Partial<AdminCompany>;
   }>({});
@@ -66,6 +67,7 @@ export default function AdminCompaniesPage() {
         : [];
       setCompanies(fetchedCompanies);
       setEditedCompanies({});
+      setEthPrice(data.lastETHPrice);
     } catch (error: any) {
       console.error("Failed to fetch companies:", error);
       toast.error(
@@ -192,6 +194,8 @@ export default function AdminCompaniesPage() {
   const totalReserve = companies
     .filter((company) => company.status === CompanyStatus.ACTIVE)
     .reduce((sum, company) => sum + (company.reserve || 0), 0);
+
+  const totalReserveUSD = totalReserve * ethPrice;
 
   return (
     <div className="container mx-auto p-8">
@@ -385,6 +389,7 @@ export default function AdminCompaniesPage() {
                     <MarketingModal
                       company={displayCompany as Company}
                       totalReserve={totalReserve}
+                      totalReserveUSD={totalReserveUSD}
                     >
                       <Button
                         variant="outline"

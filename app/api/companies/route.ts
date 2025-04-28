@@ -13,7 +13,13 @@ export const revalidate = 0;
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET(): Promise<
-  NextResponse<Company[] | { message: string }>
+  NextResponse<
+    | {
+        companies: Company[];
+        lastETHPrice: number;
+      }
+    | { message: string }
+  >
 > {
   try {
     // Get all companies with their latest snapshot
@@ -71,7 +77,19 @@ export async function GET(): Promise<
     // Sort by reserve in descending order
     transformedCompanies.sort((a, b) => b.reserve - a.reserve);
 
-    return NextResponse.json(transformedCompanies);
+    const lastETHPrice = await prisma.snapshot.findFirst({
+      orderBy: {
+        snapshotDate: "desc",
+      },
+      select: {
+        currentUSDPrice: true,
+      },
+    });
+
+    return NextResponse.json({
+      companies: transformedCompanies,
+      lastETHPrice: lastETHPrice?.currentUSDPrice || 0,
+    });
   } catch (error) {
     console.error("Failed to fetch companies:", error);
     return NextResponse.json(

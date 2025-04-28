@@ -9,6 +9,7 @@ export async function GET(request: Request): Promise<
     | {
         companies: AdminCompany[];
         influencers: Influencer[];
+        lastETHPrice: number;
       }
     | { message: string }
     | unknown
@@ -84,7 +85,20 @@ export async function GET(request: Request): Promise<
       },
     });
 
-    return NextResponse.json({ companies: transformedCompanies, influencers });
+    const lastETHPrice = await prisma.snapshot.findFirst({
+      orderBy: {
+        snapshotDate: "desc",
+      },
+      select: {
+        currentUSDPrice: true,
+      },
+    });
+
+    return NextResponse.json({
+      companies: transformedCompanies,
+      influencers,
+      lastETHPrice: lastETHPrice?.currentUSDPrice || 0,
+    });
   } catch (error) {
     console.error("Error fetching admin data:", error);
     return NextResponse.redirect(new URL("/", request.url), { status: 302 });

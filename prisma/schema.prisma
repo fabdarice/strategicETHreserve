@@ -46,7 +46,8 @@ model Snapshot {
   totalCompanies       Int
   pctDiff              Float?
   snapshotDate         DateTime @default(now())
-  totalReserveUSD      Float?
+  totalReserveUSD      Float @default(0)
+  currentUSDPrice      Int @default(0)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 

@@ -171,6 +171,7 @@ export async function GET(req: NextRequest) {
           totalCompanies: totalActiveCompanies,
           pctDiff: overallPctDiff,
           totalReserveUSD,
+          currentUSDPrice: ethPrice,
         },
       });
     } else {
@@ -181,6 +182,7 @@ export async function GET(req: NextRequest) {
           pctDiff: overallPctDiff,
           snapshotDate,
           totalReserveUSD,
+          currentUSDPrice: ethPrice,
         },
       });
     }

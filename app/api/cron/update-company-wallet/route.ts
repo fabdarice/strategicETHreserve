@@ -24,13 +24,13 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    const { id: walletId, companyId, address } = wallet;
+    const { id: walletId, address } = wallet;
 
     // Calculate total balance (includes validator balance internally)
     const totalBalanceWei = await getETHBalanceAllNetworks(address);
 
-    // Convert from Wei to ETH
-    const totalBalanceEth = Number(totalBalanceWei) / 1e18;
+    // Convert from Wei to ETH and round to 4 decimal places
+    const totalBalanceEth = Number((Number(totalBalanceWei) / 1e18).toFixed(4));
 
     // Update the CompanyWallet's balance field
     await prisma.companyWallet.update({

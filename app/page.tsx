@@ -15,6 +15,7 @@ export default function Home() {
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [ethPrice, setEthPrice] = useState<number>(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -33,8 +34,9 @@ export default function Home() {
           influencersRes.json(),
         ]);
 
-        setCompanies(companiesData);
+        setCompanies(companiesData.companies);
         setInfluencers(influencersData);
+        setEthPrice(companiesData.lastETHPrice || 0);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
       } finally {
@@ -56,6 +58,8 @@ export default function Home() {
   const totalReserve = companies
     .filter((company: Company) => company.status === "ACTIVE")
     .reduce((sum, company) => sum + company.reserve, 0);
+
+  const totalReserveUSD = totalReserve * ethPrice;
 
   const progressPercentage = Math.min((totalReserve / targetGoal) * 100, 100);
 
@@ -103,6 +107,17 @@ export default function Home() {
                     <EthereumLogo className="w-6 h-6 text-[hsl(var(--primary))]" />
                     <p className="text-3xl font-bold text-[hsl(var(--primary))] leading-none">
                       {totalReserve.toLocaleString(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </p>
+                  </div>
+
+                  {/* USD Value Display */}
+                  <div className="mt-0 flex items-center gap-2 bg-[hsl(var(--primary))/0.05] p-2 rounded-xl backdrop-blur-sm">
+                    <p className="text-lg font-medium text-[hsl(var(--primary-foreground))] leading-none">
+                      $
+                      {totalReserveUSD.toLocaleString(undefined, {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0,
                       })}
