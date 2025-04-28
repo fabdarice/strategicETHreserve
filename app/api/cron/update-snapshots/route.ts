@@ -37,6 +37,20 @@ export async function GET(req: NextRequest) {
       _sum: { balance: true },
     });
 
+    // Get all active companies to ensure we include those without wallets
+    const activeCompanies = await prisma.company.findMany({
+      where: { status: CompanyStatus.ACTIVE },
+      select: { id: true, name: true, currentReserve: true },
+    });
+
+    // Create a map of companyId to wallet balance
+    const companyWalletBalances = new Map(
+      companyReserves.map(({ companyId, _sum }) => [
+        companyId,
+        _sum.balance ?? 0,
+      ])
+    );
+
     // Fetch previous overall snapshot for pctDiff calculation
     const prevSnapshot = await prisma.snapshot.findFirst({
       where: { snapshotDate: { lt: snapshotDate } },
@@ -46,9 +60,14 @@ export async function GET(req: NextRequest) {
       ? parseFloat(prevSnapshot.totalReserve)
       : 0;
 
-    // Loop through companies to create/update daily SnapshotCompany and send alerts
-    for (const { companyId, _sum } of companyReserves) {
-      const currentReserve = _sum.balance ?? 0;
+    // Loop through all active companies
+    for (const company of activeCompanies) {
+      const companyId = company.id;
+
+      // Use wallet balance if available, otherwise use company's currentReserve
+      const currentReserve = companyWalletBalances.has(companyId)
+        ? companyWalletBalances.get(companyId)!
+        : company.currentReserve;
 
       // Find most recent previous company snapshot
       const prevCompanySnapshot = await prisma.snapshotCompany.findFirst({
@@ -58,21 +77,16 @@ export async function GET(req: NextRequest) {
         },
         orderBy: { snapshotDate: "desc" },
       });
-      const prevReserve = prevCompanySnapshot?.reserve ?? 0;
+
+      // If no previous snapshot exists, use company's currentReserve or default to 0
+      const prevReserve =
+        prevCompanySnapshot?.reserve ?? company.currentReserve ?? 0;
 
       const diff = currentReserve - prevReserve;
       const pctDiff =
         prevReserve > 0
           ? Math.round((diff / prevReserve) * 100 * 100) / 100
           : null;
-
-      console.log({
-        companyId,
-        currentReserve,
-        prevReserve,
-        diff,
-        pctDiff,
-      });
 
       // Find existing snapshot for today
       const existingCompanySnapshot = await prisma.snapshotCompany.findFirst({
@@ -103,17 +117,13 @@ export async function GET(req: NextRequest) {
 
         // Send email if increase > 10 ETH - only for new snapshots
         if (diff > 10 && adminEmail) {
-          const company = await prisma.company.findUnique({
-            where: { id: companyId },
-            select: { name: true },
-          });
           await resend.emails.send({
             from: "Strategic Ethereum Reserve <noreply@strategicethreserve.xyz>",
             to: adminEmail,
-            subject: `Reserve up by ${diff.toFixed(2)} ETH for ${company?.name ?? companyId}`,
+            subject: `Reserve up by ${diff.toFixed(2)} ETH for ${company.name}`,
             html: `
               <h2>Reserve Increase Alert</h2>
-              <p><strong>Company:</strong> ${company?.name ?? companyId}</p>
+              <p><strong>Company:</strong> ${company.name}</p>
               <p><strong>Date:</strong> ${snapshotDate.toISOString().split("T")[0]}</p>
               <p><strong>Previous Balance:</strong> ${prevReserve.toFixed(4)} ETH</p>
               <p><strong>Current Balance:</strong> ${currentReserve.toFixed(4)} ETH</p>
@@ -124,15 +134,15 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    // Compute overall totals
-    const totalReserve = companyReserves.reduce(
-      (acc, cr) => acc + (cr._sum.balance ?? 0),
-      0
-    );
+    // Compute overall totals - now we need to sum across all companies
+    const totalReserve = activeCompanies.reduce((acc, company) => {
+      const balance = companyWalletBalances.has(company.id)
+        ? companyWalletBalances.get(company.id)!
+        : company.currentReserve;
+      return acc + balance;
+    }, 0);
 
-    const totalActiveCompanies = await prisma.company.count({
-      where: { status: CompanyStatus.ACTIVE },
-    });
+    const totalActiveCompanies = activeCompanies.length;
     const overallDiff = totalReserve - prevTotalReserve;
     const overallPctDiff =
       prevTotalReserve > 0

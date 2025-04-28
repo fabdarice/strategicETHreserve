@@ -208,23 +208,22 @@ export default function AdminCompaniesPage() {
       </nav>
       <h1 className="text-2xl font-bold mb-8">Manage Companies</h1>
       <div className="overflow-x-auto">
-        <Table>
+        <Table className="table-fixed w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="min-w-[200px]">Logo URL</TableHead>
-              <TableHead className="min-w-[150px]">Name</TableHead>
-              <TableHead className="min-w-[120px]">Category</TableHead>
-              <TableHead className="min-w-[120px]">Current Reserve</TableHead>
-              <TableHead className="min-w-[120px]">Status</TableHead>
-              <TableHead className="min-w-[150px]">Accounting Type</TableHead>
-              <TableHead className="min-w-[200px]">News URL</TableHead>
-              <TableHead className="min-w-[200px]">Website</TableHead>
-              <TableHead className="min-w-[250px]">
-                Addresses (comma-sep)
-              </TableHead>
-              <TableHead className="min-w-[200px]">Contact</TableHead>
-              <TableHead className="min-w-[100px]">Marketing</TableHead>
-              <TableHead className="min-w-[80px]">Actions</TableHead>
+              <TableHead className="w-[120px]">Logo URL</TableHead>
+              <TableHead className="w-[120px]">Name</TableHead>
+              <TableHead className="w-[100px]">Category</TableHead>
+              <TableHead className="w-[100px]">Reserve</TableHead>
+              <TableHead className="w-[100px]">Status</TableHead>
+              <TableHead className="w-[110px]">Accounting</TableHead>
+              <TableHead className="w-[130px]">News URL</TableHead>
+              <TableHead className="w-[130px]">Website</TableHead>
+              <TableHead className="w-[120px]">Twitter</TableHead>
+              <TableHead className="w-[150px]">Addresses</TableHead>
+              <TableHead className="w-[120px]">Contact</TableHead>
+              <TableHead className="w-[80px]">Marketing</TableHead>
+              <TableHead className="w-[60px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -236,25 +235,25 @@ export default function AdminCompaniesPage() {
 
               return (
                 <TableRow key={company.id}>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <Input
                       value={displayCompany.logo ?? ""}
                       onChange={(e) =>
                         handleInputChange(company.id, "logo", e.target.value)
                       }
-                      className="bg-background"
+                      className="bg-background h-8 text-xs"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <Input
                       value={displayCompany.name ?? ""}
                       onChange={(e) =>
                         handleInputChange(company.id, "name", e.target.value)
                       }
-                      className="bg-background"
+                      className="bg-background h-8 text-xs"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <Input
                       value={displayCompany.category ?? ""}
                       onChange={(e) =>
@@ -264,10 +263,10 @@ export default function AdminCompaniesPage() {
                           e.target.value
                         )
                       }
-                      className="bg-background"
+                      className="bg-background h-8 text-xs"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <Input
                       type="number"
                       min="0"
@@ -282,16 +281,16 @@ export default function AdminCompaniesPage() {
                             : parseFloat(e.target.value)
                         )
                       }
-                      className="bg-background"
+                      className="bg-background h-8 text-xs"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <select
                       value={displayCompany.status ?? CompanyStatus.PENDING}
                       onChange={(e) =>
                         handleInputChange(company.id, "status", e.target.value)
                       }
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
                     >
                       {Object.values(CompanyStatus).map((status) => (
                         <option key={status} value={status}>
@@ -300,7 +299,7 @@ export default function AdminCompaniesPage() {
                       ))}
                     </select>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <select
                       value={
                         displayCompany.accountingType ??
@@ -313,7 +312,7 @@ export default function AdminCompaniesPage() {
                           e.target.value
                         )
                       }
-                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      className="w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
                     >
                       {Object.values(AccountingType).map((type) => (
                         <option key={type} value={type}>
@@ -322,28 +321,35 @@ export default function AdminCompaniesPage() {
                       ))}
                     </select>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <Input
                       value={displayCompany.news ?? ""}
                       onChange={(e) =>
                         handleInputChange(company.id, "news", e.target.value)
                       }
-                      className="bg-background"
+                      className="bg-background h-8 text-xs"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <Input
                       value={displayCompany.website ?? ""}
                       onChange={(e) =>
                         handleInputChange(company.id, "website", e.target.value)
                       }
-                      className="bg-background"
+                      className="bg-background h-8 text-xs"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
+                    <Input
+                      value={displayCompany.twitter ?? ""}
+                      onChange={(e) =>
+                        handleInputChange(company.id, "twitter", e.target.value)
+                      }
+                      className="bg-background h-8 text-xs"
+                    />
+                  </TableCell>
+                  <TableCell className="p-1">
                     <textarea
-                      // switch to an uncontrolled textarea so you can type freely,
-                      // and only update the addresses array on blur
                       defaultValue={
                         Array.isArray(displayCompany.addresses)
                           ? displayCompany.addresses.join("\n")
@@ -361,34 +367,39 @@ export default function AdminCompaniesPage() {
                           addressesArray
                         );
                       }}
-                      placeholder="Paste addresses separated by commas or new lines"
-                      className="w-full resize-y overflow-auto rounded-md border border-input bg-background px-3 py-2 text-sm"
-                      rows={4}
+                      placeholder="Comma-separated"
+                      className="w-full resize-y overflow-auto rounded-md border border-input bg-background px-2 py-1 text-xs"
+                      rows={2}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <Input
                       value={displayCompany.contact ?? ""}
                       onChange={(e) =>
                         handleInputChange(company.id, "contact", e.target.value)
                       }
-                      className="bg-background"
+                      className="bg-background h-8 text-xs"
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <MarketingModal
                       company={displayCompany as Company}
                       totalReserve={totalReserve}
                     >
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs px-2 py-1 h-7"
+                      >
                         Share
                       </Button>
                     </MarketingModal>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1">
                     <Button
                       onClick={() => handleSave(company.id)}
                       disabled={!editedCompanies[company.id]}
+                      className="text-xs px-2 py-1 h-7"
                     >
                       Save
                     </Button>

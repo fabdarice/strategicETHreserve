@@ -7,6 +7,7 @@ export interface Company {
   snapshotDate: Date | null;
   logo: string;
   website: string | null;
+  twitter: string | null;
   status: CompanyStatus;
   contact: string | null;
   accountingType: AccountingType;

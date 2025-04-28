@@ -41,6 +41,7 @@ const formSchema = z.object({
     .url("Please enter a valid URL")
     .optional()
     .or(z.literal("")),
+  twitter: z.string(),
   currentReserve: z
     .string()
     .transform((val) => {
@@ -70,6 +71,7 @@ export default function SubmitCompanyDialog({
       category: "",
       logoUrl: "",
       website: "",
+      twitter: "",
     },
   });
 
@@ -90,6 +92,7 @@ export default function SubmitCompanyDialog({
                 .filter(Boolean)
             : [],
           website: values.website || null,
+          twitter: values.twitter || null,
         }),
       });
 
@@ -140,124 +143,153 @@ export default function SubmitCompanyDialog({
                 </div>
               )}
               <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Company Name *</FormLabel>
-                      <FormControl>
-                        <Input {...field} className="bg-background" required />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        required
-                      >
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company Name *</FormLabel>
                         <FormControl>
-                          <SelectTrigger className="bg-background">
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
+                          <Input
+                            {...field}
+                            className="bg-background"
+                            required
+                          />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="DAO">DAO</SelectItem>
-                          <SelectItem value="Company">Company</SelectItem>
-                          <SelectItem value="TradFi">TradFi</SelectItem>
-                          <SelectItem value="Government">Government</SelectItem>
-                          <SelectItem value="Other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="logoUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Logo URL *</FormLabel>
-                      <FormControl>
-                        <Input {...field} className="bg-background" required />
-                      </FormControl>
-                      <FormDescription>
-                        URL to your company&apos;s logo image
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="website"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Website URL</FormLabel>
-                      <FormControl>
-                        <Input {...field} className="bg-background" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="contact"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Submitter&apos;s Telegram/Email</FormLabel>
-                      <FormControl>
-                        <Input {...field} className="bg-background" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="currentReserve"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Current ETH Reserve</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          className="bg-background"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category *</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          required
+                        >
+                          <FormControl>
+                            <SelectTrigger className="bg-background">
+                              <SelectValue placeholder="Select a category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="DAO">DAO</SelectItem>
+                            <SelectItem value="Company">Company</SelectItem>
+                            <SelectItem value="TradFi">TradFi</SelectItem>
+                            <SelectItem value="Government">
+                              Government
+                            </SelectItem>
+                            <SelectItem value="Other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="website"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Website URL</FormLabel>
+                        <FormControl>
+                          <Input {...field} className="bg-background" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="twitter"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Twitter</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="bg-background"
+                            placeholder="@username"
+                            required
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="currentReserve"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Current ETH Reserve</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            className="bg-background"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="contact"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Submitter&apos;s Contact</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="bg-background"
+                            placeholder="Telegram/Email"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
                 <FormField
                   control={form.control}
                   name="addresses"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ethereum Addresses</FormLabel>
+                      <FormLabel>Wallet Addresses</FormLabel>
                       <FormControl>
                         <Input {...field} className="bg-background" />
                       </FormControl>
                       <FormDescription>
-                        Comma-separated list of Ethereum addresses holding the
+                        Comma-separated list of wallet addresses holding the
                         reserve
                       </FormDescription>
+                      <div className="mt-2 text-xs text-muted-foreground space-y-1 bg-gray-100 dark:bg-gray-800 p-2 rounded-md">
+                        <p className="font-medium">
+                          We track ETH assets across:
+                        </p>
+                        <p>
+                          • Networks: Ethereum, Base, Optimism, Arbitrum,
+                          zkSync, Linea, Gnosis
+                        </p>
+                        <p>
+                          • Assets: Native ETH, stETH, wstETH, rETH, WETH, oETH,
+                          ankrETH, ETHx, and Aave derivatives
+                        </p>
+                        <p>• Validator nodes using withdrawal credentials</p>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}

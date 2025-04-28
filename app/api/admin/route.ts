@@ -38,6 +38,7 @@ export async function GET(request: Request): Promise<
         createdAt: true,
         updatedAt: true,
         addresses: true,
+        twitter: true,
         snapshots: {
           select: {
             reserve: true,
@@ -49,6 +50,9 @@ export async function GET(request: Request): Promise<
           },
           take: 1,
         },
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
 

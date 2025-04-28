@@ -16,6 +16,7 @@ model Company {
   addresses            String[]
   logo                 String
   website              String?
+  twitter              String?
   status               String   @default("PENDING")
   news                 String?  
   contact              String?

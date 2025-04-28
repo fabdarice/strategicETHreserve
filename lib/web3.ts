@@ -12,6 +12,7 @@ const networks = [
   { name: "Arbitrum", value: Network.ARB_MAINNET },
   { name: "zkSync", value: Network.ZKSYNC_MAINNET },
   { name: "Linea", value: Network.LINEA_MAINNET },
+  { name: "Gnosis", value: Network.GNOSIS_MAINNET },
 ];
 
 // Define the ERC20 tokens to include with their contract addresses per network
@@ -24,6 +25,11 @@ const tokensPerNetwork: {
     aEthWETH?: string; // Aave Wrapped ETH
     aEthwstETH?: string;
     aEthweETH?: string;
+    oETH?: string; // Origin ETH
+    ankrETH?: string; // Ankr ETH
+    ETHx?: string; // ETHx
+    aGnowstETH?: string; // Aave Gnosis wstETH
+    aGnowWETH?: string; // Aave Gnosis WETH
   };
 } = {
   [Network.ETH_MAINNET]: {
@@ -33,6 +39,10 @@ const tokensPerNetwork: {
     aEthWETH: "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8", // Aave WETH
     aEthwstETH: "0x0B925eD163218f6662a35e0f0371Ac234f9E9371", // Aave Lido stETH
     aEthweETH: "0xBdfa7b7893081B35Fb54027489e2Bc7A38275129", // Aave EtherFI ETH
+    wstETH: "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0", // Lido wstETH
+    oETH: "0x856c4Efb76C1D1AE02e20CEB03A2A6a08b0b8dC3", // Origin ETH
+    ankrETH: "0x8290333ceF9e6D528dD5618Fb97a76f268f3edd3", // Ankr ETH
+    ETHx: "0xA35b1B31Ce002FBF2058D22F30f95D405200A15b", // ETHx
   },
   [Network.BASE_MAINNET]: {
     wstETH: "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452", // lido wstETH
@@ -46,6 +56,13 @@ const tokensPerNetwork: {
     wstETH: "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb", // lido wstETH
     WETH: "0x4200000000000000000000000000000000000006",
   }, // Add tokens for OP
+  [Network.GNOSIS_MAINNET]: {
+    WETH: "0x6A023CCd1ff6F2045C3309768eAd9E68F978f6e1", // Gnosis WETH
+    aGnowstETH: "0x23e4E76D01B2002BE436CE8d6044b0aA2f68B68a", // Aave Gnosis wstETH
+    aGnowWETH: "0xa818F1B57c201E092C4A2017A91815034326Efd1", // Aave Gnosis WETH
+    wstETH: "0x6C76971f98945AE98dD7d4DFcA8711ebea946eA6", // lido wstETH
+    rETH: "0xc791240D1F2dEf5938E2031364Ff4ed887133C3d", // Rocket Pool rETH
+  }, // Add tokens for Gnosis
 };
 
 export const getETHBalanceAllNetworks = async (
