@@ -81,7 +81,14 @@ export const getETHBalanceAllNetworks = async (
     const balances = await Promise.all(
       alchemyInstances.map(async ({ name, alchemy, networkValue }) => {
         // Fetch native ETH balance
-        const nativeBalance = await alchemy.core.getBalance(walletAddress);
+        let nativeBalance;
+
+        if (networkValue !== Network.GNOSIS_MAINNET) {
+          nativeBalance = await alchemy.core.getBalance(walletAddress);
+        } else {
+          nativeBalance = 0;
+        }
+
         const nativeBalanceBigInt = BigInt(nativeBalance.toString());
 
         // Fetch ERC20 token balances
