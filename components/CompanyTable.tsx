@@ -144,7 +144,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                         **
                       </span>
                     )}
-                    <span>{company.reserve.toLocaleString()}</span>
+                    <span>{company.reserve.toFixed(0).toLocaleString()}</span>
                     <span className="hidden sm:inline ml-1">ETH</span>
                   </>
                 )}
