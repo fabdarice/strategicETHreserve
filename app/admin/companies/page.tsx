@@ -219,6 +219,7 @@ export default function AdminCompaniesPage() {
               <TableHead className="w-[120px]">Name</TableHead>
               <TableHead className="w-[100px]">Category</TableHead>
               <TableHead className="w-[100px]">Reserve</TableHead>
+              <TableHead className="w-[100px]">Snapshot Reserve</TableHead>
               <TableHead className="w-[100px]">Status</TableHead>
               <TableHead className="w-[110px]">Accounting</TableHead>
               <TableHead className="w-[130px]">News URL</TableHead>
@@ -287,6 +288,13 @@ export default function AdminCompaniesPage() {
                       }
                       className="bg-background h-8 text-xs"
                     />
+                  </TableCell>
+                  <TableCell className="p-1">
+                    <div className="bg-background h-8 px-3 py-1 text-xs rounded-md border border-input flex items-center">
+                      {displayCompany.reserve != null
+                        ? displayCompany.reserve.toFixed(2)
+                        : ""}
+                    </div>
                   </TableCell>
                   <TableCell className="p-1">
                     <select
