@@ -11,6 +11,7 @@ export async function GET(request: Request): Promise<
         influencers: Influencer[];
       }
     | { message: string }
+    | unknown
   >
 > {
   try {
