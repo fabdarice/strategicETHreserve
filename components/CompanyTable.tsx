@@ -70,6 +70,9 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             <TableHead className="text-right text-[hsl(var(--primary))]">
               RESERVE <span className="sm:hidden ml-1">ETH</span>
             </TableHead>
+            <TableHead className="text-center text-[hsl(var(--primary))] hidden sm:table-cell">
+              24H CHANGE
+            </TableHead>
             <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
               NEWS
             </TableHead>
@@ -127,7 +130,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                 {company.category}
               </TableCell>
               <TableCell className="text-right">
-                {company.currentReserve === 0 ? (
+                {company.reserve === 0 ? (
                   "-"
                 ) : (
                   <>
@@ -141,10 +144,72 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                         **
                       </span>
                     )}
-                    <span>{company.currentReserve.toLocaleString()}</span>
+                    <span>{company.reserve.toLocaleString()}</span>
                     <span className="hidden sm:inline ml-1">ETH</span>
                   </>
                 )}
+              </TableCell>
+              <TableCell className="hidden sm:table-cell text-center">
+                <span
+                  className={`inline-flex items-center text-xs font-medium rounded-full px-2 py-0.5 transition-all duration-300 ${
+                    company.pctDiff === null || company.pctDiff === 0
+                      ? "text-gray-400 bg-gray-400/10"
+                      : company.pctDiff > 0
+                        ? "text-emerald-500 bg-emerald-500/10"
+                        : "text-rose-500 bg-rose-500/10"
+                  }`}
+                >
+                  {company.pctDiff === null || company.pctDiff === 0 ? (
+                    <svg
+                      className="w-3 h-3 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 12h14"
+                      ></path>
+                    </svg>
+                  ) : company.pctDiff > 0 ? (
+                    <svg
+                      className="w-3 h-3 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 15l7-7 7 7"
+                      ></path>
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-3 h-3 mr-1"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      ></path>
+                    </svg>
+                  )}
+                  {company.pctDiff === null
+                    ? "0.00"
+                    : Math.abs(company.pctDiff).toFixed(2)}
+                  %
+                </span>
               </TableCell>
               <TableCell className="hidden sm:table-cell text-center">
                 {company.news ? (

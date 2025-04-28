@@ -17,14 +17,15 @@ import {
   Company,
   CompanyStatus,
   AccountingType,
+  AdminCompany,
 } from "@/app/interfaces/interface";
 import Link from "next/link";
 
 export default function AdminCompaniesPage() {
-  const [companies, setCompanies] = useState<Company[]>([]);
+  const [companies, setCompanies] = useState<AdminCompany[]>([]);
   const [loading, setLoading] = useState(true);
   const [editedCompanies, setEditedCompanies] = useState<{
-    [key: string]: Partial<Company>;
+    [key: string]: Partial<AdminCompany>;
   }>({});
 
   useEffect(() => {
@@ -78,7 +79,11 @@ export default function AdminCompaniesPage() {
     }
   };
 
-  const handleInputChange = (id: string, field: keyof Company, value: any) => {
+  const handleInputChange = (
+    id: string,
+    field: keyof AdminCompany,
+    value: any
+  ) => {
     setEditedCompanies((prev) => {
       const currentEdits = prev[id] || {};
       const newEdits = { ...currentEdits, [field]: value };
@@ -185,7 +190,7 @@ export default function AdminCompaniesPage() {
   }
 
   const totalReserve = companies
-    .filter((company) => company.status !== CompanyStatus.ACTIVE)
+    .filter((company) => company.status === CompanyStatus.ACTIVE)
     .reduce((sum, company) => sum + (company.currentReserve || 0), 0);
 
   return (
@@ -336,21 +341,29 @@ export default function AdminCompaniesPage() {
                     />
                   </TableCell>
                   <TableCell>
-                    <Input
-                      value={
+                    <textarea
+                      // switch to an uncontrolled textarea so you can type freely,
+                      // and only update the addresses array on blur
+                      defaultValue={
                         Array.isArray(displayCompany.addresses)
-                          ? displayCompany.addresses.join(", ")
+                          ? displayCompany.addresses.join("\n")
                           : ""
                       }
-                      onChange={(e) =>
+                      onBlur={(e) => {
+                        const raw = e.target.value;
+                        const addressesArray = raw
+                          .split(/[\n,]+/)
+                          .map((addr) => addr.trim())
+                          .filter(Boolean);
                         handleInputChange(
                           company.id,
                           "addresses",
-                          e.target.value
-                        )
-                      }
-                      placeholder="addr1, addr2, ..."
-                      className="bg-background"
+                          addressesArray
+                        );
+                      }}
+                      placeholder="Paste addresses separated by commas or new lines"
+                      className="w-full resize-y overflow-auto rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      rows={4}
                     />
                   </TableCell>
                   <TableCell>

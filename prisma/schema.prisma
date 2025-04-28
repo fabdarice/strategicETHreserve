@@ -43,10 +43,13 @@ model Snapshot {
   id                   String   @id @default(cuid())
   totalReserve         String
   totalCompanies       Int
+  pctDiff              Float?
   snapshotDate         DateTime @default(now())
+  totalReserveUSD      Float?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 
+  @@index([snapshotDate])
   @@map("snapshots")
 }
 
@@ -55,8 +58,14 @@ model SnapshotCompany {
   companyId            String
   company              Company  @relation(fields: [companyId], references: [id])  
   reserve              Float
+  pctDiff              Float?
+  snapshotDate         DateTime @default(now())
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
+
+  @@index([snapshotDate])
+  @@index([companyId, snapshotDate])
+  @@map("snapshot_companies")
 }
 
 model Influencer {

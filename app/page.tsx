@@ -55,7 +55,7 @@ export default function Home() {
 
   const totalReserve = companies
     .filter((company: Company) => company.status === "ACTIVE")
-    .reduce((sum, company) => sum + company.currentReserve, 0);
+    .reduce((sum, company) => sum + company.reserve, 0);
 
   const progressPercentage = Math.min((totalReserve / targetGoal) * 100, 100);
 

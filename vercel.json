@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/update-company-wallet",
+      "schedule": "* * * * *"
+    },
+    {
+      "path": "/api/cron/update-snapshots",
+      "schedule": "0 5 * * *"
+    }
+  ]
+}

@@ -2,18 +2,23 @@ export interface Company {
   id: string;
   name: string;
   category: string;
-  currentReserve: number;
-  addresses: string[];
+  reserve: number;
+  pctDiff: number | null;
+  snapshotDate: Date | null;
   logo: string;
   website: string | null;
   status: CompanyStatus;
   contact: string | null;
   accountingType: AccountingType;
-  news?: string;
-  wallets: CompanyWallet[];
+  news: string | null;
 
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface AdminCompany extends Company {
+  addresses: string[];
+  currentReserve: number;
 }
 
 export interface CompanyWallet {

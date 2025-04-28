@@ -1,19 +1,23 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
-import { CompanyStatus } from "@/app/interfaces/interface";
+import {
+  AccountingType,
+  Company,
+  CompanyStatus,
+} from "@/app/interfaces/interface";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function GET() {
+export async function GET(): Promise<
+  NextResponse<Company[] | { message: string }>
+> {
   try {
+    // Get all companies with their latest snapshot
     const companies = await prisma.company.findMany({
-      orderBy: {
-        currentReserve: "desc",
-      },
       select: {
         id: true,
         name: true,
@@ -27,9 +31,46 @@ export async function GET() {
         news: true,
         createdAt: true,
         updatedAt: true,
+        snapshots: {
+          select: {
+            reserve: true,
+            pctDiff: true,
+            snapshotDate: true,
+          },
+          orderBy: {
+            snapshotDate: "desc",
+          },
+          take: 1,
+        },
       },
     });
-    return NextResponse.json(companies);
+
+    // Transform response to include reserve from snapshot or company
+    const transformedCompanies: Company[] = companies.map((company) => {
+      const latestSnapshot =
+        company.snapshots.length > 0 ? company.snapshots[0] : null;
+      const reserve = latestSnapshot
+        ? latestSnapshot.reserve
+        : company.currentReserve;
+      const pctDiff = latestSnapshot?.pctDiff || null;
+
+      // Remove snapshots array and add flattened data
+      const { snapshots, ...companyData } = company;
+
+      return {
+        ...companyData,
+        reserve,
+        pctDiff,
+        snapshotDate: latestSnapshot?.snapshotDate || null,
+        status: companyData.status as CompanyStatus,
+        accountingType: companyData.accountingType as AccountingType,
+      };
+    });
+
+    // Sort by reserve in descending order
+    transformedCompanies.sort((a, b) => b.reserve - a.reserve);
+
+    return NextResponse.json(transformedCompanies);
   } catch (error) {
     console.error("Failed to fetch companies:", error);
     return NextResponse.json(
