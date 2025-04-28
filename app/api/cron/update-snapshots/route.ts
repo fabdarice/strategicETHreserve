@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { CompanyStatus } from "@/app/interfaces/interface";
+import { getETHPrice } from "@/lib/web3";
 
 export const runtime = "nodejs";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const adminEmail = process.env.ADMIN_EMAIL || "fabrice.cheng@gmail.com";
-const ethPrice = 1800;
 
 export async function GET(req: NextRequest) {
   // Verify this is called by Vercel Cron
@@ -138,6 +138,8 @@ export async function GET(req: NextRequest) {
       prevTotalReserve > 0
         ? Math.round((overallDiff / prevTotalReserve) * 100 * 100) / 100
         : null;
+
+    const ethPrice = await getETHPrice();
     const totalReserveUSD = totalReserve * ethPrice;
 
     // Find existing overall snapshot for today

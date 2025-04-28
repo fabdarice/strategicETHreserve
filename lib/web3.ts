@@ -168,3 +168,30 @@ export const getValidatorBalance = async (
     throw error; // Rethrow the error after logging
   }
 };
+
+export const getETHPrice = async (): Promise<number> => {
+  if (
+    process.env.COINMARKETCAP_API_URL === undefined ||
+    process.env.COINMARKETCAP_API_KEY === undefined
+  ) {
+    throw new Error("Environments to fetch ETH prices not set");
+  }
+
+  try {
+    const response = await fetch(process.env.COINMARKETCAP_API_URL, {
+      method: "GET",
+      headers: {
+        "X-CMC_PRO_API_KEY": process.env.COINMARKETCAP_API_KEY,
+      },
+    });
+    if (response.status !== 200) throw new Error("Failed to fetch ETH Price");
+
+    const jsonData = await response.json();
+    const price = Math.floor(jsonData.data.ETH[0].quote.USD.price);
+
+    return price as number;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed fetching ETH price");
+  }
+};
