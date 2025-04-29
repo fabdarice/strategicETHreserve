@@ -49,7 +49,7 @@ export async function GET(request: Request): Promise<
           orderBy: {
             snapshotDate: "desc",
           },
-          take: 1,
+          take: 7,
         },
       },
       orderBy: {
@@ -61,10 +61,17 @@ export async function GET(request: Request): Promise<
     const transformedCompanies: AdminCompany[] = companies.map((company) => {
       const latestSnapshot =
         company.snapshots.length > 0 ? company.snapshots[0] : null;
+      const prevSnapshot =
+        company.snapshots.length > 1 ? company.snapshots[1] : null;
       const reserve = latestSnapshot
         ? latestSnapshot.reserve
         : company.currentReserve;
-      const pctDiff = latestSnapshot?.pctDiff || null;
+      const pctDiff =
+        latestSnapshot && prevSnapshot
+          ? ((latestSnapshot.reserve - prevSnapshot.reserve) /
+              prevSnapshot.reserve) *
+            100
+          : 0;
 
       // Remove snapshots array and add flattened data
       const { snapshots, ...companyData } = company;
