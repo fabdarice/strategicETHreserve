@@ -54,6 +54,7 @@ const tokensPerNetwork: {
     aEthETHX?: string; // Aave ETHx
     aOptWETH?: string; // Aave Optimism WETH
     aOptwstETH?: string; // Aave Optimism wstETH
+    spwstETH?: string; // Spark wstETH
   };
 } = {
   [Network.ETH_MAINNET]: {
@@ -80,6 +81,7 @@ const tokensPerNetwork: {
     osETH: "0xf1C9acDc66974dFB6dEcB12aA385b9cD01190E38", // osETH
     aEthrETH: "0xCc9EE9483f662091a1de4795249E24aC0aC2630f", // Aave rETH
     aEthETHX: "0x1c0E06a0b1A4c160c17545FF2A951bfcA57C0002", // Aave ETHx
+    spwstETH: "0x12B54025C112Aa61fAce2CDB7118740875A566E9", // Spark wstETH
   },
   [Network.BASE_MAINNET]: {
     wstETH: "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452", // lido wstETH
