@@ -13,6 +13,7 @@ const networks = [
   { name: "zkSync", value: Network.ZKSYNC_MAINNET },
   { name: "Linea", value: Network.LINEA_MAINNET },
   { name: "Gnosis", value: Network.GNOSIS_MAINNET },
+  { name: "Arbitrum Nova", value: Network.ARBNOVA_MAINNET },
   // { name: "Mantle", value: Network.MANTLE_MAINNET }, // Mantle is not supported by Alchemy APIs yet
 ];
 

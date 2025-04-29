@@ -293,7 +293,7 @@ export default function SubmitCompanyDialog({
                           <ul className="list-disc list-inside text-xs text-muted-foreground space-y-1 mt-2">
                             <li className="transition-colors duration-200 hover:text-primary">
                               Networks: Ethereum, Base, Optimism, Arbitrum,
-                              zkSync, Linea, Gnosis
+                              Arbitrum Nova, zkSync, Linea, Gnosis
                             </li>
                             <li className="transition-colors duration-200 hover:text-primary">
                               Assets: ETH, stETH, wstETH, rETH, WETH, oETH,

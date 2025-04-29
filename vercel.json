@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/update-snapshots",
-      "schedule": "0 5 * * *"
+      "schedule": "59 * * * *"
     }
   ]
 }
