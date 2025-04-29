@@ -280,7 +280,8 @@ export default function SubmitCompanyDialog({
                         />
                       </FormControl>
                       <FormDescription>
-                        Comma-separated list of wallet addresses
+                        Comma-separated list of addresses (kept private, never
+                        shared)
                       </FormDescription>
                       <div className="mt-3 bg-gradient-to-r from-primary/10 to-primary/20 border border-primary/30 rounded-lg p-4 shadow-md space-y-2 backdrop-blur-sm relative overflow-hidden">
                         <div className="absolute inset-0 bg-[url('/images/eth-pattern.svg')] opacity-5"></div>
@@ -296,7 +297,9 @@ export default function SubmitCompanyDialog({
                             </li>
                             <li className="transition-colors duration-200 hover:text-primary">
                               Assets: ETH, stETH, wstETH, rETH, WETH, oETH,
-                              ankrETH, ETHx, and Aave derivatives
+                              ankrETH, ETHx, rsETH, eETH, weETH, cmETH, mETH,
+                              and Aave derivatives (aETH, aWETH, awstETH,
+                              aweETH, arETH, aosETH, aETHx)
                             </li>
                             <li className="transition-colors duration-200 hover:text-primary">
                               Validator nodes using withdrawal credentials
