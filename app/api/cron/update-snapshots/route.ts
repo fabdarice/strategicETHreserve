@@ -31,17 +31,23 @@ export async function GET(req: NextRequest) {
       )
     );
 
-    // Aggregate current reserves per company
-    const companyReserves = await prisma.companyWallet.groupBy({
-      by: ["companyId"],
-      _sum: { balance: true },
-    });
+    const ethPrice = await getETHPrice();
 
-    // Get all active companies to ensure we include those without wallets
-    const activeCompanies = await prisma.company.findMany({
-      where: { status: CompanyStatus.ACTIVE },
-      select: { id: true, name: true, currentReserve: true },
-    });
+    // Fetch all required data in parallel
+    const [companyReserves, activeCompanies, prevSnapshot] = await Promise.all([
+      prisma.companyWallet.groupBy({
+        by: ["companyId"],
+        _sum: { balance: true },
+      }),
+      prisma.company.findMany({
+        where: { status: CompanyStatus.ACTIVE },
+        select: { id: true, name: true, currentReserve: true },
+      }),
+      prisma.snapshot.findFirst({
+        where: { snapshotDate: { lt: snapshotDate } },
+        orderBy: { snapshotDate: "desc" },
+      }),
+    ]);
 
     // Create a map of companyId to wallet balance
     const companyWalletBalances = new Map(
@@ -51,20 +57,13 @@ export async function GET(req: NextRequest) {
       ])
     );
 
-    // Fetch previous overall snapshot for pctDiff calculation
-    const prevSnapshot = await prisma.snapshot.findFirst({
-      where: { snapshotDate: { lt: snapshotDate } },
-      orderBy: { snapshotDate: "desc" },
-    });
     const prevTotalReserve = prevSnapshot
       ? parseFloat(prevSnapshot.totalReserve)
       : 0;
 
-    // Loop through all active companies
-    for (const company of activeCompanies) {
+    // Process all companies in parallel
+    const companySnapshotPromises = activeCompanies.map(async (company) => {
       const companyId = company.id;
-
-      // Use wallet balance if available, otherwise use company's currentReserve
       const currentReserve = companyWalletBalances.has(companyId)
         ? companyWalletBalances.get(companyId)!
         : company.currentReserve;
@@ -78,7 +77,6 @@ export async function GET(req: NextRequest) {
         orderBy: { snapshotDate: "desc" },
       });
 
-      // If no previous snapshot exists, use company's currentReserve or default to 0
       const prevReserve =
         prevCompanySnapshot?.reserve ?? company.currentReserve ?? 0;
 
@@ -117,24 +115,34 @@ export async function GET(req: NextRequest) {
 
         // Send email if pctDiff is greater than 10% or less than -10%
         if (pctDiff && (pctDiff > 10 || pctDiff < -10) && adminEmail) {
-          await resend.emails.send({
-            from: "Strategic Ethereum Reserve <noreply@strategicethreserve.xyz>",
-            to: adminEmail,
-            subject: `Reserve changed by ${pctDiff?.toFixed(2)}% for ${company.name}`,
-            html: `
-              <h2>Reserve Change Alert</h2>
-              <p><strong>Company:</strong> ${company.name}</p>
-              <p><strong>Date:</strong> ${snapshotDate.toISOString().split("T")[0]}</p>
-              <p><strong>Previous Balance:</strong> ${prevReserve.toFixed(4)} ETH</p>
-              <p><strong>Current Balance:</strong> ${currentReserve.toFixed(4)} ETH</p>
-              <p><strong>Percent Change:</strong> ${pctDiff?.toFixed(2)}%</p>
-            `,
-          });
+          try {
+            await resend.emails.send({
+              from: "Strategic Ethereum Reserve <noreply@strategicethreserve.xyz>",
+              to: adminEmail,
+              subject: `Reserve changed by ${pctDiff?.toFixed(2)}% for ${company.name}`,
+              html: `
+                <h2>Reserve Change Alert</h2>
+                <p><strong>Company:</strong> ${company.name}</p>
+                <p><strong>Date:</strong> ${snapshotDate.toISOString().split("T")[0]}</p>
+                <p><strong>Previous Balance:</strong> ${prevReserve.toFixed(4)} ETH</p>
+                <p><strong>Current Balance:</strong> ${currentReserve.toFixed(4)} ETH</p>
+                <p><strong>Percent Change:</strong> ${pctDiff?.toFixed(2)}%</p>
+              `,
+            });
+          } catch (error) {
+            console.error(
+              `Failed to send email for company ${company.name}:`,
+              error
+            );
+          }
         }
       }
-    }
+    });
 
-    // Compute overall totals - now we need to sum across all companies
+    // Wait for all company snapshots to be processed
+    await Promise.all(companySnapshotPromises);
+
+    // Compute overall totals
     const totalReserve = activeCompanies.reduce((acc, company) => {
       const balance = companyWalletBalances.has(company.id)
         ? companyWalletBalances.get(company.id)!
@@ -149,7 +157,6 @@ export async function GET(req: NextRequest) {
         ? Math.round((overallDiff / prevTotalReserve) * 100 * 100) / 100
         : null;
 
-    const ethPrice = await getETHPrice();
     const totalReserveUSD = totalReserve * ethPrice;
 
     // Find existing overall snapshot for today
