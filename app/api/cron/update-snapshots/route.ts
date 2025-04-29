@@ -115,14 +115,14 @@ export async function GET(req: NextRequest) {
           },
         });
 
-        // Send email if increase > 10 ETH - only for new snapshots
-        if (diff > 10 && adminEmail) {
+        // Send email if pctDiff is greater than 10% or less than -10%
+        if (pctDiff && (pctDiff > 10 || pctDiff < -10) && adminEmail) {
           await resend.emails.send({
             from: "Strategic Ethereum Reserve <noreply@strategicethreserve.xyz>",
             to: adminEmail,
-            subject: `Reserve up by ${diff.toFixed(2)} ETH for ${company.name}`,
+            subject: `Reserve changed by ${pctDiff?.toFixed(2)}% for ${company.name}`,
             html: `
-              <h2>Reserve Increase Alert</h2>
+              <h2>Reserve Change Alert</h2>
               <p><strong>Company:</strong> ${company.name}</p>
               <p><strong>Date:</strong> ${snapshotDate.toISOString().split("T")[0]}</p>
               <p><strong>Previous Balance:</strong> ${prevReserve.toFixed(4)} ETH</p>
