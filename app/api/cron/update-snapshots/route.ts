@@ -114,7 +114,10 @@ export async function GET(req: NextRequest) {
         });
 
         // Send email if pctDiff is greater than 10% or less than -10%
-        if (pctDiff && (pctDiff > 10 || pctDiff < -10) && adminEmail) {
+        if (
+          adminEmail &&
+          ((pctDiff && (pctDiff > 10 || pctDiff < -10)) || diff >= 500)
+        ) {
           try {
             await resend.emails.send({
               from: "Strategic Ethereum Reserve <noreply@strategicethreserve.xyz>",
