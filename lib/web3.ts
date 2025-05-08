@@ -59,6 +59,8 @@ const tokensPerNetwork: {
     cWETHv3?: string; // Compound WETH v3
     aEthLidoWETH?: string; // Aave Lido WETH
     spWETH?: string; // Spark WETH
+    brETHStable?: string; // Balancer rETH/WETH BPT
+    dsTVL?: string; // Enzyme Finance Diva Early Stakers srETH Vault
   };
 } = {
   [Network.ETH_MAINNET]: {
