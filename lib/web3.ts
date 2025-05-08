@@ -1,6 +1,6 @@
 import { Alchemy, Network } from "alchemy-sdk";
 import { parseEther } from "viem";
-
+import { useReadContract } from "wagmi";
 const config = {
   apiKey: process.env.ALCHEMY_SECRET_KEY,
 };
@@ -89,6 +89,8 @@ const tokensPerNetwork: {
     cWETHv3: "0xA17581A9E3356d9A858b789D68B4d866e593aE94", // Compound WETH v3
     aEthLidoWETH: "0xfA1fDbBD71B0aA16162D76914d69cD8CB3Ef92da", // Aave Lido WETH
     spWETH: "0x59cD1C87501baa753d0B5B5Ab5D8416A45cD71DB", // Spark WETH
+    brETHStable: "0x1E19CF2D73a72Ef1332C882F20534B6519Be0276", // Balancer rETH/WETH BPT
+    dsTVL: "0x1ce8aAfb51e79F6BDc0EF2eBd6fD34b00620f6dB", // Enzyme Finance Diva Early Stakers srETH Vault
   },
   [Network.BASE_MAINNET]: {
     wstETH: "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452", // lido wstETH
@@ -281,4 +283,20 @@ export const getETHPrice = async (): Promise<number> => {
     console.error(error);
     throw new Error("Failed fetching ETH price");
   }
+};
+
+export const getContractBalance = (
+  walletAddress: `0x${string}`,
+  contractAddress: `0x${string}`,
+  abi: any,
+  functionName: string
+) => {
+  const { data: balance } = useReadContract({
+    address: contractAddress as `0x${string}`,
+    abi: abi,
+    functionName: functionName,
+    args: [walletAddress],
+  });
+
+  return balance;
 };
