@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
-import { CompanyStatus } from "@/app/interfaces/interface";
+import { AccountingType, CompanyStatus } from "@/app/interfaces/interface";
 import { getETHPrice } from "@/lib/web3";
 
 export const runtime = "nodejs";
@@ -41,7 +41,12 @@ export async function GET(req: NextRequest) {
       }),
       prisma.company.findMany({
         where: { status: CompanyStatus.ACTIVE },
-        select: { id: true, name: true, currentReserve: true },
+        select: {
+          id: true,
+          name: true,
+          currentReserve: true,
+          accountingType: true,
+        },
       }),
       prisma.snapshot.findFirst({
         where: { snapshotDate: { lt: snapshotDate } },
@@ -64,9 +69,11 @@ export async function GET(req: NextRequest) {
     // Process all companies in parallel
     const companySnapshotPromises = activeCompanies.map(async (company) => {
       const companyId = company.id;
-      const currentReserve = companyWalletBalances.has(companyId)
-        ? companyWalletBalances.get(companyId)!
-        : company.currentReserve;
+      const currentReserve =
+        companyWalletBalances.has(companyId) &&
+        company.accountingType === AccountingType.WALLET_TRACKING
+          ? companyWalletBalances.get(companyId)!
+          : company.currentReserve;
 
       // Find most recent previous company snapshot
       const prevCompanySnapshot = await prisma.snapshotCompany.findFirst({

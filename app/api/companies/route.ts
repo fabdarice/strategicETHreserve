@@ -58,9 +58,11 @@ export async function GET(): Promise<
         company.snapshots.length > 0 ? company.snapshots[0] : null;
       const prevSnapshot =
         company.snapshots.length > 1 ? company.snapshots[1] : null;
-      const reserve = latestSnapshot
-        ? latestSnapshot.reserve
-        : company.currentReserve;
+      const reserve =
+        latestSnapshot &&
+        company.accountingType === AccountingType.WALLET_TRACKING
+          ? latestSnapshot.reserve
+          : company.currentReserve;
       const pctDiff =
         latestSnapshot && prevSnapshot
           ? ((latestSnapshot.reserve - prevSnapshot.reserve) /
