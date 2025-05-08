@@ -287,18 +287,18 @@ export const getETHPrice = async (): Promise<number> => {
   }
 };
 
-export const getContractBalance = (
-  walletAddress: `0x${string}`,
-  contractAddress: `0x${string}`,
-  abi: any,
-  functionName: string
-) => {
-  const { data: balance } = useReadContract({
-    address: contractAddress as `0x${string}`,
-    abi: abi,
-    functionName: functionName,
-    args: [walletAddress],
-  });
+// export const getContractBalance = (
+//   walletAddress: `0x${string}`,
+//   contractAddress: `0x${string}`,
+//   abi: any,
+//   functionName: string
+// ) => {
+//   const { data: balance } = useReadContract({
+//     address: contractAddress as `0x${string}`,
+//     abi: abi,
+//     functionName: functionName,
+//     args: [walletAddress],
+//   });
 
-  return balance;
-};
+//   return balance;
+// };
