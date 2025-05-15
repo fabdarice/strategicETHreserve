@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Company, Influencer } from "./interfaces/interface";
 import CircleLoader from "react-spinners/ClipLoader";
-import { targetGoal } from "@/lib/constants";
+import { targetGoal, TOTAL_CIRCULATING_ETH_SUPPLY } from "@/lib/constants";
 
 export default function Home() {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -67,6 +67,11 @@ export default function Home() {
     (company: Company) => company.status === "ACTIVE"
   ).length;
 
+  const percentageOfCirculatingSupply =
+    TOTAL_CIRCULATING_ETH_SUPPLY > 0
+      ? (totalReserve / TOTAL_CIRCULATING_ETH_SUPPLY) * 100
+      : 0;
+
   if (error) {
     return (
       <main className="min-h-screen cyber-grid">
@@ -124,14 +129,32 @@ export default function Home() {
                     </p>
                   </div>
 
-                  {/* Active Companies Count */}
-                  <div className="mt-2 text-xs flex items-center gap-1">
-                    <span className="text-muted-foreground">
-                      Active Participants:
-                    </span>
-                    <span className="font-medium text-[hsl(var(--primary))] ">
-                      {activeCompanyCount}
-                    </span>
+                  {/* Combined Participants and Percentage of Circulating Supply */}
+                  <div className="mt-3 text-xs flex items-center justify-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <span className="text-muted-foreground">
+                        Participants:
+                      </span>
+                      <span className="font-medium text-[hsl(var(--primary))]">
+                        {activeCompanyCount}
+                      </span>
+                    </div>
+                    <span className="text-muted-foreground">|</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-muted-foreground">
+                        % of Supply:
+                      </span>
+                      <span className="font-medium text-[hsl(var(--primary))]">
+                        {percentageOfCirculatingSupply.toLocaleString(
+                          undefined,
+                          {
+                            minimumFractionDigits: 4,
+                            maximumFractionDigits: 4,
+                          }
+                        )}
+                        %
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
