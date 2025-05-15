@@ -61,6 +61,8 @@ const tokensPerNetwork: {
     spWETH?: string; // Spark WETH
     brETHStable?: string; // Balancer rETH/WETH BPT
     dsTVL?: string; // Enzyme Finance Diva Early Stakers srETH Vault
+    sfrxETH?: string; // Frax Staked ETH
+    frxETH?: string; // Frax ETH
   };
 } = {
   [Network.ETH_MAINNET]: {
@@ -93,6 +95,8 @@ const tokensPerNetwork: {
     spWETH: "0x59cD1C87501baa753d0B5B5Ab5D8416A45cD71DB", // Spark WETH
     brETHStable: "0x1E19CF2D73a72Ef1332C882F20534B6519Be0276", // Balancer rETH/WETH BPT
     dsTVL: "0x1ce8aAfb51e79F6BDc0EF2eBd6fD34b00620f6dB", // Enzyme Finance Diva Early Stakers srETH Vault
+    frxETH: "0x5E8422345238F34275888049021821E8E08CAa1f", // Frax ETH
+    sfrxETH: "0xac3E018457B222d93114458476f3E3416Abbe38F", // Frax Staked ETH
   },
   [Network.BASE_MAINNET]: {
     wstETH: "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452", // lido wstETH
