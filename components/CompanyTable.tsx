@@ -159,7 +159,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                   className={`inline-flex items-center text-xs font-medium rounded-full px-2 py-0.5 transition-all duration-300 ${
                     company.pctDiff === null || company.pctDiff === 0
                       ? "text-gray-400 bg-gray-400/10"
-                      : company.pctDiff > 0
+                      : company.pctDiff && company.pctDiff > 0
                         ? "text-emerald-500 bg-emerald-500/10"
                         : "text-rose-500 bg-rose-500/10"
                   }`}
@@ -179,7 +179,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                         d="M5 12h14"
                       ></path>
                     </svg>
-                  ) : company.pctDiff > 0 ? (
+                  ) : company.pctDiff && company.pctDiff > 0 ? (
                     <svg
                       className="w-3 h-3 mr-1"
                       fill="none"
@@ -212,7 +212,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
                   )}
                   {company.pctDiff === null
                     ? "0.00"
-                    : Math.abs(company.pctDiff).toFixed(2)}
+                    : Math.abs(company.pctDiff ?? 0).toFixed(2)}
                   %
                 </span>
               </TableCell>

@@ -3,7 +3,7 @@ export interface Company {
   name: string;
   category: string;
   reserve: number;
-  pctDiff: number | null;
+  pctDiff?: number | null;
   snapshotDate: Date | null;
   logo: string;
   website: string | null;

@@ -34,18 +34,18 @@ export async function GET(req: NextRequest) {
     const ethPrice = await getETHPrice();
 
     // Fetch all required data in parallel
-    const [companyReserves, activeCompanies, prevSnapshot] = await Promise.all([
+    const [companyReserves, allCompanies, prevSnapshot] = await Promise.all([
       prisma.companyWallet.groupBy({
         by: ["companyId"],
         _sum: { balance: true },
       }),
       prisma.company.findMany({
-        where: { status: CompanyStatus.ACTIVE },
         select: {
           id: true,
           name: true,
           currentReserve: true,
           accountingType: true,
+          status: true,
         },
       }),
       prisma.snapshot.findFirst({
@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
       : 0;
 
     // Process all companies in parallel
-    const companySnapshotPromises = activeCompanies.map(async (company) => {
+    const companySnapshotPromises = allCompanies.map(async (company) => {
       const companyId = company.id;
       const currentReserve =
         companyWalletBalances.has(companyId) &&
@@ -151,6 +151,10 @@ export async function GET(req: NextRequest) {
 
     // Wait for all company snapshots to be processed
     await Promise.all(companySnapshotPromises);
+
+    const activeCompanies = allCompanies.filter(
+      (company) => company.status === CompanyStatus.ACTIVE
+    );
 
     // Compute overall totals
     const totalReserve = activeCompanies.reduce((acc, company) => {

@@ -61,8 +61,6 @@ export default function Home() {
 
   const totalReserveUSD = totalReserve * ethPrice;
 
-  const progressPercentage = Math.min((totalReserve / targetGoal) * 100, 100);
-
   const activeCompanyCount = companies.filter(
     (company: Company) => company.status === "ACTIVE"
   ).length;

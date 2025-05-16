@@ -61,17 +61,7 @@ export async function GET(request: Request): Promise<
     const transformedCompanies: AdminCompany[] = companies.map((company) => {
       const latestSnapshot =
         company.snapshots.length > 0 ? company.snapshots[0] : null;
-      const prevSnapshot =
-        company.snapshots.length > 1 ? company.snapshots[1] : null;
-      const reserve = latestSnapshot
-        ? latestSnapshot.reserve
-        : company.currentReserve;
-      const pctDiff =
-        latestSnapshot && prevSnapshot
-          ? ((latestSnapshot.reserve - prevSnapshot.reserve) /
-              prevSnapshot.reserve) *
-            100
-          : 0;
+      const reserve = latestSnapshot ? latestSnapshot.reserve : 0;
 
       // Remove snapshots array and add flattened data
       const { snapshots, ...companyData } = company;
@@ -79,7 +69,6 @@ export async function GET(request: Request): Promise<
       return {
         ...companyData,
         reserve,
-        pctDiff,
         snapshotDate: latestSnapshot?.snapshotDate || null,
         status: companyData.status as CompanyStatus,
         accountingType: companyData.accountingType as AccountingType,
