@@ -179,6 +179,9 @@ export default function SubmitCompanyDialog({
                             <SelectItem value="DAO">DAO</SelectItem>
                             <SelectItem value="Company">Company</SelectItem>
                             <SelectItem value="TradFi">TradFi</SelectItem>
+                            <SelectItem value="Foundation">
+                              Foundation
+                            </SelectItem>
                             <SelectItem value="Government">
                               Government
                             </SelectItem>
