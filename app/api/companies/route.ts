@@ -56,8 +56,13 @@ export async function GET(): Promise<
     const transformedCompanies: Company[] = companies.map((company) => {
       const latestSnapshot =
         company.snapshots.length > 0 ? company.snapshots[0] : null;
+      // Find a snapshot from ~30 days ago, or use the oldest available
       const prevSnapshot =
-        company.snapshots.length > 1 ? company.snapshots[1] : null;
+        company.snapshots.length > 1
+          ? company.snapshots.length >= 30
+            ? company.snapshots[29]
+            : company.snapshots[company.snapshots.length - 1]
+          : null;
       const reserve =
         latestSnapshot &&
         company.accountingType === AccountingType.WALLET_TRACKING

@@ -71,7 +71,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
               RESERVE <span className="sm:hidden ml-1">ETH</span>
             </TableHead>
             <TableHead className="text-center text-[hsl(var(--primary))] hidden sm:table-cell">
-              24H CHANGE
+              30D CHANGE
             </TableHead>
             <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
               NEWS
