@@ -6,13 +6,12 @@ import InfluencerSection from "@/components/InfluencerSection";
 import { EthereumLogo } from "@/components/icons/EthereumLogo";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { Company, Influencer } from "./interfaces/interface";
+import { Company } from "./interfaces/interface";
 import CircleLoader from "react-spinners/ClipLoader";
-import { targetGoal, TOTAL_CIRCULATING_ETH_SUPPLY } from "@/lib/constants";
+import { TOTAL_CIRCULATING_ETH_SUPPLY } from "@/lib/constants";
 
 export default function Home() {
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [influencers, setInfluencers] = useState<Influencer[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [ethPrice, setEthPrice] = useState<number>(0);
@@ -20,22 +19,15 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [companiesRes, influencersRes] = await Promise.all([
-          fetch(`/api/companies`),
-          fetch(`/api/influencers`),
-        ]);
+        const [companiesRes] = await Promise.all([fetch(`/api/companies`)]);
 
-        if (!companiesRes.ok || !influencersRes.ok) {
+        if (!companiesRes.ok) {
           throw new Error("Failed to fetch data");
         }
 
-        const [companiesData, influencersData] = await Promise.all([
-          companiesRes.json(),
-          influencersRes.json(),
-        ]);
+        const companiesData = await companiesRes.json();
 
         setCompanies(companiesData.companies);
-        setInfluencers(influencersData);
         setEthPrice(companiesData.lastETHPrice || 0);
       } catch (err) {
         setError(err instanceof Error ? err.message : "An error occurred");
@@ -171,7 +163,6 @@ export default function Home() {
               <RecentPledges pledges={recentPledges} />
             </div>
           )}
-          {!isLoading && <InfluencerSection influencers={influencers} />}
         </div>
         <footer className="mt-24 text-center">
           <a
