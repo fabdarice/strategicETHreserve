@@ -39,7 +39,7 @@ export default function CompanyTable({ companies }: { companies: Company[] }) {
             className="mb-2"
           />
           <p className="text-xs text-center md:text-sm md:text-left">
-            Entities holding $ETH in their treasury
+            Entities holding &gt;100 ETH in their treasury
           </p>
         </div>
         <div className="mt-2 md:mt-0 text-center md:text-left">
