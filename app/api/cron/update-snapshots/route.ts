@@ -47,6 +47,11 @@ export async function GET(req: NextRequest) {
           accountingType: true,
           status: true,
         },
+        where: {
+          status: {
+            not: CompanyStatus.INACTIVE,
+          },
+        },
       }),
       prisma.snapshot.findFirst({
         where: { snapshotDate: { lt: snapshotDate } },

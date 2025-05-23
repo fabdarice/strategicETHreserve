@@ -156,6 +156,14 @@ export async function PUT(request: Request) {
           where: { id },
           data,
         });
+
+        if (data.status === CompanyStatus.INACTIVE) {
+          await tx.companyWallet.deleteMany({
+            where: { companyId: id },
+          });
+          return updatedCompany;
+        }
+
         // Sync company wallets for any new addresses
         const existingWallets = await tx.companyWallet.findMany({
           where: { companyId: id },
