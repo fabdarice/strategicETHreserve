@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import SubmitCompanyDialog from "@/components/SubmitCompanyDialog";
 import Image from "next/image";
 import { Company, AccountingType } from "@/app/interfaces/interface";
-import { ExternalLink, Newspaper } from "lucide-react";
+import { Newspaper } from "lucide-react";
 
 // Helper function to check if a date is within the last 7 days
 const isNew = (date: Date): boolean => {

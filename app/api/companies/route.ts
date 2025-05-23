@@ -91,6 +91,11 @@ export async function GET(): Promise<
     // Sort by reserve in descending order
     transformedCompanies.sort((a, b) => b.reserve - a.reserve);
 
+    // Filter out companies with reserve less than 100
+    const filteredCompanies = transformedCompanies.filter(
+      (company) => company.reserve > 100
+    );
+
     const lastETHPrice = await prisma.snapshot.findFirst({
       orderBy: {
         snapshotDate: "desc",
@@ -101,7 +106,7 @@ export async function GET(): Promise<
     });
 
     return NextResponse.json({
-      companies: transformedCompanies,
+      companies: filteredCompanies,
       lastETHPrice: lastETHPrice?.currentUSDPrice || 0,
     });
   } catch (error) {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { AdminCompany, Company, Influencer } from "@/app/interfaces/interface";
+import { AdminCompany, Company } from "@/app/interfaces/interface";
 import { AccountingType } from "@/app/interfaces/interface";
 import { CompanyStatus } from "@/app/interfaces/interface";
 
@@ -8,7 +8,6 @@ export async function GET(request: Request): Promise<
   NextResponse<
     | {
         companies: AdminCompany[];
-        influencers: Influencer[];
         lastETHPrice: number;
       }
     | { message: string }
@@ -80,12 +79,6 @@ export async function GET(request: Request): Promise<
       };
     });
 
-    const influencers = await prisma.influencer.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
     const lastETHPrice = await prisma.snapshot.findFirst({
       orderBy: {
         snapshotDate: "desc",
@@ -97,7 +90,6 @@ export async function GET(request: Request): Promise<
 
     return NextResponse.json({
       companies: transformedCompanies,
-      influencers,
       lastETHPrice: lastETHPrice?.currentUSDPrice || 0,
     });
   } catch (error) {

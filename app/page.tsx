@@ -2,7 +2,6 @@
 
 import CompanyTable from "@/components/CompanyTable";
 import RecentPledges from "@/components/RecentPledges";
-import InfluencerSection from "@/components/InfluencerSection";
 import { EthereumLogo } from "@/components/icons/EthereumLogo";
 import Image from "next/image";
 import { useEffect, useState } from "react";
