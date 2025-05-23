@@ -52,6 +52,11 @@ export async function GET(request: Request): Promise<
           take: 7,
         },
       },
+      where: {
+        status: {
+          not: CompanyStatus.INACTIVE,
+        },
+      },
       orderBy: {
         createdAt: "desc",
       },
