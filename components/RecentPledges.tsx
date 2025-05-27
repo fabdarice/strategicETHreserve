@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default function RecentPledges({ pledges }: { pledges: Company[] }) {
   return (
-    <section className="space-y-6">
+    <section className="space-y-6 md:w-80 flex-shrink-0">
       <div>
         <Image
           src="/images/recentpledges.svg"
@@ -18,7 +18,7 @@ export default function RecentPledges({ pledges }: { pledges: Company[] }) {
         />
         <p className="text-sm">Latest entities joining the SER movement</p>
       </div>
-      <div className="grid gap-3 sm:grid-cols-1">
+      <div className="grid gap-3 grid-cols-1">
         {pledges.map((pledge) => (
           <Card
             key={pledge.id}
