@@ -79,7 +79,7 @@ export function MarketingModal({
                       {company.reserve.toLocaleString(undefined, {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0,
-                      })}
+                      })}{" "}
                       ETH
                     </span>
                   </p>
