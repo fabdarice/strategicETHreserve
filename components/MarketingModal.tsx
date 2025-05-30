@@ -70,7 +70,7 @@ export function MarketingModal({
                   </div>
                 )}
                 <div className="flex flex-col gap-1">
-                  <h2 className="text-3xl font-bold text-foreground tracking-tight">
+                  <h2 className="text-3xl font-bold text-foreground tracking-tight truncate">
                     {company.name}
                   </h2>
                   <p className="text-xl font-medium text-muted-foreground">
