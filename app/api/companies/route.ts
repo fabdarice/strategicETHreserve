@@ -22,7 +22,7 @@ export async function GET(): Promise<
   >
 > {
   try {
-    // Get all companies with their latest snapshot
+    // Get all companies with their most recent snapshot
     const companies = await prisma.company.findMany({
       select: {
         id: true,
@@ -47,46 +47,62 @@ export async function GET(): Promise<
           orderBy: {
             snapshotDate: "desc",
           },
-          take: 7,
+          take: 1, // Only get the most recent snapshot
         },
       },
     });
 
     // Transform response to include reserve from snapshot or company
-    const transformedCompanies: Company[] = companies.map((company) => {
-      const latestSnapshot =
-        company.snapshots.length > 0 ? company.snapshots[0] : null;
-      // Find a snapshot from ~30 days ago, or use the oldest available
-      const prevSnapshot =
-        company.snapshots.length > 1
-          ? company.snapshots.length >= 30
-            ? company.snapshots[29]
-            : company.snapshots[company.snapshots.length - 1]
-          : null;
-      const reserve =
-        latestSnapshot &&
-        company.accountingType === AccountingType.WALLET_TRACKING
-          ? latestSnapshot.reserve
-          : company.currentReserve;
-      const pctDiff =
-        latestSnapshot && prevSnapshot
-          ? ((latestSnapshot.reserve - prevSnapshot.reserve) /
-              prevSnapshot.reserve) *
-            100
-          : 0;
+    const transformedCompanies: Company[] = await Promise.all(
+      companies.map(async (company) => {
+        const latestSnapshot =
+          company.snapshots.length > 0 ? company.snapshots[0] : null;
 
-      // Remove snapshots array and add flattened data
-      const { snapshots, ...companyData } = company;
+        // Fetch snapshot from ~30 days ago for this company
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      return {
-        ...companyData,
-        reserve,
-        pctDiff,
-        snapshotDate: latestSnapshot?.snapshotDate || null,
-        status: companyData.status as CompanyStatus,
-        accountingType: companyData.accountingType as AccountingType,
-      };
-    });
+        const prevSnapshot = await prisma.snapshotCompany.findFirst({
+          where: {
+            companyId: company.id,
+            snapshotDate: {
+              lte: thirtyDaysAgo,
+            },
+          },
+          orderBy: {
+            snapshotDate: "desc",
+          },
+          select: {
+            reserve: true,
+            snapshotDate: true,
+          },
+        });
+
+        const reserve =
+          latestSnapshot &&
+          company.accountingType === AccountingType.WALLET_TRACKING
+            ? latestSnapshot.reserve
+            : company.currentReserve;
+        const pctDiff =
+          latestSnapshot && prevSnapshot
+            ? ((latestSnapshot.reserve - prevSnapshot.reserve) /
+                prevSnapshot.reserve) *
+              100
+            : 0;
+
+        // Remove snapshots array and add flattened data
+        const { snapshots, ...companyData } = company;
+
+        return {
+          ...companyData,
+          reserve,
+          pctDiff,
+          snapshotDate: latestSnapshot?.snapshotDate || null,
+          status: companyData.status as CompanyStatus,
+          accountingType: companyData.accountingType as AccountingType,
+        };
+      })
+    );
 
     // Sort by reserve in descending order
     transformedCompanies.sort((a, b) => b.reserve - a.reserve);
