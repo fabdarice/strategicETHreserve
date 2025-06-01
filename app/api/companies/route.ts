@@ -41,7 +41,6 @@ export async function GET(): Promise<
         snapshots: {
           select: {
             reserve: true,
-            pctDiff: true,
             snapshotDate: true,
           },
           orderBy: {

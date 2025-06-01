@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     // Fetch the oldest company wallet by updatedAt
     const wallet = await prisma.companyWallet.findFirst({
       orderBy: { updatedAt: "asc" },
+      where: { autoScan: true },
     });
 
     if (!wallet) {
