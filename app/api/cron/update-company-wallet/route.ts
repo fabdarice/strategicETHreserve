@@ -2,14 +2,19 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getETHBalanceAllNetworks } from "@/lib/web3";
+import { validateCronToken, createAuthErrorResponse } from "@/lib/api/auth";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "@/lib/api/error-handling";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   // Verify this is called by Vercel Cron
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { isAuthenticated } = validateCronToken(request);
+  if (!isAuthenticated) {
+    return createAuthErrorResponse();
   }
 
   try {
@@ -20,7 +25,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (!wallet) {
-      return NextResponse.json({
+      return createSuccessResponse({
         message: "No company wallets found to update",
       });
     }
@@ -39,14 +44,10 @@ export async function GET(req: NextRequest) {
       data: { balance: totalBalanceEth },
     });
 
-    return NextResponse.json({
+    return createSuccessResponse({
       message: "Company wallet balance updated",
     });
   } catch (error) {
-    console.error("Cron update error:", error);
-    return NextResponse.json(
-      { error: (error as Error).message || "Unexpected error" },
-      { status: 500 }
-    );
+    return createErrorResponse(error, "Cron update error");
   }
 }

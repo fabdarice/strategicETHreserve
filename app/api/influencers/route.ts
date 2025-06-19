@@ -1,6 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import { validateAdminToken, createUnauthorizedResponse } from "@/lib/api/auth";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  createValidationErrorResponse,
+} from "@/lib/api/error-handling";
 
 const InfluencerSchema = z.object({
   name: z.string().min(1),
@@ -17,39 +23,35 @@ export async function GET() {
         createdAt: "asc",
       },
     });
-    return NextResponse.json(influencers);
+
+    return createSuccessResponse(influencers);
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch influencers" },
-      { status: 500 }
-    );
+    return createErrorResponse(error, "Failed to fetch influencers");
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const token = req.headers.get("Authorization")?.split("Bearer ")?.[1];
+    const { isAuthenticated } = validateAdminToken(request);
 
-    // If there's no token, redirect to login
-    if (!token || token !== process.env.ADMIN_PASSWORD) {
-      return NextResponse.redirect(new URL("/", req.url));
+    if (!isAuthenticated) {
+      return createUnauthorizedResponse(request);
     }
 
-    const body = await req.json();
+    const body = await request.json();
     const validatedData = InfluencerSchema.parse(body);
 
     const influencer = await prisma.influencer.create({
       data: validatedData,
     });
 
-    return NextResponse.json(influencer, { status: 201 });
+    return createSuccessResponse(influencer, 201);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      return createValidationErrorResponse(
+        error.errors.map((e) => e.message).join(", ")
+      );
     }
-    return NextResponse.json(
-      { error: "Failed to create influencer" },
-      { status: 500 }
-    );
+    return createErrorResponse(error, "Failed to create influencer");
   }
 }

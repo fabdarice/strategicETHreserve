@@ -1,57 +1,24 @@
-import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import { NextRequest } from "next/server";
+import { getCompanyReserveData } from "@/lib/api/snapshots";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  createValidationErrorResponse,
+} from "@/lib/api/error-handling";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
     // Get companyId from query parameters
     const { searchParams } = new URL(request.url);
     const companyId = searchParams.get("companyId");
 
     if (!companyId) {
-      return NextResponse.json(
-        { error: "Company ID is required" },
-        { status: 400 }
-      );
+      return createValidationErrorResponse("Company ID is required");
     }
 
-    // Get the last two snapshots for this company ordered by date
-    const companySnapshots = await prisma.snapshotCompany.findMany({
-      where: {
-        companyId: companyId,
-      },
-      orderBy: {
-        snapshotDate: "desc",
-      },
-      select: {
-        reserve: true,
-        snapshotDate: true,
-      },
-      take: 2,
-    });
-
-    if (companySnapshots.length === 0) {
-      return NextResponse.json({
-        totalReserve: 0,
-        previousReserve: 0,
-      });
-    }
-
-    // Current (latest) snapshot
-    const totalReserve = companySnapshots[0]?.reserve || 0;
-
-    // Previous snapshot if available
-    const previousReserve =
-      companySnapshots.length > 1 ? companySnapshots[1]?.reserve || 0 : 0;
-
-    return NextResponse.json({
-      totalReserve,
-      previousReserve,
-    });
+    const reserveData = await getCompanyReserveData(companyId);
+    return createSuccessResponse(reserveData);
   } catch (error) {
-    console.error("Error fetching reserve data:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch reserve data" },
-      { status: 500 }
-    );
+    return createErrorResponse(error, "Failed to fetch reserve data");
   }
 }

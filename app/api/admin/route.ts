@@ -1,218 +1,99 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { AdminCompany, Company } from "@/app/interfaces/interface";
-import { AccountingType } from "@/app/interfaces/interface";
 import { CompanyStatus } from "@/app/interfaces/interface";
+import {
+  getCompaniesWithSnapshots,
+  transformCompaniesForAdmin,
+  getLatestETHPrice,
+  validateEVMAddresses,
+  syncCompanyWallets,
+} from "@/lib/api/companies";
+import {
+  validateAdminToken,
+  createUnauthorizedResponse,
+  createAuthErrorResponse,
+} from "@/lib/api/auth";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+  createValidationErrorResponse,
+} from "@/lib/api/error-handling";
 
-export async function GET(request: Request): Promise<
-  NextResponse<
-    | {
-        companies: AdminCompany[];
-        lastETHPrice: number;
-      }
-    | { message: string }
-    | unknown
-  >
-> {
+export async function GET(request: NextRequest) {
   try {
-    const token = request.headers.get("Authorization")?.split("Bearer ")?.[1];
+    const { isAuthenticated } = validateAdminToken(request);
 
-    // If there's no token or invalid token, redirect to homepage
-    if (!token || token !== process.env.ADMIN_PASSWORD) {
-      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
+    if (!isAuthenticated) {
+      return createUnauthorizedResponse(request);
     }
 
-    // Get all companies with their latest snapshot
-    const companies = await prisma.company.findMany({
-      select: {
-        id: true,
-        name: true,
-        category: true,
-        currentReserve: true,
-        logo: true,
-        website: true,
-        status: true,
-        contact: true,
-        accountingType: true,
-        news: true,
-        createdAt: true,
-        updatedAt: true,
-        addresses: true,
-        twitter: true,
-        snapshots: {
-          select: {
-            reserve: true,
-            pctDiff: true,
-            snapshotDate: true,
-          },
-          orderBy: {
-            snapshotDate: "desc",
-          },
-          take: 7,
-        },
-      },
-      where: {
-        status: {
-          not: CompanyStatus.INACTIVE,
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const companies = await getCompaniesWithSnapshots(true);
+    const transformedCompanies = await transformCompaniesForAdmin(companies);
+    const lastETHPrice = await getLatestETHPrice();
 
-    // Transform response to include reserve from snapshot or company
-    const transformedCompanies: AdminCompany[] = companies.map((company) => {
-      const latestSnapshot =
-        company.snapshots.length > 0 ? company.snapshots[0] : null;
-      const reserve = latestSnapshot ? latestSnapshot.reserve : 0;
-
-      // Remove snapshots array and add flattened data
-      const { snapshots, ...companyData } = company;
-
-      return {
-        ...companyData,
-        reserve,
-        snapshotDate: latestSnapshot?.snapshotDate || null,
-        status: companyData.status as CompanyStatus,
-        accountingType: companyData.accountingType as AccountingType,
-      };
-    });
-
-    const lastETHPrice = await prisma.snapshot.findFirst({
-      orderBy: {
-        snapshotDate: "desc",
-      },
-      select: {
-        currentUSDPrice: true,
-      },
-    });
-
-    return NextResponse.json({
+    return createSuccessResponse({
       companies: transformedCompanies,
-      lastETHPrice: lastETHPrice?.currentUSDPrice || 0,
+      lastETHPrice,
     });
   } catch (error) {
-    console.error("Error fetching admin data:", error);
-    return NextResponse.redirect(new URL("/", request.url), { status: 302 });
+    return createUnauthorizedResponse(request);
   }
 }
 
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
-    const token = request.headers.get("Authorization")?.split("Bearer ")?.[1];
+    const { isAuthenticated } = validateAdminToken(request);
 
-    // If there's no token or invalid token, redirect to homepage
-    if (!token || token !== process.env.ADMIN_PASSWORD) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!isAuthenticated) {
+      return createAuthErrorResponse();
     }
 
     const { type, id, data } = await request.json();
 
     if (!type || !id || !data) {
-      return NextResponse.json(
-        { error: "Missing type, id, or data" },
-        { status: 400 }
-      );
+      return createValidationErrorResponse("Missing type, id, or data");
     }
 
+    // Remove read-only fields
     delete data.reserve;
     delete data.pctDiff;
     delete data.snapshotDate;
 
     let result;
+
     if (type === "company") {
-      // Validate addresses array
-      const addresses = data.addresses;
-      if (!Array.isArray(addresses)) {
-        return NextResponse.json(
-          { error: "Addresses must be an array" },
-          { status: 400 }
-        );
-      }
-      // Validate each address as EVM address
-      const evmRegex = /^0x[a-fA-F0-9]{40}$/;
-      const invalidAddress = addresses.find(
-        (addr: string) => typeof addr !== "string" || !evmRegex.test(addr)
-      );
-      if (invalidAddress) {
-        return NextResponse.json(
-          { error: `Invalid EVM address: ${invalidAddress}` },
-          { status: 400 }
-        );
-      }
-      // Update company and synchronize wallets in a transaction
-      result = await prisma.$transaction(async (tx) => {
-        // Update company record
-        const updatedCompany = await tx.company.update({
-          where: { id },
-          data,
-        });
-
-        if (data.status === CompanyStatus.INACTIVE) {
-          await tx.companyWallet.deleteMany({
-            where: { companyId: id },
-          });
-          return updatedCompany;
-        }
-
-        // Sync company wallets for any new addresses
-        const existingWallets = await tx.companyWallet.findMany({
-          where: { companyId: id },
-          select: { address: true },
-        });
-        const existingAddressesSet = new Set(
-          existingWallets.map((w) => w.address.toLowerCase())
-        );
-        const newWalletsData = addresses
-          .filter(
-            (addr: string) => !existingAddressesSet.has(addr.toLowerCase())
-          )
-          .map((addr: string) => ({
-            companyId: id,
-            address: addr,
-            balance: 0,
-          }));
-        if (newWalletsData.length > 0) {
-          await tx.companyWallet.createMany({ data: newWalletsData });
-        }
-        return updatedCompany;
-      });
+      result = await updateCompany(id, data);
     } else if (type === "influencer") {
       result = await prisma.influencer.update({
         where: { id },
         data,
       });
     } else {
-      return NextResponse.json({ error: "Invalid type" }, { status: 400 });
+      return createValidationErrorResponse("Invalid type");
     }
 
-    return NextResponse.json(result);
+    return createSuccessResponse(result);
   } catch (error) {
-    console.error("Error updating data:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return createErrorResponse(error, "Error updating data");
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const token = request.headers.get("Authorization")?.split("Bearer ")?.[1];
+    const { isAuthenticated } = validateAdminToken(request);
 
-    // If there's no token or invalid token, redirect to homepage
-    if (!token || token !== process.env.ADMIN_PASSWORD) {
-      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
+    if (!isAuthenticated) {
+      return createUnauthorizedResponse(request);
     }
 
     const { type, data } = await request.json();
 
     if (!type || !data) {
-      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
+      return createUnauthorizedResponse(request);
     }
 
     let result;
+
     if (type === "influencer") {
       result = await prisma.influencer.create({
         data: {
@@ -223,12 +104,44 @@ export async function POST(request: Request) {
         },
       });
     } else {
-      return NextResponse.redirect(new URL("/", request.url), { status: 302 });
+      return createUnauthorizedResponse(request);
     }
 
-    return NextResponse.json(result);
+    return createSuccessResponse(result);
   } catch (error) {
-    console.error("Error creating data:", error);
-    return NextResponse.redirect(new URL("/", request.url), { status: 302 });
+    return createUnauthorizedResponse(request);
   }
+}
+
+async function updateCompany(id: string, data: any) {
+  // Validate addresses array
+  const addresses = data.addresses;
+  if (!Array.isArray(addresses)) {
+    throw new Error("Addresses must be an array");
+  }
+
+  const validation = validateEVMAddresses(addresses);
+  if (!validation.valid) {
+    throw new Error(`Invalid EVM address: ${validation.invalidAddress}`);
+  }
+
+  // Update company and synchronize wallets in a transaction
+  return await prisma.$transaction(async (tx) => {
+    // Update company record
+    const updatedCompany = await tx.company.update({
+      where: { id },
+      data,
+    });
+
+    if (data.status === CompanyStatus.INACTIVE) {
+      await tx.companyWallet.deleteMany({
+        where: { companyId: id },
+      });
+      return updatedCompany;
+    }
+
+    // Sync company wallets for any new addresses
+    await syncCompanyWallets(id, addresses);
+    return updatedCompany;
+  });
 }

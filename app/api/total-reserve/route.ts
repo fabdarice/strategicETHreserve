@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "@/lib/api/error-handling";
 
 export async function GET() {
   try {
@@ -17,12 +21,8 @@ export async function GET() {
       0
     );
 
-    return NextResponse.json({ totalReserve });
+    return createSuccessResponse({ totalReserve });
   } catch (error) {
-    console.error("Error fetching total reserve:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return createErrorResponse(error, "Error fetching total reserve");
   }
 }
