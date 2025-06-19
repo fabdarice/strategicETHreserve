@@ -87,7 +87,7 @@ export default function ETHReserveChart({
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                 <p className="text-xs text-yellow-500 font-medium">
-                  6-digit entity joined!
+                  new 6-digit member!
                 </p>
               </div>
             </div>
