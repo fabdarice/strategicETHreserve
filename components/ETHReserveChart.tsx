@@ -117,7 +117,7 @@ export default function ETHReserveChart({
             <div className="relative w-full h-full">
               {/* Subtle watermark text in center */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                <div className="text-[hsl(var(--primary))] opacity-10 text-2xl font-bold tracking-wider select-none">
+                <div className="text-[hsl(var(--primary))] opacity-10 text-sm sm:text-lg lg:text-2xl font-bold tracking-wider select-none">
                   Strategic ETH Reserve
                 </div>
               </div>
