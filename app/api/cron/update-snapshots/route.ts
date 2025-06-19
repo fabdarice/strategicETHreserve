@@ -157,31 +157,38 @@ export async function GET(req: NextRequest) {
     // Wait for all company snapshots to be processed
     await Promise.all(companySnapshotPromises);
 
-    const activeCompanies = allCompanies.filter(
-      (company) => company.status === CompanyStatus.ACTIVE
-    );
-
-    // Filter out companies with balance less than 100 ETH
-    const eligibleCompanies = activeCompanies.filter((company) => {
-      const balance =
-        companyWalletBalances.has(company.id) &&
-        company.accountingType === AccountingType.WALLET_TRACKING
-          ? companyWalletBalances.get(company.id)!
-          : company.currentReserve;
-      return balance > 100;
+    // Fetch the company snapshots that were just created/updated for today
+    const todayCompanySnapshots = await prisma.snapshotCompany.findMany({
+      where: {
+        snapshotDate: {
+          gte: snapshotDate,
+          lt: new Date(snapshotDate.getTime() + 24 * 60 * 60 * 1000),
+        },
+        company: {
+          status: CompanyStatus.ACTIVE,
+        },
+      },
+      include: {
+        company: {
+          select: {
+            status: true,
+          },
+        },
+      },
     });
 
-    // Compute overall totals
-    const totalReserve = eligibleCompanies.reduce((acc, company) => {
-      const balance =
-        companyWalletBalances.has(company.id) &&
-        company.accountingType === AccountingType.WALLET_TRACKING
-          ? companyWalletBalances.get(company.id)!
-          : company.currentReserve;
-      return acc + balance;
-    }, 0);
+    // Filter snapshots for companies with reserve > 100 ETH (matching frontend logic)
+    const eligibleSnapshots = todayCompanySnapshots.filter(
+      (snapshot) => snapshot.reserve > 100
+    );
 
-    const totalActiveCompanies = eligibleCompanies.length;
+    // Calculate totals from the snapshots (matching what frontend will display)
+    const totalReserve = eligibleSnapshots.reduce(
+      (acc, snapshot) => acc + snapshot.reserve,
+      0
+    );
+
+    const totalActiveCompanies = eligibleSnapshots.length;
     const overallDiff = totalReserve - prevTotalReserve;
     const overallPctDiff =
       prevTotalReserve > 0

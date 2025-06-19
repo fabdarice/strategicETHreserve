@@ -69,7 +69,10 @@ export default function ETHReserveChart({
           <div className="flex items-center gap-2 mb-1">
             <EthereumLogo className="w-4 h-4 text-[hsl(var(--primary))]" />
             <p className="text-[hsl(var(--primary))] font-semibold">
-              {`${payload[0].value.toLocaleString()} ETH`}
+              {`${payload[0].value.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })} ETH`}
             </p>
           </div>
           <p className="text-xs text-muted-foreground">
