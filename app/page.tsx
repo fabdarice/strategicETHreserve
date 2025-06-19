@@ -119,7 +119,11 @@ export default function Home() {
             </div>
           ) : (
             <div className="flex flex-col gap-12 lg:flex-row">
-              <CompanyTable companies={companies} />
+              <CompanyTable
+                companies={companies}
+                totalReserve={totalReserve}
+                totalReserveUSD={totalReserveUSD}
+              />
               <RecentPledges pledges={recentPledges} />
             </div>
           )}

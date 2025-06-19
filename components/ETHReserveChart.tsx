@@ -63,6 +63,10 @@ export default function ETHReserveChart({
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
+      const dataPoint = payload[0].payload;
+      const increase = dataPoint.dayOverDayIncrease || 0;
+      const isSignificantIncrease = increase >= 100000;
+
       return (
         <div className="bg-card/95 backdrop-blur-sm border border-[hsl(var(--primary))] rounded-lg p-3 shadow-lg">
           <p className="text-sm text-muted-foreground mb-1">{label}</p>
@@ -78,11 +82,64 @@ export default function ETHReserveChart({
           <p className="text-xs text-muted-foreground">
             {`~$${(payload[0].payload.usd || 0).toLocaleString()}`}
           </p>
+          {isSignificantIncrease && (
+            <div className="mt-2 pt-2 border-t border-yellow-500/20">
+              <div className="flex items-center gap-1">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                <p className="text-xs text-yellow-500 font-medium">
+                  6-digit entity joined!
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       );
     }
     return null;
   };
+
+  // Custom dot component for significant increases
+  const CustomDot = (props: any) => {
+    const { cx, cy, payload } = props;
+    const increase = payload.dayOverDayIncrease || 0;
+    const isSignificantIncrease = increase >= 100000;
+
+    if (!isSignificantIncrease) return null;
+
+    return (
+      <g>
+        {/* Outer glow ring */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r="8"
+          fill="none"
+          stroke="rgb(234 179 8)"
+          strokeWidth="1"
+          opacity="0.3"
+        />
+        {/* Inner gold dot */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r="4"
+          fill="rgb(234 179 8)"
+          stroke="hsl(var(--background))"
+          strokeWidth="1"
+        />
+      </g>
+    );
+  };
+
+  // Process chart data to calculate day-over-day increases
+  const processedChartData = chartData.map((point, index) => {
+    if (index === 0) {
+      return { ...point, dayOverDayIncrease: 0 };
+    }
+    const previousReserve = chartData[index - 1].reserve;
+    const dayOverDayIncrease = point.reserve - previousReserve;
+    return { ...point, dayOverDayIncrease };
+  });
 
   if (isLoading) {
     return (
@@ -123,7 +180,7 @@ export default function ETHReserveChart({
               </div>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
-                  data={chartData}
+                  data={processedChartData}
                   margin={{ top: 5, right: 20, left: -15, bottom: -10 }}
                 >
                   <CartesianGrid
@@ -149,12 +206,7 @@ export default function ETHReserveChart({
                     dataKey="reserve"
                     stroke="hsl(var(--primary))"
                     strokeWidth={2}
-                    dot={{
-                      fill: "hsl(var(--primary))",
-                      strokeWidth: 1,
-                      r: 3,
-                      stroke: "hsl(var(--background))",
-                    }}
+                    dot={<CustomDot />}
                     activeDot={{
                       r: 5,
                       fill: "hsl(var(--primary))",
