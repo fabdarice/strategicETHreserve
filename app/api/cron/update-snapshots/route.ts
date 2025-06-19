@@ -161,15 +161,27 @@ export async function GET(req: NextRequest) {
       (company) => company.status === CompanyStatus.ACTIVE
     );
 
+    // Filter out companies with balance less than 100 ETH
+    const eligibleCompanies = activeCompanies.filter((company) => {
+      const balance =
+        companyWalletBalances.has(company.id) &&
+        company.accountingType === AccountingType.WALLET_TRACKING
+          ? companyWalletBalances.get(company.id)!
+          : company.currentReserve;
+      return balance > 100;
+    });
+
     // Compute overall totals
-    const totalReserve = activeCompanies.reduce((acc, company) => {
-      const balance = companyWalletBalances.has(company.id)
-        ? companyWalletBalances.get(company.id)!
-        : company.currentReserve;
+    const totalReserve = eligibleCompanies.reduce((acc, company) => {
+      const balance =
+        companyWalletBalances.has(company.id) &&
+        company.accountingType === AccountingType.WALLET_TRACKING
+          ? companyWalletBalances.get(company.id)!
+          : company.currentReserve;
       return acc + balance;
     }, 0);
 
-    const totalActiveCompanies = activeCompanies.length;
+    const totalActiveCompanies = eligibleCompanies.length;
     const overallDiff = totalReserve - prevTotalReserve;
     const overallPctDiff =
       prevTotalReserve > 0
