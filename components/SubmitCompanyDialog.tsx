@@ -43,14 +43,18 @@ const formSchema = z.object({
   twitter: z.string(),
   currentReserve: z
     .string()
+    .min(1, "Current ETH Reserve is required")
     .transform((val) => {
-      if (!val) return undefined;
+      if (!val) throw new Error("Current ETH Reserve is required");
       const num = parseFloat(val);
-      if (isNaN(num)) throw new Error("Must be a number");
+      if (isNaN(num)) throw new Error("Must be a valid number");
       if (num < 0) throw new Error("Must be a positive number");
+      if (num < 100)
+        throw new Error(
+          "Minimum reserve requirement is 100 ETH to join the Strategic ETH Reserve movement"
+        );
       return num;
-    })
-    .optional(),
+    }),
   addresses: z.string().optional(),
   contact: z.string().optional(),
 });
@@ -237,14 +241,16 @@ export default function SubmitCompanyDialog({
                     name="currentReserve"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Current ETH Reserve</FormLabel>
+                        <FormLabel>Current ETH Reserve *</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             type="number"
-                            min="0"
+                            min="100"
                             step="0.01"
                             className="bg-background"
+                            placeholder="Minimum 100 ETH"
+                            required
                           />
                         </FormControl>
                         <FormMessage />
