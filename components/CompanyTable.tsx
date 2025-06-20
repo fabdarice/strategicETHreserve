@@ -46,7 +46,7 @@ const CONTRIBUTION_TIERS: ContributionTier[] = [
   {
     name: "3-digits",
     minAmount: 100, // 3 digits
-    accentClass: "border-l-3 border-l-slate-400",
+    accentClass: "border-l-4 border-l-gray-400",
     textWeight: "font-normal",
   },
 ];
@@ -112,6 +112,29 @@ export default function CompanyTable({
           </SubmitCompanyDialog>
         </div>
       </div>
+
+      {/* Tier Legend */}
+      <div className="px-6 py-4 border-b border-[hsl(var(--primary)/0.3)]">
+        <div className="flex flex-wrap gap-4 justify-center text-xs text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
+            <span>6-digits (100,000+ ETH)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
+            <span>5-digits (10,000+ ETH)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
+            <span>4-digits (1,000+ ETH)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-3 border-l-4 border-l-gray-400 bg-muted/30"></div>
+            <span>3-digits (100+ ETH)</span>
+          </div>
+        </div>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow className="border-[hsl(var(--primary)/0.3)]">
@@ -226,7 +249,9 @@ export default function CompanyTable({
                         ? "text-gray-400 bg-gray-400/10"
                         : company.pctDiff && company.pctDiff > 0
                           ? "text-emerald-500 bg-emerald-500/10"
-                          : "text-rose-500 bg-rose-500/10"
+                          : company.pctDiff && company.pctDiff < -0.01
+                            ? "text-rose-500 bg-rose-500/10"
+                            : "text-gray-400 bg-gray-400/10"
                     }`}
                   >
                     {company.pctDiff === null || company.pctDiff === 0 ? (
@@ -259,7 +284,7 @@ export default function CompanyTable({
                           d="M5 15l7-7 7 7"
                         ></path>
                       </svg>
-                    ) : (
+                    ) : company.pctDiff && company.pctDiff < -0.01 ? (
                       <svg
                         className="w-3 h-3 mr-1"
                         fill="none"
@@ -272,6 +297,21 @@ export default function CompanyTable({
                           strokeLinejoin="round"
                           strokeWidth="2"
                           d="M19 9l-7 7-7-7"
+                        ></path>
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-3 h-3 mr-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 12h14"
                         ></path>
                       </svg>
                     )}
@@ -301,28 +341,6 @@ export default function CompanyTable({
           })}
         </TableBody>
       </Table>
-
-      {/* Tier Legend */}
-      <div className="p-4 border-t border-[hsl(var(--primary)/0.3)]">
-        <div className="flex flex-wrap gap-4 justify-center text-xs text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
-            <span>6-digits (100,000+ ETH)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
-            <span>5-digits (10,000+ ETH)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
-            <span>4-digits (1,000+ ETH)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-3 border-l-3 border-l-slate-400 bg-muted/30"></div>
-            <span>3-digits (100+ ETH)</span>
-          </div>
-        </div>
-      </div>
 
       {/* Legend for Accounting Types */}
       <div className="px-4 pb-4 text-xs text-muted-foreground">
