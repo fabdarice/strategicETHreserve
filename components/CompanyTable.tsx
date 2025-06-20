@@ -115,7 +115,30 @@ export default function CompanyTable({
 
       {/* Tier Legend */}
       <div className="px-6 py-4 border-b border-[hsl(var(--primary)/0.3)]">
-        <div className="flex flex-wrap gap-4 justify-center text-xs text-muted-foreground">
+        {/* Mobile Legend - Simplified */}
+        <div className="sm:hidden">
+          <div className="flex flex-wrap gap-3 justify-center text-xs text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
+              <span>6-digits</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
+              <span>5-digits</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
+              <span>4-digits</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-4 h-3 border-l-4 border-l-gray-400 bg-muted/30"></div>
+              <span>3-digits</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop Legend - Full */}
+        <div className="hidden sm:flex flex-wrap gap-4 justify-center text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
             <div className="w-6 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
             <span>6-digits (100,000+ ETH)</span>
