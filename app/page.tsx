@@ -96,13 +96,13 @@ export default function Home() {
           <div className="mx-auto max-w-2xl mb-6 text-center relative">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--primary))/20] to-transparent"></div>
             <p className="text-sm text-muted-foreground pt-4 leading-relaxed tracking-wide">
-              <span className="font-semibold text-[hsl(var(--primary))] drop-shadow-sm text-lg">
+              <span className="font-semibold text-[hsl(var(--primary))] drop-shadow-sm">
                 ETH is set to become the world&apos;s #1 reserve asset
               </span>{" "}
               <br />
               <span className="text-white">
-                Entities in the SER movement are recognizing ETH as a strategic
-                reserve asset and actively accumulating it.
+                SER tracks entities accumulating ETH as a strategic reserve
+                asset.
               </span>
             </p>
           </div>
