@@ -101,8 +101,8 @@ export default function Home() {
               </span>{" "}
               <br />
               <span className="text-white">
-                The SER Movement tracks entities accumulating ETH as a strategic
-                reserve asset
+                Entities in the SER movement are recognizing ETH as a strategic
+                reserve asset and actively accumulating it.
               </span>
             </p>
           </div>
