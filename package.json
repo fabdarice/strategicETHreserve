@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "db:seed": "prisma db seed",
     "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy"
+    "db:deploy": "prisma migrate deploy",
+    "check-balances": "tsx scripts/check-company-balances.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -88,6 +89,7 @@
   "devDependencies": {
     "@types/node": "^22.13.14",
     "ts-node": "^10.9.2",
+    "tsx": "^4.7.0",
     "typescript": "^5.8.2"
   }
 }
