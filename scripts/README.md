@@ -90,3 +90,90 @@ npm run check-balances "Micro"
 - Database connection configured
 - Environment variables for Alchemy API keys
 - CoinMarketCap API key (for ETH price data)
+
+---
+
+## Add Manual Wallet
+
+This script allows you to add a manual wallet entry to a company with a custom address format and disabled auto-scanning. **This script can only be run locally** for security reasons.
+
+### Usage
+
+```bash
+# Run the script with company name and balance
+npm run add-manual-wallet "Company Name" <balance>
+
+# Or run directly with tsx
+tsx scripts/add-manual-wallet.ts "Company Name" <balance>
+```
+
+### Examples
+
+```bash
+# Add a manual wallet with 1000.5 ETH to MicroStrategy
+npm run add-manual-wallet "MicroStrategy" 1000.5
+
+# Add a manual wallet with 500 ETH to Tesla
+npm run add-manual-wallet "Tesla" 500
+
+# Partial company name matching works
+npm run add-manual-wallet "Micro" 250.75
+```
+
+### What it does
+
+1. **Finds the company** by name (case-insensitive, partial matching)
+2. **Generates a unique manual address** in format `0xmanual1`, `0xmanual2`, etc.
+3. **Creates a new CompanyWallet entry** with:
+   - The generated manual address
+   - The specified balance
+   - `autoScan = false`
+4. **Updates the company's total reserve** by adding the new balance
+5. **Displays confirmation** with all the details
+
+### Address Format
+
+Manual wallets are created with addresses in the format:
+
+- `0xmanual1` - First manual wallet for the company
+- `0xmanual2` - Second manual wallet for the company
+- `0xmanual3` - And so on...
+
+The script automatically finds the next available number based on existing manual wallets.
+
+### Output Format
+
+```
+🔍 Looking up company: MicroStrategy
+✅ Found company: MicroStrategy Inc.
+📊 Current wallets: 2
+🔧 Creating manual wallet: 0xmanual3
+💰 Balance: 1000.5 ETH
+🔄 Auto Scan: false
+
+✅ Manual wallet created successfully!
+📋 Wallet ID: clx1234567890abcdef
+🏢 Company: MicroStrategy Inc.
+📍 Address: 0xmanual3
+💰 Balance: 1000.5 ETH
+🔄 Auto Scan: false
+📅 Created: 2024-01-15T10:30:45.123Z
+
+📊 Updated company total reserve: 331201.0 ETH
+📈 Previous total: 330200.5 ETH
+➕ Added: 1000.5 ETH
+```
+
+### Security Features
+
+- **Local-only execution**: Script checks environment variables and refuses to run in production
+- **Input validation**: Validates company name exists and balance is a valid number
+- **Error handling**: Graceful error handling with descriptive messages
+- **Database transaction**: Atomic operations to maintain data consistency
+
+### Use Cases
+
+- Adding off-chain ETH holdings that can't be auto-scanned
+- Manual adjustments for complex treasury structures
+- Temporary entries for pending transactions
+- Testing and development purposes

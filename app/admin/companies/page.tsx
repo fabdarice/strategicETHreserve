@@ -117,20 +117,19 @@ export default function AdminCompaniesPage() {
       <CompanyStats
         totalReserve={totalReserve}
         totalReserveUSD={totalReserveUSD}
-        ethPrice={ethPrice}
       />
 
       <CompaniesTable
-        companies={activeCompanies}
-        title="Active & Inactive Companies"
+        companies={pendingCompanies}
+        title="Pending Companies"
         totalReserve={totalReserve}
         totalReserveUSD={totalReserveUSD}
         onCompaniesUpdate={fetchData}
       />
 
       <CompaniesTable
-        companies={pendingCompanies}
-        title="Pending Companies"
+        companies={activeCompanies}
+        title="Active & Inactive Companies"
         totalReserve={totalReserve}
         totalReserveUSD={totalReserveUSD}
         onCompaniesUpdate={fetchData}

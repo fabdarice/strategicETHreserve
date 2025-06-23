@@ -11,7 +11,8 @@
     "db:seed": "prisma db seed",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "check-balances": "tsx scripts/check-company-balances.ts"
+    "check-balances": "tsx scripts/check-company-balances.ts",
+    "add-manual-wallet": "tsx scripts/add-manual-wallet.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
