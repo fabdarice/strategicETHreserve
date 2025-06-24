@@ -28,7 +28,13 @@ export async function GET(request: NextRequest) {
     }
 
     const companies = await getCompaniesWithSnapshots(true);
-    const transformedCompanies = await transformCompaniesForAdmin(companies);
+    // Filter out companies with reserves under 100 ETH
+    const filteredCompanies = companies.filter((company) => {
+      const reserve = company.currentReserve || 0;
+      return reserve >= 100;
+    });
+    const transformedCompanies =
+      await transformCompaniesForAdmin(filteredCompanies);
     const lastETHPrice = await getLatestETHPrice();
 
     return createSuccessResponse({
