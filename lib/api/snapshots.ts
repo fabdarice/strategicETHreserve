@@ -44,7 +44,7 @@ export async function getChartData(): Promise<ChartResponse> {
   );
 
   // If we have less than 84 days (12 weeks), use weekly aggregation
-  const useWeekly = daysDiff < 84;
+  const useWeekly = daysDiff < 190;
 
   let chartData: ChartDataPoint[];
 
@@ -85,7 +85,7 @@ function aggregateWeeklyData(snapshots: any[]): ChartDataPoint[] {
       (a, b) =>
         new Date(a.snapshotDate).getTime() - new Date(b.snapshotDate).getTime()
     )
-    .slice(-12) // Take last 12 weeks
+    .slice(-25) // Take last 12 weeks
     .map((snapshot) => ({
       period: new Date(snapshot.snapshotDate).toLocaleDateString("en-US", {
         month: "short",
@@ -119,7 +119,7 @@ function aggregateMonthlyData(snapshots: any[]): ChartDataPoint[] {
       (a, b) =>
         new Date(a.snapshotDate).getTime() - new Date(b.snapshotDate).getTime()
     )
-    .slice(-12) // Take last 12 months
+    .slice(-24) // Take last 12 months
     .map((snapshot) => ({
       period: new Date(snapshot.snapshotDate).toLocaleDateString("en-US", {
         month: "short",
