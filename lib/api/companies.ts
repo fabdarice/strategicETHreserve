@@ -77,25 +77,45 @@ export async function transformCompaniesForPublic(
       const latestSnapshot =
         company.snapshots.length > 0 ? company.snapshots[0] : null;
 
-      // Fetch snapshot from ~30 days ago for this company
+      // Check if company is older than 30 days
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const companyCreatedAt = new Date(company.createdAt);
+      const isCompanyOlderThan30Days = companyCreatedAt <= thirtyDaysAgo;
 
-      const prevSnapshot = await prisma.snapshotCompany.findFirst({
-        where: {
-          companyId: company.id,
-          snapshotDate: {
-            lte: thirtyDaysAgo,
+      let prevSnapshot;
+      if (isCompanyOlderThan30Days) {
+        // Fetch snapshot from ~30 days ago for companies older than 30 days
+        prevSnapshot = await prisma.snapshotCompany.findFirst({
+          where: {
+            companyId: company.id,
+            snapshotDate: {
+              lte: thirtyDaysAgo,
+            },
           },
-        },
-        orderBy: {
-          snapshotDate: "desc",
-        },
-        select: {
-          reserve: true,
-          snapshotDate: true,
-        },
-      });
+          orderBy: {
+            snapshotDate: "desc",
+          },
+          select: {
+            reserve: true,
+            snapshotDate: true,
+          },
+        });
+      } else {
+        // Pick the oldest snapshot for companies newer than 30 days
+        prevSnapshot = await prisma.snapshotCompany.findFirst({
+          where: {
+            companyId: company.id,
+          },
+          orderBy: {
+            snapshotDate: "asc",
+          },
+          select: {
+            reserve: true,
+            snapshotDate: true,
+          },
+        });
+      }
 
       const reserve =
         latestSnapshot &&
