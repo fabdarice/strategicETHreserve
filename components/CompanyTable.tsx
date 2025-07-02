@@ -164,7 +164,7 @@ export default function CompanyTable({
             <TableHead className="text-[hsl(var(--primary))]">
               ENTITIES
             </TableHead>
-            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell">
+            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
               CATEGORY
             </TableHead>
             <TableHead className="text-right text-[hsl(var(--primary))]">
@@ -235,7 +235,7 @@ export default function CompanyTable({
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="hidden sm:table-cell py-2">
+                <TableCell className="hidden sm:table-cell py-2 text-center">
                   {company.category}
                 </TableCell>
                 <TableCell className="text-right py-2">
