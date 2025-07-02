@@ -184,9 +184,7 @@ export default function SubmitCompanyDialog({
                             <SelectItem value="Treasury">Treasury</SelectItem>
                             <SelectItem value="L2">L2</SelectItem>
                             <SelectItem value="Web3">Web3</SelectItem>
-                            <SelectItem value="Government">
-                              Government
-                            </SelectItem>
+                            <SelectItem value="Gov">Gov</SelectItem>
                             <SelectItem value="Other">Other</SelectItem>
                           </SelectContent>
                         </Select>

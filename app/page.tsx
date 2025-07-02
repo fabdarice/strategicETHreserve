@@ -3,6 +3,7 @@
 import CompanyTable from "@/components/CompanyTable";
 import RecentPledges from "@/components/RecentPledges";
 import ETHReserveChart from "@/components/ETHReserveChart";
+import CategoryReserveChart from "@/components/CategoryReserveChart";
 import TotalReserveStats from "@/components/TotalReserveStats";
 import { EthereumLogo } from "@/components/icons/EthereumLogo";
 import Image from "next/image";
@@ -117,11 +118,14 @@ export default function Home() {
                   percentageOfCirculatingSupply={percentageOfCirculatingSupply}
                 />
               </div>
-              <div className="w-full lg:w-2/3">
+              <div className="w-full lg:w-1/3">
                 <ETHReserveChart
                   totalReserve={totalReserve}
                   totalReserveUSD={totalReserveUSD}
                 />
+              </div>
+              <div className="w-full lg:w-1/3">
+                <CategoryReserveChart companies={companies} />
               </div>
             </div>
           )}
