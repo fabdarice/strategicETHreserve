@@ -168,7 +168,7 @@ export default function CompanyTable({
               CATEGORY
             </TableHead>
             <TableHead className="text-right text-[hsl(var(--primary))]">
-              RESERVE <span className="sm:hidden ml-1">ETH</span>
+              ETH
             </TableHead>
             <TableHead className="text-center text-[hsl(var(--primary))] hidden sm:table-cell">
               30D CHANGE
@@ -183,9 +183,9 @@ export default function CompanyTable({
             return (
               <TableRow
                 key={company.id}
-                className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors ${tier.accentClass}`}
+                className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors h-12 ${tier.accentClass}`}
               >
-                <TableCell className="font-medium">
+                <TableCell className="font-medium py-2">
                   {company.website ? (
                     <a
                       href={company.website}
@@ -235,10 +235,10 @@ export default function CompanyTable({
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="hidden sm:table-cell">
+                <TableCell className="hidden sm:table-cell py-2">
                   {company.category}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right py-2">
                   {company.reserve === 0 ? (
                     "-"
                   ) : (
@@ -261,11 +261,10 @@ export default function CompanyTable({
                           maximumFractionDigits: 0,
                         })}
                       </span>
-                      <span className="hidden sm:inline ml-1">ETH</span>
                     </>
                   )}
                 </TableCell>
-                <TableCell className="hidden sm:table-cell text-center">
+                <TableCell className="hidden sm:table-cell text-center py-2">
                   <span
                     className={`inline-flex items-center text-xs font-medium rounded-full px-2 py-0.5 transition-all duration-300 ${
                       company.pctDiff === null || company.pctDiff === 0
@@ -344,7 +343,7 @@ export default function CompanyTable({
                     %
                   </span>
                 </TableCell>
-                <TableCell className="hidden lg:table-cell text-center">
+                <TableCell className="hidden lg:table-cell text-center py-2">
                   <MarketingModal
                     company={company}
                     totalReserve={totalReserve}
