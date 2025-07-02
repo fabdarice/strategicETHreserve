@@ -180,12 +180,10 @@ export default function SubmitCompanyDialog({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="DAO">DAO</SelectItem>
                             <SelectItem value="Company">Company</SelectItem>
-                            <SelectItem value="TradFi">TradFi</SelectItem>
-                            <SelectItem value="Foundation">
-                              Foundation
-                            </SelectItem>
+                            <SelectItem value="Treasury">Treasury</SelectItem>
+                            <SelectItem value="L2">L2</SelectItem>
+                            <SelectItem value="Web3">Web3</SelectItem>
                             <SelectItem value="Government">
                               Government
                             </SelectItem>
