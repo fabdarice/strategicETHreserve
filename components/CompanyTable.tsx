@@ -13,8 +13,13 @@ import { Button } from "@/components/ui/button";
 import SubmitCompanyDialog from "@/components/SubmitCompanyDialog";
 import Image from "next/image";
 import { Company, AccountingType } from "@/app/interfaces/interface";
-import { Share2 } from "lucide-react";
+import { Share2, ChevronUp, ChevronDown } from "lucide-react";
 import { MarketingModal } from "@/components/MarketingModal";
+import { useState } from "react";
+
+// Sorting types
+type SortField = "name" | "category" | "reserve" | "pctDiff";
+type SortDirection = "asc" | "desc";
 
 // Tier system with minimal left accent styling
 type ContributionTier = {
@@ -74,12 +79,79 @@ export default function CompanyTable({
   totalReserve: number;
   totalReserveUSD: number;
 }) {
+  // Sorting state
+  const [sortField, setSortField] = useState<SortField>("reserve");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
   const activeCompanies = companies.filter(
     (company) => company.status === "ACTIVE"
   );
 
-  // Sort companies by reserve amount in descending order (highest first)
-  const sortedCompanies = activeCompanies.sort((a, b) => b.reserve - a.reserve);
+  // Sorting function
+  const sortCompanies = (companies: Company[]) => {
+    return [...companies].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortField) {
+        case "name":
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case "category":
+          aValue = a.category.toLowerCase();
+          bValue = b.category.toLowerCase();
+          // Secondary sort by reserve for category
+          if (aValue === bValue) {
+            return b.reserve - a.reserve;
+          }
+          break;
+        case "reserve":
+          aValue = a.reserve;
+          bValue = b.reserve;
+          break;
+        case "pctDiff":
+          // Handle null values - put them at the end
+          aValue = a.pctDiff ?? -Infinity;
+          bValue = b.pctDiff ?? -Infinity;
+          break;
+        default:
+          return 0;
+      }
+
+      if (sortDirection === "asc") {
+        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      } else {
+        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      }
+    });
+  };
+
+  // Handle header click
+  const handleSort = (field: SortField) => {
+    if (field === sortField) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection(
+        field === "reserve" || field === "pctDiff" ? "desc" : "asc"
+      );
+    }
+  };
+
+  // Get sort icon
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return null;
+    }
+    return sortDirection === "asc" ? (
+      <ChevronUp className="w-4 h-4 ml-1" />
+    ) : (
+      <ChevronDown className="w-4 h-4 ml-1" />
+    );
+  };
+
+  const sortedCompanies = sortCompanies(activeCompanies);
 
   return (
     <div className="rounded-lg border border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden flex-1">
@@ -161,17 +233,41 @@ export default function CompanyTable({
       <Table>
         <TableHeader>
           <TableRow className="border-[hsl(var(--primary)/0.3)]">
-            <TableHead className="text-[hsl(var(--primary))]">
-              ENTITIES
+            <TableHead
+              className="text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              onClick={() => handleSort("name")}
+            >
+              <div className="flex items-center">
+                ENTITIES
+                {getSortIcon("name")}
+              </div>
             </TableHead>
-            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
-              CATEGORY
+            <TableHead
+              className="text-[hsl(var(--primary))] hidden sm:table-cell text-center cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              onClick={() => handleSort("category")}
+            >
+              <div className="flex items-center justify-center">
+                CATEGORY
+                {getSortIcon("category")}
+              </div>
             </TableHead>
-            <TableHead className="text-right text-[hsl(var(--primary))]">
-              ETH
+            <TableHead
+              className="text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              onClick={() => handleSort("reserve")}
+            >
+              <div className="flex items-center justify-end">
+                ETH
+                {getSortIcon("reserve")}
+              </div>
             </TableHead>
-            <TableHead className="text-center text-[hsl(var(--primary))] hidden sm:table-cell">
-              30D CHANGE
+            <TableHead
+              className="text-center text-[hsl(var(--primary))] hidden sm:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              onClick={() => handleSort("pctDiff")}
+            >
+              <div className="flex items-center justify-center">
+                30D CHANGE
+                {getSortIcon("pctDiff")}
+              </div>
             </TableHead>
             <TableHead className="text-[hsl(var(--primary))] hidden lg:table-cell text-center w-12"></TableHead>
           </TableRow>
