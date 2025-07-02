@@ -32,7 +32,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { isAuthenticated } = validateAdminToken(request);
+    const { isAuthenticated } = await validateAdminToken(request);
 
     if (!isAuthenticated) {
       return createUnauthorizedResponse(request);
