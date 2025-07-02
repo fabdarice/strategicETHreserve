@@ -88,6 +88,7 @@ export async function authenticateAdmin(
 
     return { success: true, token };
   } catch (error) {
+    console.error("Authentication error:", error);
     return { success: false, error: "Authentication failed" };
   }
 }

@@ -70,12 +70,6 @@ export default function AdminCompaniesPage() {
           <Link href="/admin" className="mr-4 text-blue-500 hover:underline">
             Admin Home
           </Link>
-          <Link
-            href="/admin/influencers"
-            className="text-blue-500 hover:underline"
-          >
-            Manage Influencers
-          </Link>
         </nav>
         <h1 className="text-2xl font-bold mb-8">Manage Companies</h1>
         <div>Loading Companies...</div>
@@ -103,12 +97,6 @@ export default function AdminCompaniesPage() {
       <nav className="mb-4">
         <Link href="/admin" className="mr-4 text-blue-500 hover:underline">
           Admin Home
-        </Link>
-        <Link
-          href="/admin/influencers"
-          className="text-blue-500 hover:underline"
-        >
-          Manage Influencers
         </Link>
       </nav>
 

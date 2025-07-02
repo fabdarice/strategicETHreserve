@@ -12,7 +12,8 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "check-balances": "tsx scripts/check-company-balances.ts",
-    "add-manual-wallet": "tsx scripts/add-manual-wallet.ts"
+    "add-manual-wallet": "tsx scripts/add-manual-wallet.ts",
+    "create-admin": "tsx scripts/create-admin.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

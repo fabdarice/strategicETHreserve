@@ -21,7 +21,7 @@ import {
 
 export async function GET(request: NextRequest) {
   try {
-    const { isAuthenticated } = validateAdminToken(request);
+    const { isAuthenticated } = await validateAdminToken(request);
 
     if (!isAuthenticated) {
       return createUnauthorizedResponse(request);
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const { isAuthenticated } = validateAdminToken(request);
+    const { isAuthenticated } = await validateAdminToken(request);
 
     if (!isAuthenticated) {
       return createAuthErrorResponse();
@@ -86,7 +86,7 @@ export async function PUT(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const { isAuthenticated } = validateAdminToken(request);
+    const { isAuthenticated } = await validateAdminToken(request);
 
     if (!isAuthenticated) {
       return createUnauthorizedResponse(request);
