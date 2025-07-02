@@ -14,6 +14,8 @@ import CircleLoader from "react-spinners/ClipLoader";
 interface ETHReserveChartProps {
   totalReserve: number;
   totalReserveUSD: number;
+  showUSD: boolean;
+  ethPrice: number;
 }
 
 interface ChartDataPoint {
@@ -26,6 +28,8 @@ interface ChartDataPoint {
 export default function ETHReserveChart({
   totalReserve,
   totalReserveUSD,
+  showUSD,
+  ethPrice,
 }: ETHReserveChartProps) {
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -70,20 +74,32 @@ export default function ETHReserveChart({
       return (
         <div className="bg-card/95 backdrop-blur-sm border border-[hsl(var(--primary))] rounded-lg p-3 shadow-lg">
           <p className="text-sm text-muted-foreground mb-1">{label}</p>
-          <div className="flex items-center gap-2 mb-1">
-            <EthereumLogo className="w-4 h-4 text-[hsl(var(--primary))]" />
-            <p className="text-[hsl(var(--primary))] font-semibold">
-              {`${payload[0].value.toLocaleString(undefined, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })} ETH`}
-            </p>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            {`~$${(payload[0].payload.usd || 0).toLocaleString()}`}
-          </p>
+          {showUSD ? (
+            <div className="items-center gap-2 mb-1">
+              <p className="text-[hsl(var(--primary))] font-semibold">
+                {`$${(
+                  payload[0].payload.usd || payload[0].value * ethPrice
+                ).toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })}`}
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-center gap-0 mb-1">
+              <EthereumLogo className="w-4 h-4 text-[hsl(var(--primary))]" />
+
+              <p className="text-[hsl(var(--primary))] font-semibold">
+                {`${payload[0].value.toLocaleString(undefined, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 0,
+                })} ETH`}
+              </p>
+            </div>
+          )}
+
           {isSignificantIncrease && (
-            <div className="mt-2 pt-2 border-t border-yellow-500/20">
+            <div className="mt-0 pt-0 border-t border-yellow-500/20">
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                 <p className="text-xs text-yellow-500 font-medium">
@@ -131,14 +147,19 @@ export default function ETHReserveChart({
     );
   };
 
-  // Process chart data to calculate day-over-day increases
+  // Process chart data to calculate day-over-day increases and prepare display values
   const processedChartData = chartData.map((point, index) => {
-    if (index === 0) {
-      return { ...point, dayOverDayIncrease: 0 };
-    }
-    const previousReserve = chartData[index - 1].reserve;
-    const dayOverDayIncrease = point.reserve - previousReserve;
-    return { ...point, dayOverDayIncrease };
+    const dayOverDayIncrease =
+      index === 0 ? 0 : point.reserve - chartData[index - 1].reserve;
+    const displayValue = showUSD
+      ? point.usd || point.reserve * ethPrice
+      : point.reserve;
+
+    return {
+      ...point,
+      dayOverDayIncrease,
+      displayValue,
+    };
   });
 
   if (isLoading) {
@@ -147,8 +168,8 @@ export default function ETHReserveChart({
         <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full">
           <div className="mb-4">
             <h2 className="text-lg font-bold text-[hsl(var(--primary))] mb-1 flex items-center gap-2">
-              <EthereumLogo className="w-4 h-4" />
-              Strategic ETH Reserve Growth
+              {!showUSD && <EthereumLogo className="w-4 h-4" />}
+              Strategic {showUSD ? "USD" : "ETH"} Reserve Growth
             </h2>
             <p className="text-xs text-muted-foreground">
               Loading historical data...
@@ -175,7 +196,7 @@ export default function ETHReserveChart({
               {/* Subtle watermark text in center */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                 <div className="text-[hsl(var(--primary))] opacity-10 text-sm sm:text-lg lg:text-2xl font-bold tracking-wider select-none">
-                  Strategic ETH Reserve
+                  Strategic {showUSD ? "USD" : "ETH"} Reserve
                 </div>
               </div>
               <ResponsiveContainer width="100%" height="100%">
@@ -198,12 +219,34 @@ export default function ETHReserveChart({
                     stroke="hsl(var(--primary))"
                     fontSize={10}
                     tickLine={false}
-                    tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                    tickFormatter={(value) => {
+                      if (showUSD) {
+                        const millions = value / 1000000;
+                        if (millions >= 1000) {
+                          const billions = millions / 1000;
+                          return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
+                        } else if (millions >= 1) {
+                          return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(2)}M`;
+                        } else {
+                          return `$${(value / 1000).toFixed(0)}k`;
+                        }
+                      } else {
+                        const thousands = value / 1000;
+                        if (thousands >= 1000) {
+                          const millions = thousands / 1000;
+                          return `${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(2)}M`;
+                        } else if (thousands >= 1) {
+                          return `${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}k`;
+                        } else {
+                          return value.toString();
+                        }
+                      }
+                    }}
                   />
                   <Tooltip content={<CustomTooltip />} />
                   <Line
                     type="monotone"
-                    dataKey="reserve"
+                    dataKey="displayValue"
                     stroke="hsl(var(--primary))"
                     strokeWidth={2}
                     dot={<CustomDot />}

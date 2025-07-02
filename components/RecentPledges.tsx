@@ -4,6 +4,7 @@ import { Company } from "@/app/interfaces/interface";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import Image from "next/image";
+import { EthereumLogo } from "@/components/icons/EthereumLogo";
 
 // Tier system with minimal left accent styling (same as CompanyTable)
 type ContributionTier = {
@@ -47,7 +48,15 @@ function getContributionTier(amount: number): ContributionTier {
   );
 }
 
-export default function RecentPledges({ pledges }: { pledges: Company[] }) {
+export default function RecentPledges({
+  pledges,
+  showUSD,
+  ethPrice,
+}: {
+  pledges: Company[];
+  showUSD: boolean;
+  ethPrice: number;
+}) {
   return (
     <section className="space-y-6 md:w-80 flex-shrink-0">
       <div>
@@ -101,13 +110,18 @@ export default function RecentPledges({ pledges }: { pledges: Company[] }) {
                   </div>
                   {pledge.reserve > 0 && (
                     <div
-                      className={`text-[hsl(var(--primary))] ${tier.textWeight}`}
+                      className={`text-[hsl(var(--primary))] ${tier.textWeight} flex items-center gap-1`}
                     >
-                      {pledge.reserve.toLocaleString(undefined, {
+                      {!showUSD && <EthereumLogo className="w-4 h-4" />}
+                      {showUSD && "$"}
+                      {(showUSD
+                        ? pledge.reserve * ethPrice
+                        : pledge.reserve
+                      ).toLocaleString(undefined, {
                         minimumFractionDigits: 0,
-                        maximumFractionDigits: 0,
-                      })}{" "}
-                      ETH
+                        maximumFractionDigits: showUSD ? 0 : 0,
+                      })}
+                      {!showUSD && " ETH"}
                     </div>
                   )}
                   <div className="text-sm text-muted-foreground">

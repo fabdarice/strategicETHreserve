@@ -12,6 +12,8 @@ import { useMemo } from "react";
 
 interface CategoryReserveChartProps {
   companies: Company[];
+  showUSD: boolean;
+  ethPrice: number;
 }
 
 interface CategoryData {
@@ -19,6 +21,7 @@ interface CategoryData {
   reserve: number;
   percentage: number;
   count: number;
+  displayValue: number;
 }
 
 // Define colors for different categories
@@ -37,6 +40,8 @@ const CATEGORY_COLORS = [
 
 export default function CategoryReserveChart({
   companies,
+  showUSD,
+  ethPrice,
 }: CategoryReserveChartProps) {
   const categoryData = useMemo(() => {
     const activeCompanies = companies.filter(
@@ -73,11 +78,12 @@ export default function CategoryReserveChart({
         reserve,
         count,
         percentage: (reserve / totalReserve) * 100,
+        displayValue: showUSD ? reserve * ethPrice : reserve,
       }))
       .sort((a, b) => b.reserve - a.reserve); // Sort by reserve amount
 
     return data;
-  }, [companies]);
+  }, [companies, showUSD, ethPrice]);
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload }: any) => {
@@ -88,21 +94,21 @@ export default function CategoryReserveChart({
           <p className="text-sm font-semibold text-[hsl(var(--primary))] mb-2">
             {data.category}
           </p>
-          <div className="flex items-center gap-2 mb-1">
-            <EthereumLogo className="w-4 h-4 text-[hsl(var(--primary))]" />
+          <div className="items-center mb-1 text-center">
             <p className="text-[hsl(var(--primary))] font-semibold">
-              {data.reserve.toLocaleString(undefined, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              })}{" "}
-              ETH
+              {showUSD
+                ? `$${data.displayValue.toLocaleString(undefined, {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })}`
+                : `${data.reserve.toLocaleString(undefined, {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                  })} ETH`}
             </p>
           </div>
           <p className="text-xs text-muted-foreground mb-1">
             {data.percentage.toFixed(1)}% of total reserve
-          </p>
-          <p className="text-xs text-muted-foreground">
-            {data.count} {data.count === 1 ? "entity" : "entities"}
           </p>
         </div>
       );
@@ -116,7 +122,7 @@ export default function CategoryReserveChart({
         <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full">
           <div className="mb-4">
             <h2 className="text-lg font-bold text-[hsl(var(--primary))] mb-1 flex items-center gap-2">
-              <EthereumLogo className="w-4 h-4" />
+              {!showUSD && <EthereumLogo className="w-4 h-4" />}
               Reserve by Category
             </h2>
           </div>
@@ -184,7 +190,7 @@ export default function CategoryReserveChart({
                 innerRadius={30}
                 outerRadius={80}
                 paddingAngle={2}
-                dataKey="reserve"
+                dataKey="displayValue"
                 stroke="hsl(var(--background))"
                 strokeWidth={2}
               >

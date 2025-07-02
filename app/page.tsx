@@ -6,6 +6,7 @@ import ETHReserveChart from "@/components/ETHReserveChart";
 import CategoryReserveChart from "@/components/CategoryReserveChart";
 import TotalReserveStats from "@/components/TotalReserveStats";
 import { EthereumLogo } from "@/components/icons/EthereumLogo";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Company } from "./interfaces/interface";
@@ -17,6 +18,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [ethPrice, setEthPrice] = useState<number>(0);
+  const [showUSD, setShowUSD] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -78,6 +80,38 @@ export default function Home() {
     <main className="min-h-screen cyber-grid">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="text-center mb-8 relative">
+          {/* ETH/USD Toggle - Top right */}
+          <div className="absolute top-0 right-0">
+            <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] rounded-lg p-1 neon-border">
+              <div className="flex">
+                <Button
+                  variant={!showUSD ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setShowUSD(false)}
+                  className={`text-xs font-semibold px-3 py-1 ${
+                    !showUSD
+                      ? "bg-[hsl(var(--primary))] text-black"
+                      : "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1]"
+                  }`}
+                >
+                  ETH
+                </Button>
+                <Button
+                  variant={showUSD ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setShowUSD(true)}
+                  className={`text-xs font-semibold px-3 py-1 ${
+                    showUSD
+                      ? "bg-[hsl(var(--primary))] text-black"
+                      : "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1]"
+                  }`}
+                >
+                  USD
+                </Button>
+              </div>
+            </div>
+          </div>
+
           <div className="flex justify-center items-center mb-4">
             <div className="relative">
               <EthereumLogo className="w-20 h-20 text-[hsl(var(--primary))] animate-pulse" />
@@ -116,16 +150,23 @@ export default function Home() {
                   totalReserveUSD={totalReserveUSD}
                   activeCompanyCount={activeCompanyCount}
                   percentageOfCirculatingSupply={percentageOfCirculatingSupply}
+                  showUSD={showUSD}
                 />
               </div>
               <div className="w-full lg:w-1/3">
                 <ETHReserveChart
                   totalReserve={totalReserve}
                   totalReserveUSD={totalReserveUSD}
+                  showUSD={showUSD}
+                  ethPrice={ethPrice}
                 />
               </div>
               <div className="w-full lg:w-1/3">
-                <CategoryReserveChart companies={companies} />
+                <CategoryReserveChart
+                  companies={companies}
+                  showUSD={showUSD}
+                  ethPrice={ethPrice}
+                />
               </div>
             </div>
           )}
@@ -142,8 +183,14 @@ export default function Home() {
                 companies={companies}
                 totalReserve={totalReserve}
                 totalReserveUSD={totalReserveUSD}
+                ethPrice={ethPrice}
+                showUSD={showUSD}
               />
-              <RecentPledges pledges={recentPledges} />
+              <RecentPledges
+                pledges={recentPledges}
+                showUSD={showUSD}
+                ethPrice={ethPrice}
+              />
             </div>
           )}
         </div>

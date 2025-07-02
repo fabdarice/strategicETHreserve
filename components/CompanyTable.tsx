@@ -18,7 +18,7 @@ import { MarketingModal } from "@/components/MarketingModal";
 import { useState } from "react";
 
 // Sorting types
-type SortField = "name" | "category" | "reserve" | "pctDiff";
+type SortField = "name" | "category" | "reserve" | "pctDiff" | "rank";
 type SortDirection = "asc" | "desc";
 
 // Tier system with minimal left accent styling
@@ -74,10 +74,14 @@ export default function CompanyTable({
   companies,
   totalReserve,
   totalReserveUSD,
+  ethPrice,
+  showUSD,
 }: {
   companies: Company[];
   totalReserve: number;
   totalReserveUSD: number;
+  ethPrice: number;
+  showUSD: boolean;
 }) {
   // Sorting state
   const [sortField, setSortField] = useState<SortField>("reserve");
@@ -110,6 +114,17 @@ export default function CompanyTable({
           aValue = a.reserve;
           bValue = b.reserve;
           break;
+        case "rank":
+          // For rank, we sort by reserve but flip the direction
+          // asc rank order (1,2,3...) needs desc reserve order (highest first)
+          aValue = a.reserve;
+          bValue = b.reserve;
+          // Flip the comparison for rank
+          if (sortDirection === "asc") {
+            return bValue - aValue; // highest reserves first (rank 1, 2, 3...)
+          } else {
+            return aValue - bValue; // lowest reserves first (highest rank numbers first)
+          }
         case "pctDiff":
           // Handle null values - put them at the end
           aValue = a.pctDiff ?? -Infinity;
@@ -234,6 +249,14 @@ export default function CompanyTable({
         <TableHeader>
           <TableRow className="border-[hsl(var(--primary)/0.3)]">
             <TableHead
+              className="text-[hsl(var(--primary))] text-center w-16 cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              onClick={() => handleSort("rank")}
+            >
+              <div className="flex items-center justify-center">
+                #{getSortIcon("rank")}
+              </div>
+            </TableHead>
+            <TableHead
               className="text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
               onClick={() => handleSort("name")}
             >
@@ -256,8 +279,10 @@ export default function CompanyTable({
               onClick={() => handleSort("reserve")}
             >
               <div className="flex items-center justify-end">
-                ETH
-                {getSortIcon("reserve")}
+                <div className="flex items-center gap-2">
+                  {showUSD ? "USD" : "ETH"}
+                  {getSortIcon("reserve")}
+                </div>
               </div>
             </TableHead>
             <TableHead
@@ -265,23 +290,36 @@ export default function CompanyTable({
               onClick={() => handleSort("pctDiff")}
             >
               <div className="flex items-center justify-center">
-                30D CHANGE
+                30 DAYS
                 {getSortIcon("pctDiff")}
               </div>
             </TableHead>
-            <TableHead className="text-[hsl(var(--primary))] hidden lg:table-cell text-center w-12"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedCompanies.map((company) => {
+          {sortedCompanies.map((company, index) => {
             const tier = getContributionTier(company.reserve);
+            const displayValue = showUSD
+              ? company.reserve * ethPrice
+              : company.reserve;
+
+            // Calculate rank based on reserve amount (always use ETH, not USD)
+            // Create a sorted list by reserve to get the true rank
+            const rankedCompanies = [...activeCompanies].sort(
+              (a, b) => b.reserve - a.reserve
+            );
+            const rank =
+              rankedCompanies.findIndex((c) => c.id === company.id) + 1;
 
             return (
               <TableRow
                 key={company.id}
-                className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors h-12 ${tier.accentClass}`}
+                className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors h-8 ${tier.accentClass}`}
               >
-                <TableCell className="font-medium py-2">
+                <TableCell className="text-center py-1 font-medium">
+                  {rank}
+                </TableCell>
+                <TableCell className="font-medium py-1">
                   {company.website ? (
                     <a
                       href={company.website}
@@ -331,10 +369,10 @@ export default function CompanyTable({
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="hidden sm:table-cell py-2 text-center">
+                <TableCell className="hidden sm:table-cell py-1 text-center">
                   {company.category}
                 </TableCell>
-                <TableCell className="text-right py-2">
+                <TableCell className="text-right py-1">
                   {company.reserve === 0 ? (
                     "-"
                   ) : (
@@ -352,9 +390,10 @@ export default function CompanyTable({
                         </span>
                       )}
                       <span className={tier.textWeight}>
-                        {company.reserve.toLocaleString(undefined, {
+                        {showUSD && "$"}
+                        {displayValue.toLocaleString(undefined, {
                           minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
+                          maximumFractionDigits: showUSD ? 0 : 0,
                         })}
                       </span>
                     </>
@@ -439,21 +478,6 @@ export default function CompanyTable({
                     %
                   </span>
                 </TableCell>
-                <TableCell className="hidden lg:table-cell text-center py-2">
-                  <MarketingModal
-                    company={company}
-                    totalReserve={totalReserve}
-                    totalReserveUSD={totalReserveUSD}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 text-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] hover:bg-[hsl(var(--primary))/0.1]"
-                    >
-                      <Share2 className="w-4 h-4" />
-                    </Button>
-                  </MarketingModal>
-                </TableCell>
               </TableRow>
             );
           })}
@@ -461,7 +485,7 @@ export default function CompanyTable({
       </Table>
 
       {/* Legend for Accounting Types */}
-      <div className="px-4 pb-4 text-xs text-muted-foreground">
+      <div className="px-4 pb-4 pt-4 text-xs text-muted-foreground">
         <p>
           <span className="font-bold text-[hsl(var(--primary))]">*</span> Amount
           self-reported by the entity.
