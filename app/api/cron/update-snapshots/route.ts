@@ -169,7 +169,7 @@ async function sendChangeAlert(
 ) {
   if (
     adminEmail &&
-    ((pctDiff && (pctDiff > 10 || pctDiff < -10)) || diff >= 100)
+    ((pctDiff && (pctDiff > 1 || pctDiff < -1)) || diff >= 100)
   ) {
     try {
       await resend.emails.send({
