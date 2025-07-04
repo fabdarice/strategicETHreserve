@@ -13,12 +13,12 @@ import { Button } from "@/components/ui/button";
 import SubmitCompanyDialog from "@/components/SubmitCompanyDialog";
 import Image from "next/image";
 import { Company, AccountingType } from "@/app/interfaces/interface";
-import { Share2, ChevronUp, ChevronDown } from "lucide-react";
+import { Share2, ChevronUp, ChevronDown, Filter, X } from "lucide-react";
 import { MarketingModal } from "@/components/MarketingModal";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 // Sorting types
-type SortField = "name" | "category" | "reserve" | "pctDiff" | "rank";
+type SortField = "name" | "reserve" | "pctDiff" | "rank";
 type SortDirection = "asc" | "desc";
 
 // Tier system with minimal left accent styling
@@ -87,9 +87,56 @@ export default function CompanyTable({
   const [sortField, setSortField] = useState<SortField>("reserve");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
+  // Filter state
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
+  const filterRef = useRef<HTMLDivElement>(null);
+
   const activeCompanies = companies.filter(
     (company) => company.status === "ACTIVE"
   );
+
+  // Get unique categories from active companies
+  const availableCategories = Array.from(
+    new Set(activeCompanies.map((company) => company.category))
+  ).sort();
+
+  // Filter companies by selected categories
+  const filteredCompanies =
+    selectedCategories.length > 0
+      ? activeCompanies.filter((company) =>
+          selectedCategories.includes(company.category)
+        )
+      : activeCompanies;
+
+  // Toggle category selection
+  const toggleCategory = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSelectedCategories([]);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        filterRef.current &&
+        !filterRef.current.contains(event.target as Node)
+      ) {
+        setShowCategoryFilter(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Sorting function
   const sortCompanies = (companies: Company[]) => {
@@ -101,14 +148,6 @@ export default function CompanyTable({
         case "name":
           aValue = a.name.toLowerCase();
           bValue = b.name.toLowerCase();
-          break;
-        case "category":
-          aValue = a.category.toLowerCase();
-          bValue = b.category.toLowerCase();
-          // Secondary sort by reserve for category
-          if (aValue === bValue) {
-            return b.reserve - a.reserve;
-          }
           break;
         case "reserve":
           aValue = a.reserve;
@@ -166,7 +205,7 @@ export default function CompanyTable({
     );
   };
 
-  const sortedCompanies = sortCompanies(activeCompanies);
+  const sortedCompanies = sortCompanies(filteredCompanies);
 
   return (
     <div className="rounded-lg border border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden flex-1">
@@ -265,13 +304,77 @@ export default function CompanyTable({
                 {getSortIcon("name")}
               </div>
             </TableHead>
-            <TableHead
-              className="text-[hsl(var(--primary))] hidden sm:table-cell text-center cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
-              onClick={() => handleSort("category")}
-            >
+            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center relative">
               <div className="flex items-center justify-center">
-                CATEGORY
-                {getSortIcon("category")}
+                <span>CATEGORY</span>
+                <div className="relative ml-2" ref={filterRef}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowCategoryFilter(!showCategoryFilter);
+                    }}
+                    className={`p-1 rounded hover:bg-[hsl(var(--primary)/0.1)] transition-colors ${
+                      selectedCategories.length > 0
+                        ? "text-[hsl(var(--primary))]"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <Filter className="w-3 h-3" />
+                  </button>
+
+                  {showCategoryFilter && (
+                    <div className="absolute top-full right-0 mt-2 bg-card border border-[hsl(var(--primary)/0.3)] rounded-lg shadow-lg z-50 min-w-[200px] p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-[hsl(var(--primary))]">
+                          Filter Categories
+                        </span>
+                        {selectedCategories.length > 0 && (
+                          <button
+                            onClick={clearFilters}
+                            className="text-xs text-muted-foreground hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1"
+                          >
+                            <X className="w-3 h-3" />
+                            Clear
+                          </button>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        {availableCategories.map((category) => {
+                          const isSelected =
+                            selectedCategories.includes(category);
+                          const count = activeCompanies.filter(
+                            (c) => c.category === category
+                          ).length;
+
+                          return (
+                            <button
+                              key={category}
+                              onClick={() => toggleCategory(category)}
+                              className={`w-full text-left px-2 py-1 rounded text-xs transition-all duration-200 flex items-center justify-between ${
+                                isSelected
+                                  ? "bg-[hsl(var(--primary))] text-secondary"
+                                  : "hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
+                              }`}
+                            >
+                              <span>{category}</span>
+                              <span className="text-xs opacity-70">
+                                ({count})
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {selectedCategories.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-[hsl(var(--primary)/0.3)]">
+                          <div className="text-xs text-muted-foreground">
+                            Showing {filteredCompanies.length} of{" "}
+                            {activeCompanies.length} entities
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </TableHead>
             <TableHead
@@ -305,7 +408,7 @@ export default function CompanyTable({
 
             // Calculate rank based on reserve amount (always use ETH, not USD)
             // Create a sorted list by reserve to get the true rank
-            const rankedCompanies = [...activeCompanies].sort(
+            const rankedCompanies = [...filteredCompanies].sort(
               (a, b) => b.reserve - a.reserve
             );
             const rank =
