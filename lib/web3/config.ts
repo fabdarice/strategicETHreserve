@@ -96,6 +96,7 @@ export const tokensPerNetwork: {
     dsTVL?: string;
     sfrxETH?: string;
     frxETH?: string;
+    fWETH?: string; // Fluid WETH
   };
 } = {
   [Network.ETH_MAINNET]: {
@@ -146,6 +147,7 @@ export const tokensPerNetwork: {
     aArbwstETH: "0x513c7E3a9c69cA3e22550eF58AC1C0088e918FFf",
     rETH: "0xEC70Dcb4A1EFa46b8F2D97C310C9c4790ba5ffA8",
     aArbrETH: "0x8Eb270e296023E9D92081fdF967dDd7878724424",
+    fWETH: "0x45Df0656F8aDf017590009d2f1898eeca4F0a205",
   },
   [Network.OPT_MAINNET]: {
     wstETH: "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
