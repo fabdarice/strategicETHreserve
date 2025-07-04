@@ -303,7 +303,7 @@ export default function SubmitCompanyDialog({
                             <li className="transition-colors duration-200 hover:text-primary">
                               Assets: ETH, stETH, wstETH, rETH, WETH, oETH,
                               ankrETH, ETHx, rsETH, eETH, weETH, cmETH, mETH,
-                              spWETH, cWETHv3, frxETH, sfrxETH, and Aave
+                              spWETH, cWETHv3, frxETH, sfrxETH, fWETH, and Aave
                               derivatives (aETH, aWETH, awstETH, aweETH, arETH,
                               aosETH, aETHx, aLidoWETH)
                             </li>
