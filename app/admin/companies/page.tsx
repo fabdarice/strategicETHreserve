@@ -95,8 +95,8 @@ export default function AdminCompaniesPage() {
   return (
     <div className="container mx-auto p-8">
       <nav className="mb-4">
-        <Link href="/admin" className="mr-4 text-blue-500 hover:underline">
-          Admin Home
+        <Link href="/" className="mr-4 text-blue-500 hover:underline">
+          Home
         </Link>
       </nav>
 
