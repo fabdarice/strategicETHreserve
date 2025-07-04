@@ -48,13 +48,21 @@ export function CompanyRow({
         />
       </TableCell>
       <TableCell className="p-1">
-        <Input
+        <select
           value={displayCompany.category ?? ""}
           onChange={(e) =>
             onInputChange(company.id, "category", e.target.value)
           }
-          className="bg-background h-8 text-xs"
-        />
+          className="w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
+        >
+          <option value="">Select a category</option>
+          <option value="Company">Company</option>
+          <option value="Treasury">Treasury</option>
+          <option value="Blockchains">Blockchains</option>
+          <option value="Web3 Entities">Web3 Entities</option>
+          <option value="Gov">Gov</option>
+          <option value="Other">Other</option>
+        </select>
       </TableCell>
       <TableCell className="p-1">
         <Input

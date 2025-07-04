@@ -180,12 +180,25 @@ export default function SubmitCompanyDialog({
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Company">Company</SelectItem>
-                            <SelectItem value="Treasury">Treasury</SelectItem>
-                            <SelectItem value="L2">L2</SelectItem>
-                            <SelectItem value="Web3">Web3</SelectItem>
-                            <SelectItem value="Gov">Gov</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
+                            <SelectItem value="Public Companies">
+                              Public Companies
+                            </SelectItem>
+                            <SelectItem value="Private Companies">
+                              Private Companies
+                            </SelectItem>
+                            <SelectItem value="Treasuries">
+                              Treasuries
+                            </SelectItem>
+                            <SelectItem value="Blockchains">
+                              Blockchains
+                            </SelectItem>
+                            <SelectItem value="Web3 Entities">
+                              Web3 Entities
+                            </SelectItem>
+                            <SelectItem value="Goverments">
+                              Goverments
+                            </SelectItem>
+                            <SelectItem value="Others">Others</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
