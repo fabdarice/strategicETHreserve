@@ -56,12 +56,13 @@ export function CompanyRow({
           className="w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
         >
           <option value="">Select a category</option>
-          <option value="Company">Company</option>
-          <option value="Treasury">Treasury</option>
+          <option value="Public Companies">Public Companies</option>
+          <option value="Private Companies">Private Companies</option>
+          <option value="Treasuries">Treasuries</option>
           <option value="Blockchains">Blockchains</option>
           <option value="Web3 Entities">Web3 Entities</option>
-          <option value="Gov">Gov</option>
-          <option value="Other">Other</option>
+          <option value="Goverments">Goverments</option>
+          <option value="Others">Others</option>
         </select>
       </TableCell>
       <TableCell className="p-1">
