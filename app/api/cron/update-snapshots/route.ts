@@ -144,18 +144,18 @@ async function processCompanySnapshot(
         snapshotDate,
       },
     });
-
-    // Send email if significant change
-    await sendChangeAlert(
-      company,
-      pctDiff,
-      diff,
-      prevReserve,
-      currentReserve,
-      snapshotDate,
-      adminEmail
-    );
   }
+
+  // Send email if significant change (moved outside if/else to catch all changes)
+  await sendChangeAlert(
+    company,
+    pctDiff,
+    diff,
+    prevReserve,
+    currentReserve,
+    snapshotDate,
+    adminEmail
+  );
 }
 
 async function sendChangeAlert(
