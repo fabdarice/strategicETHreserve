@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Company } from "@/app/interfaces/interface";
 import { EthereumLogo } from "@/components/icons/EthereumLogo";
 import { useState, useEffect } from "react";
+import confetti from "canvas-confetti";
 
 // Custom DialogContent without close button
 const CustomDialogContent = React.forwardRef<
@@ -24,7 +25,7 @@ const CustomDialogContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-xl translate-x-[-50%] translate-y-[-50%] gap-4 border-2 border-[hsl(var(--primary))] bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
         className
       )}
       {...props}
@@ -90,16 +91,72 @@ export function ReserveIncreaseModal({
       ? ((totalReserve - previousReserve) / previousReserve) * 100
       : 100;
 
+  // Fireworks function
+  const triggerFireworks = () => {
+    const canvas = document.getElementById(
+      "fireworks-canvas"
+    ) as HTMLCanvasElement;
+    if (!canvas) return;
+
+    // Create a confetti instance bound to the canvas
+    const myConfetti = confetti.create(canvas, {
+      resize: true,
+      useWorker: true,
+    });
+
+    const colors = [
+      "#FFD700",
+      "#FF6B6B",
+      "#4ECDC4",
+      "#45B7D1",
+      "#96CEB4",
+      "#FFEAA7",
+    ];
+
+    // Fire confetti just a few times instead of continuously
+    const fireTimes = [0, 500, 1000]; // Fire at 0ms, 500ms, and 1000ms
+
+    fireTimes.forEach((delay) => {
+      setTimeout(() => {
+        myConfetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: colors,
+        });
+      }, delay);
+    });
+  };
+
+  // Trigger fireworks when modal opens and data is loaded
+  useEffect(() => {
+    if (open && !loading && totalReserve > 0) {
+      const timer = setTimeout(() => {
+        triggerFireworks();
+      }, 300); // Small delay to let modal fully open
+
+      return () => clearTimeout(timer);
+    }
+  }, [open, loading, totalReserve]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <CustomDialogContent className="p-0 overflow-hidden border-none bg-background/95 backdrop-blur-sm">
+      <CustomDialogContent className="p-0 overflow-hidden bg-background/95 backdrop-blur-sm ">
+        {/* Canvas for fireworks contained within modal */}
+        <canvas
+          id="fireworks-canvas"
+          className="absolute inset-0 pointer-events-none z-10"
+          width={600}
+          height={600}
+        />
+
         {loading ? (
-          <div className="p-6 flex justify-center items-center">
+          <div className="p-6 flex justify-center items-center relative z-20">
             <p className="text-lg">Loading reserve data...</p>
           </div>
         ) : (
-          <div className="p-6 space-y-6">
+          <div className="p-6 space-y-6 relative z-20">
             {/* Logo */}
             <div className="flex flex-col items-center gap-3">
               <div className="relative flex items-center justify-center">
