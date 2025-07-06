@@ -35,6 +35,8 @@ const SECONDARY_CATEGORIES = [
   "DeFi",
   "L1",
   "L2",
+  "DAO",
+  "Metaverse",
   "Others",
 ];
 
