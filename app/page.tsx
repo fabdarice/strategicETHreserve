@@ -194,7 +194,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        <footer className="mt-24 text-center">
+        <footer className="mt-12 text-center">
           <a
             href="https://x.com/fabdarice"
             target="_blank"
