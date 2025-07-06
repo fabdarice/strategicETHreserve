@@ -13,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import SubmitCompanyDialog from "@/components/SubmitCompanyDialog";
 import Image from "next/image";
 import { Company, AccountingType } from "@/app/interfaces/interface";
-import { Share2, ChevronUp, ChevronDown, Filter, X } from "lucide-react";
-import { MarketingModal } from "@/components/MarketingModal";
+import { ChevronUp, ChevronDown, Filter, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 // Sorting types
@@ -98,15 +97,40 @@ export default function CompanyTable({
 
   // Get unique categories from active companies
   const availableCategories = Array.from(
-    new Set(activeCompanies.map((company) => company.category))
+    new Set([
+      ...activeCompanies.map((company) => company.category),
+      ...activeCompanies
+        .flatMap((company) =>
+          Array.isArray(company.secondaryCategory)
+            ? company.secondaryCategory
+            : company.secondaryCategory
+              ? [company.secondaryCategory]
+              : []
+        )
+        .filter((cat) => cat !== ""),
+    ])
   ).sort();
 
-  // Filter companies by selected categories
+  // Filter companies by selected categories (include both primary and secondary)
   const filteredCompanies =
     selectedCategories.length > 0
-      ? activeCompanies.filter((company) =>
-          selectedCategories.includes(company.category)
-        )
+      ? activeCompanies.filter((company) => {
+          // Check if primary category matches
+          if (selectedCategories.includes(company.category)) {
+            return true;
+          }
+
+          // Check if any secondary category matches
+          const secondaryCategories = Array.isArray(company.secondaryCategory)
+            ? company.secondaryCategory
+            : company.secondaryCategory
+              ? [company.secondaryCategory]
+              : [];
+
+          return secondaryCategories.some((cat) =>
+            selectedCategories.includes(cat)
+          );
+        })
       : activeCompanies;
 
   // Toggle category selection
@@ -206,6 +230,35 @@ export default function CompanyTable({
   };
 
   const sortedCompanies = sortCompanies(filteredCompanies);
+
+  // Helper function to get the display category for a company based on current filter
+  const getDisplayCategory = (company: Company) => {
+    if (selectedCategories.length === 0) {
+      return company.category;
+    }
+
+    // If filtering, show the category that matched the filter
+    if (selectedCategories.includes(company.category)) {
+      return company.category;
+    }
+
+    // Check secondary categories (handle both array and string formats)
+    const secondaryCategories = Array.isArray(company.secondaryCategory)
+      ? company.secondaryCategory
+      : company.secondaryCategory
+        ? [company.secondaryCategory]
+        : [];
+
+    const matchingSecondaryCategory = secondaryCategories.find((cat) =>
+      selectedCategories.includes(cat)
+    );
+
+    if (matchingSecondaryCategory) {
+      return matchingSecondaryCategory;
+    }
+
+    return company.category;
+  };
 
   return (
     <div className="rounded-lg border border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden flex-1">
@@ -342,9 +395,23 @@ export default function CompanyTable({
                         {availableCategories.map((category) => {
                           const isSelected =
                             selectedCategories.includes(category);
-                          const count = activeCompanies.filter(
-                            (c) => c.category === category
-                          ).length;
+                          const count = activeCompanies.filter((c) => {
+                            // Count if primary category matches
+                            if (c.category === category) {
+                              return true;
+                            }
+
+                            // Count if any secondary category matches
+                            const secondaryCategories = Array.isArray(
+                              c.secondaryCategory
+                            )
+                              ? c.secondaryCategory
+                              : c.secondaryCategory
+                                ? [c.secondaryCategory]
+                                : [];
+
+                            return secondaryCategories.includes(category);
+                          }).length;
 
                           return (
                             <button
@@ -473,7 +540,7 @@ export default function CompanyTable({
                   )}
                 </TableCell>
                 <TableCell className="hidden sm:table-cell py-1 text-center">
-                  {company.category}
+                  {getDisplayCategory(company)}
                 </TableCell>
                 <TableCell className="text-right py-1">
                   {company.reserve === 0 ? (

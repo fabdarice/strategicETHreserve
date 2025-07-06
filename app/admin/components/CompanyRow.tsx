@@ -11,6 +11,8 @@ import {
   AccountingType,
   AdminCompany,
 } from "@/app/interfaces/interface";
+import { useState, useRef, useEffect } from "react";
+import { ChevronDown, X } from "lucide-react";
 
 interface CompanyRowProps {
   company: AdminCompany;
@@ -22,6 +24,20 @@ interface CompanyRowProps {
   totalReserveUSD?: number;
 }
 
+// Available secondary categories
+const SECONDARY_CATEGORIES = [
+  "Public Companies",
+  "Private Companies",
+  "Treasuries",
+  "Blockchains",
+  "Web3 Entities",
+  "Goverments",
+  "DeFi",
+  "L1",
+  "L2",
+  "Others",
+];
+
 export function CompanyRow({
   company,
   displayCompany,
@@ -31,6 +47,45 @@ export function CompanyRow({
   totalReserve = 0,
   totalReserveUSD = 0,
 }: CompanyRowProps) {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Ensure secondaryCategory is always an array
+  const secondaryCategories = Array.isArray(displayCompany.secondaryCategory)
+    ? displayCompany.secondaryCategory
+    : displayCompany.secondaryCategory
+      ? [displayCompany.secondaryCategory]
+      : [];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const toggleCategory = (category: string) => {
+    const currentCategories = secondaryCategories;
+    const newCategories = currentCategories.includes(category)
+      ? currentCategories.filter((c) => c !== category)
+      : [...currentCategories, category];
+
+    onInputChange(company.id, "secondaryCategory", newCategories);
+  };
+
+  const removeCategory = (category: string) => {
+    const newCategories = secondaryCategories.filter((c) => c !== category);
+    onInputChange(company.id, "secondaryCategory", newCategories);
+  };
+
   return (
     <TableRow>
       <TableCell className="p-1">
@@ -64,6 +119,69 @@ export function CompanyRow({
           <option value="Goverments">Goverments</option>
           <option value="Others">Others</option>
         </select>
+      </TableCell>
+      <TableCell className="p-1">
+        <div className="relative" ref={dropdownRef}>
+          <div
+            onClick={() => setShowDropdown(!showDropdown)}
+            className="min-h-[32px] w-full rounded-md border border-input bg-background px-2 py-1 text-xs cursor-pointer flex items-center justify-between"
+          >
+            <div className="flex flex-wrap gap-1 flex-1">
+              {secondaryCategories.length > 0 ? (
+                secondaryCategories.map((category) => (
+                  <span
+                    key={category}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 bg-primary/10 text-primary rounded text-xs"
+                  >
+                    {category}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeCategory(category);
+                      }}
+                      className="hover:bg-primary/20 rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                ))
+              ) : (
+                <span className="text-muted-foreground">Select categories</span>
+              )}
+            </div>
+            <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          </div>
+
+          {showDropdown && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-input rounded-md shadow-lg z-50 max-h-60 overflow-y-auto">
+              {SECONDARY_CATEGORIES.map((category) => {
+                const isSelected = secondaryCategories.includes(category);
+                return (
+                  <button
+                    key={category}
+                    onClick={() => toggleCategory(category)}
+                    className={`w-full text-left px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground transition-colors ${
+                      isSelected ? "bg-primary/10 text-primary" : ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className={`w-3 h-3 border rounded-sm ${isSelected ? "bg-primary border-primary" : "border-input"}`}
+                      >
+                        {isSelected && (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-1.5 h-1.5 bg-primary-foreground rounded-full"></div>
+                          </div>
+                        )}
+                      </div>
+                      {category}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </TableCell>
       <TableCell className="p-1">
         <Input

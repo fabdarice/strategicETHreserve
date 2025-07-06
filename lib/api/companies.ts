@@ -12,6 +12,7 @@ export async function getCompaniesWithSnapshots(isAdmin: boolean = false) {
       id: true,
       name: true,
       category: true,
+      secondaryCategory: true,
       currentReserve: true,
       logo: true,
       website: true,

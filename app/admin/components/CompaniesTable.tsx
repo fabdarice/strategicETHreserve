@@ -148,6 +148,7 @@ export function CompaniesTable({
               <TableHead className="w-[120px]">Logo URL</TableHead>
               <TableHead className="w-[120px]">Name</TableHead>
               <TableHead className="w-[100px]">Category</TableHead>
+              <TableHead className="w-[100px]">Secondary Category</TableHead>
               <TableHead className="w-[100px]">Reserve</TableHead>
               <TableHead className="w-[100px]">Snapshot Reserve</TableHead>
               <TableHead className="w-[100px]">Status</TableHead>

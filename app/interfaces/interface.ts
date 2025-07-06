@@ -2,6 +2,7 @@ export interface Company {
   id: string;
   name: string;
   category: string;
+  secondaryCategory: string[];
   reserve: number;
   pctDiff?: number | null;
   snapshotDate: Date | null;

@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-// Remove unused Link and Button imports
+import { Button } from "@/components/ui/button";
+// Remove unused Link import
 // import Link from "next/link";
-// import { Button } from "@/components/ui/button";
 
 export default function AdminPage() {
   const [isValidating, setIsValidating] = useState(true);
@@ -12,6 +12,12 @@ export default function AdminPage() {
   useEffect(() => {
     validateAuthAndRedirect();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_token");
+    toast.success("Logged out successfully");
+    window.location.href = "/admin/login";
+  };
 
   const validateAuthAndRedirect = async () => {
     const adminToken = localStorage.getItem("admin_token");
@@ -62,9 +68,16 @@ export default function AdminPage() {
         {isValidating ? (
           <>
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-4">
               Validating authentication...
             </p>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="text-sm"
+            >
+              Logout
+            </Button>
           </>
         ) : (
           <p className="text-muted-foreground">Redirecting...</p>

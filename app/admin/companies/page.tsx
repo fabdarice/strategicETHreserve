@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { CompanyStatus, AdminCompany } from "@/app/interfaces/interface";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { CompaniesTable } from "../components/CompaniesTable";
 import { CompanyStats } from "../components/CompanyStats";
 
@@ -15,6 +16,12 @@ export default function AdminCompaniesPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_token");
+    toast.success("Logged out successfully");
+    window.location.href = "/admin/login";
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -66,10 +73,13 @@ export default function AdminCompaniesPage() {
   if (loading) {
     return (
       <div className="container mx-auto p-8">
-        <nav className="mb-4">
+        <nav className="mb-4 flex justify-between items-center">
           <Link href="/admin" className="mr-4 text-blue-500 hover:underline">
             Admin Home
           </Link>
+          <Button onClick={handleLogout} variant="outline" size="sm">
+            Logout
+          </Button>
         </nav>
         <h1 className="text-2xl font-bold mb-8">Manage Companies</h1>
         <div>Loading Companies...</div>
@@ -94,10 +104,13 @@ export default function AdminCompaniesPage() {
 
   return (
     <div className="container mx-auto p-8">
-      <nav className="mb-4">
+      <nav className="mb-4 flex justify-between items-center">
         <Link href="/" className="mr-4 text-blue-500 hover:underline">
           Home
         </Link>
+        <Button onClick={handleLogout} variant="outline" size="sm">
+          Logout
+        </Button>
       </nav>
 
       <h1 className="text-2xl font-bold mb-8">Manage Companies</h1>
