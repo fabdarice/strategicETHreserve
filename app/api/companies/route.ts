@@ -47,6 +47,7 @@ export async function POST(request: Request) {
     const {
       name,
       category = "Other",
+      ticker = null,
       logoUrl = "",
       website = null,
       twitter = null,
@@ -64,6 +65,7 @@ export async function POST(request: Request) {
       data: {
         name,
         category,
+        ticker,
         logo: logoUrl,
         website,
         twitter,
@@ -85,6 +87,7 @@ export async function POST(request: Request) {
         <ul>
           <li><strong>Name:</strong> ${name}</li>
           <li><strong>Category:</strong> ${category}</li>
+          <li><strong>Ticker:</strong> ${ticker || "Not provided"}</li>
           <li><strong>Website:</strong> ${website || "Not provided"}</li>          
           <li><strong>Twitter:</strong> ${twitter || "Not provided"}</li>          
           <li><strong>Current Reserve:</strong> ${currentReserve} ETH</li>

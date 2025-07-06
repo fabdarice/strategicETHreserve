@@ -103,6 +103,13 @@ export function CompanyRow({
         />
       </TableCell>
       <TableCell className="p-1">
+        <Input
+          value={displayCompany.ticker ?? ""}
+          onChange={(e) => onInputChange(company.id, "ticker", e.target.value)}
+          className="bg-background h-8 text-xs"
+        />
+      </TableCell>
+      <TableCell className="p-1">
         <select
           value={displayCompany.category ?? ""}
           onChange={(e) =>

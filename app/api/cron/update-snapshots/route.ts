@@ -135,6 +135,18 @@ async function processCompanySnapshot(
       where: { id: existingCompanySnapshot.id },
       data: { reserve: currentReserve, pctDiff },
     });
+
+    if (existingCompanySnapshot.reserve !== currentReserve) {
+      await sendChangeAlert(
+        company,
+        pctDiff,
+        diff,
+        prevReserve,
+        currentReserve,
+        snapshotDate,
+        adminEmail
+      );
+    }
   } else {
     await prisma.snapshotCompany.create({
       data: {
@@ -144,18 +156,17 @@ async function processCompanySnapshot(
         snapshotDate,
       },
     });
-  }
 
-  // Send email if significant change (moved outside if/else to catch all changes)
-  await sendChangeAlert(
-    company,
-    pctDiff,
-    diff,
-    prevReserve,
-    currentReserve,
-    snapshotDate,
-    adminEmail
-  );
+    await sendChangeAlert(
+      company,
+      pctDiff,
+      diff,
+      prevReserve,
+      currentReserve,
+      snapshotDate,
+      adminEmail
+    );
+  }
 }
 
 async function sendChangeAlert(

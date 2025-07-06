@@ -357,6 +357,9 @@ export default function CompanyTable({
                 {getSortIcon("name")}
               </div>
             </TableHead>
+            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
+              TICKER
+            </TableHead>
             <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center relative">
               <div className="flex items-center justify-center">
                 <span>CATEGORY</span>
@@ -538,6 +541,9 @@ export default function CompanyTable({
                       )}
                     </div>
                   )}
+                </TableCell>
+                <TableCell className="hidden sm:table-cell py-1 text-center">
+                  {company.ticker || "-"}
                 </TableCell>
                 <TableCell className="hidden sm:table-cell py-1 text-center">
                   {getDisplayCategory(company)}

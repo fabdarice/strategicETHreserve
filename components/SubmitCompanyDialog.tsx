@@ -35,6 +35,7 @@ import {
 const formSchema = z.object({
   name: z.string().min(2, "Entity name must be at least 2 characters"),
   category: z.string().min(1, "Please select a category"),
+  ticker: z.string().optional(),
   website: z
     .string()
     .url("Please enter a valid URL")
@@ -72,6 +73,7 @@ export default function SubmitCompanyDialog({
     defaultValues: {
       name: "",
       category: "",
+      ticker: "",
       website: "",
       twitter: "",
     },
@@ -93,6 +95,7 @@ export default function SubmitCompanyDialog({
                 .map((addr) => addr.trim())
                 .filter(Boolean)
             : [],
+          ticker: values.ticker || null,
           website: values.website || null,
           twitter: values.twitter || null,
         }),
@@ -163,6 +166,25 @@ export default function SubmitCompanyDialog({
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="ticker"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ticker Symbol</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            className="bg-background"
+                            placeholder="BTC, ETH, etc."
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
                     name="category"

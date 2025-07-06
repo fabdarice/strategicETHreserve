@@ -147,6 +147,7 @@ export function CompaniesTable({
             <TableRow>
               <TableHead className="w-[120px]">Logo URL</TableHead>
               <TableHead className="w-[120px]">Name</TableHead>
+              <TableHead className="w-[100px]">Ticker</TableHead>
               <TableHead className="w-[100px]">Category</TableHead>
               <TableHead className="w-[100px]">Secondary Category</TableHead>
               <TableHead className="w-[100px]">Reserve</TableHead>

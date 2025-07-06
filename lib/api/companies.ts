@@ -13,6 +13,7 @@ export async function getCompaniesWithSnapshots(isAdmin: boolean = false) {
       name: true,
       category: true,
       secondaryCategory: true,
+      ticker: true,
       currentReserve: true,
       logo: true,
       website: true,

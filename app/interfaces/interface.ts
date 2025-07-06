@@ -3,6 +3,7 @@ export interface Company {
   name: string;
   category: string;
   secondaryCategory: string[];
+  ticker?: string | null;
   reserve: number;
   pctDiff?: number | null;
   snapshotDate: Date | null;

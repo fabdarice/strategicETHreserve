@@ -13,6 +13,7 @@ model Company {
   name                 String   @unique
   category             String  
   secondaryCategory    String[]
+  ticker               String?
   currentReserve       Float
   addresses            String[]
   logo                 String
