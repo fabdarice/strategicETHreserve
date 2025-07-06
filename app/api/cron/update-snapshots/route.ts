@@ -135,8 +135,7 @@ async function processCompanySnapshot(
       where: { id: existingCompanySnapshot.id },
       data: { reserve: currentReserve, pctDiff },
     });
-
-    if (existingCompanySnapshot.reserve !== currentReserve) {
+    if (Math.abs(existingCompanySnapshot.reserve - currentReserve) > 10) {
       await sendChangeAlert(
         company,
         pctDiff,
