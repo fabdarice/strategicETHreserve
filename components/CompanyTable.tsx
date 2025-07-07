@@ -646,7 +646,7 @@ export default function CompanyTable({
                   {company.reserve === 0 ? (
                     "-"
                   ) : (
-                    <span className="font-medium">
+                    <span className="font-medium tabular-nums">
                       {company.reserve.toLocaleString(undefined, {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0,
@@ -658,7 +658,7 @@ export default function CompanyTable({
                   {company.reserve === 0 ? (
                     "-"
                   ) : (
-                    <span className="font-medium secondary-value-text">
+                    <span className="font-medium tabular-nums secondary-value-text">
                       $
                       {usdValue.toLocaleString(undefined, {
                         minimumFractionDigits: 0,
@@ -669,7 +669,7 @@ export default function CompanyTable({
                 </TableCell>
                 <TableCell className="hidden sm:table-cell text-center py-2">
                   <span
-                    className={`inline-flex items-center text-xs font-medium rounded-full px-2 py-0.5 transition-all duration-300 ${
+                    className={`inline-flex items-center text-xs font-medium rounded-full px-2 py-0.5 transition-all duration-300 tabular-nums ${
                       company.pctDiff === null || company.pctDiff === 0
                         ? "text-gray-400 bg-gray-400/10"
                         : company.pctDiff && company.pctDiff > 0
