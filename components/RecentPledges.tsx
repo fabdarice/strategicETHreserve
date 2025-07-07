@@ -61,7 +61,11 @@ export default function RecentPledges({
     <section className="space-y-6 md:w-80 flex-shrink-0">
       <div>
         <Image
-          src="/images/recentpledges.svg"
+          src={
+            showUSD
+              ? "/images/recentpledges_inst.svg"
+              : "/images/recentpledges.svg"
+          }
           alt="Ethereum Champions"
           width={200}
           height={30}
@@ -76,7 +80,7 @@ export default function RecentPledges({
           return (
             <Card
               key={pledge.id}
-              className={`border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border ${tier.accentClass} ${
+              className={`border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border institutional-shadow-lg ${tier.accentClass} ${
                 pledge.website
                   ? "cursor-pointer hover:bg-[hsl(var(--primary))/0.1] transition-colors"
                   : ""

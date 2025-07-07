@@ -18,7 +18,33 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [ethPrice, setEthPrice] = useState<number>(0);
-  const [showUSD, setShowUSD] = useState(false);
+  const [showUSD, setShowUSD] = useState(true); // Default to USD mode
+
+  // Load saved preference from localStorage
+  useEffect(() => {
+    const savedPreference = localStorage.getItem("ser-display-mode");
+    if (savedPreference !== null) {
+      setShowUSD(savedPreference === "USD");
+    }
+  }, []);
+
+  // Theme switching effect
+  useEffect(() => {
+    const body = document.body;
+    if (showUSD) {
+      body.classList.add("institutional");
+    } else {
+      body.classList.remove("institutional");
+    }
+
+    // Save preference to localStorage
+    localStorage.setItem("ser-display-mode", showUSD ? "USD" : "ETH");
+
+    // Cleanup function to remove class when component unmounts
+    return () => {
+      body.classList.remove("institutional");
+    };
+  }, [showUSD]);
 
   useEffect(() => {
     async function fetchData() {
@@ -68,7 +94,9 @@ export default function Home() {
 
   if (error) {
     return (
-      <main className="min-h-screen cyber-grid">
+      <main
+        className={`min-h-screen cyber-grid ${showUSD ? "institutional" : ""}`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-red-500">Error: {error}</div>
         </div>
@@ -77,12 +105,16 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen cyber-grid">
+    <main
+      className={`min-h-screen cyber-grid ${showUSD ? "institutional" : ""}`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="text-center mb-8 relative">
           {/* ETH/USD Toggle - Top right */}
           <div className="absolute top-0 right-0">
-            <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] rounded-lg p-1 neon-border">
+            <div
+              className={`bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] rounded-lg p-1 neon-border ${showUSD ? "institutional-shadow-lg" : ""}`}
+            >
               <div className="flex">
                 <Button
                   variant={!showUSD ? "default" : "ghost"}
@@ -120,7 +152,11 @@ export default function Home() {
           </div>
           <div className="flex mx-auto mb-4 justify-center">
             <Image
-              src="/images/strategicethreserve.svg"
+              src={
+                showUSD
+                  ? "/images/strategicethreserve_inst.svg"
+                  : "/images/strategicethreserve.svg"
+              }
               alt="Strategic Ethereum Reserve"
               width={507}
               height={400}
@@ -135,7 +171,7 @@ export default function Home() {
                 ETH is set to become the world&apos;s #1 reserve asset
               </span>{" "}
               <br />
-              <span className="text-white">
+              <span className={showUSD ? "text-foreground" : "text-white"}>
                 SER tracks entities accumulating ETH as a strategic reserve
                 asset.
               </span>
@@ -199,7 +235,7 @@ export default function Home() {
             href="https://x.com/fabdarice"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-lg bg-card/80 backdrop-blur-sm  hover:bg-[hsl(var(--primary))/0.1] transition-colors"
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-lg backdrop-blur-sm  hover:bg-[hsl(var(--primary))/0.1] transition-colors"
           >
             <span className="text-[hsl(var(--primary))] neon-glow">
               built by

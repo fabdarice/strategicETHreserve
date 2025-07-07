@@ -261,11 +261,15 @@ export default function CompanyTable({
   };
 
   return (
-    <div className="rounded-lg border border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden flex-1">
+    <div className="rounded-lg border border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden flex-1 institutional-shadow-lg">
       <div className="p-6 md:flex md:justify-between gap-2">
         <div>
           <Image
-            src="/images/seralignedcompanies.svg"
+            src={
+              showUSD
+                ? "/images/seralignedcompanies_inst.svg"
+                : "/images/seralignedcompanies.svg"
+            }
             alt="Ethereum Aligned Companies"
             width={300}
             height={50}
@@ -279,7 +283,7 @@ export default function CompanyTable({
           <SubmitCompanyDialog>
             <Button
               size="lg"
-              className="bg-[hsl(var(--primary))] text-secondary hover:bg-[hsl(var(--primary-foreground))] neon-border"
+              className="bg-[hsl(var(--primary))] text-secondary hover:bg-[hsl(var(--primary-foreground))] neon-border join-movement-btn"
             >
               <Image
                 src="/images/joinmovement.svg"
@@ -292,50 +296,52 @@ export default function CompanyTable({
         </div>
       </div>
 
-      {/* Tier Legend */}
-      <div className="px-6 py-4 border-b border-[hsl(var(--primary)/0.3)]">
-        {/* Mobile Legend - Simplified */}
-        <div className="sm:hidden">
-          <div className="flex flex-wrap gap-3 justify-center text-xs text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <div className="w-4 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
-              <span>6-digits</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-4 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
-              <span>5-digits</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-4 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
-              <span>4-digits</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <div className="w-4 h-3 border-l-4 border-l-gray-400 bg-muted/30"></div>
-              <span>3-digits</span>
+      {/* Tier Legend - Hidden in institutional mode */}
+      {!showUSD && (
+        <div className="px-6 py-4 border-b border-[hsl(var(--primary)/0.3)]">
+          {/* Mobile Legend - Simplified */}
+          <div className="sm:hidden">
+            <div className="flex flex-wrap gap-3 justify-center text-xs text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
+                <span>6-digits</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
+                <span>5-digits</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
+                <span>4-digits</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="w-4 h-3 border-l-4 border-l-gray-400 bg-muted/30"></div>
+                <span>3-digits</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Desktop Legend - Full */}
-        <div className="hidden sm:flex flex-wrap gap-4 justify-center text-xs text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
-            <span>6-digits (100,000+ ETH)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
-            <span>5-digits (10,000+ ETH)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
-            <span>4-digits (1,000+ ETH)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-3 border-l-4 border-l-gray-400 bg-muted/30"></div>
-            <span>3-digits (100+ ETH)</span>
+          {/* Desktop Legend - Full */}
+          <div className="hidden sm:flex flex-wrap gap-4 justify-center text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
+              <span>6-digits (100,000+ ETH)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
+              <span>5-digits (10,000+ ETH)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
+              <span>4-digits (1,000+ ETH)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-3 border-l-4 border-l-gray-400 bg-muted/30"></div>
+              <span>3-digits (100+ ETH)</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <Table>
         <TableHeader>
@@ -487,7 +493,7 @@ export default function CompanyTable({
             return (
               <TableRow
                 key={company.id}
-                className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors h-8 ${tier.accentClass}`}
+                className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors h-8 ${!showUSD ? tier.accentClass : ""}`}
               >
                 <TableCell className="text-center py-1 font-medium">
                   {rank}
@@ -499,7 +505,7 @@ export default function CompanyTable({
                       target="_blank"
                       rel="noopener noreferrer"
                       className={`flex items-center gap-2 hover:text-[hsl(var(--primary))] transition-colors ${
-                        tier.name === "6-digits"
+                        !showUSD && tier.name === "6-digits"
                           ? "text-yellow-500 hover:text-yellow-400"
                           : ""
                       }`}
@@ -522,7 +528,9 @@ export default function CompanyTable({
                   ) : (
                     <div
                       className={`flex items-center gap-2 ${
-                        tier.name === "6-digits" ? "text-yellow-500" : ""
+                        !showUSD && tier.name === "6-digits"
+                          ? "text-yellow-500"
+                          : ""
                       }`}
                     >
                       <div className="w-[20px] h-[20px] relative flex-shrink-0">
@@ -565,7 +573,9 @@ export default function CompanyTable({
                           **
                         </span>
                       )}
-                      <span className={tier.textWeight}>
+                      <span
+                        className={!showUSD ? tier.textWeight : "font-medium"}
+                      >
                         {showUSD && "$"}
                         {displayValue.toLocaleString(undefined, {
                           minimumFractionDigits: 0,

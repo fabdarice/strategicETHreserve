@@ -165,11 +165,11 @@ export default function ETHReserveChart({
   if (isLoading) {
     return (
       <div className="w-full">
-        <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full">
+        <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full institutional-shadow-lg">
           <div className="mb-4">
             <h2 className="text-lg font-bold text-[hsl(var(--primary))] mb-1 flex items-center gap-2">
               {!showUSD && <EthereumLogo className="w-4 h-4" />}
-              Strategic {showUSD ? "USD" : "ETH"} Reserve Growth
+              Strategic ETH Reserve
             </h2>
             <p className="text-xs text-muted-foreground">
               Loading historical data...
@@ -185,7 +185,7 @@ export default function ETHReserveChart({
 
   return (
     <div className="w-full">
-      <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full">
+      <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full institutional-shadow-lg">
         <div className="h-[200px] w-full">
           {chartData.length === 0 ? (
             <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
@@ -195,8 +195,8 @@ export default function ETHReserveChart({
             <div className="relative w-full h-full">
               {/* Subtle watermark text in center */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                <div className="text-[hsl(var(--primary))] opacity-10 text-sm sm:text-lg lg:text-2xl font-bold tracking-wider select-none">
-                  Strategic {showUSD ? "USD" : "ETH"} Reserve
+                <div className="text-[hsl(var(--primary))] opacity-10 text-sm sm:text-lg font-bold tracking-wider select-none">
+                  Strategic ETH Reserve
                 </div>
               </div>
               <ResponsiveContainer width="100%" height="100%">

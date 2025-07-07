@@ -217,8 +217,8 @@ export default function SubmitCompanyDialog({
                             <SelectItem value="Web3 Entities">
                               Web3 Entities
                             </SelectItem>
-                            <SelectItem value="Goverments">
-                              Goverments
+                            <SelectItem value="Governments">
+                              Governments
                             </SelectItem>
                             <SelectItem value="Others">Others</SelectItem>
                           </SelectContent>

@@ -31,7 +31,7 @@ const SECONDARY_CATEGORIES = [
   "Treasuries",
   "Blockchains",
   "Web3 Entities",
-  "Goverments",
+  "Governments",
   "DeFi",
   "L1",
   "L2",
@@ -125,7 +125,7 @@ export function CompanyRow({
           <option value="Treasuries">Treasuries</option>
           <option value="Blockchains">Blockchains</option>
           <option value="Web3 Entities">Web3 Entities</option>
-          <option value="Goverments">Goverments</option>
+          <option value="Governments">Governments</option>
           <option value="Others">Others</option>
         </select>
       </TableCell>

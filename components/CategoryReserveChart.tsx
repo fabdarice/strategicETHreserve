@@ -119,7 +119,7 @@ export default function CategoryReserveChart({
   if (categoryData.length === 0) {
     return (
       <div className="w-full">
-        <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full">
+        <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full institutional-shadow-lg">
           <div className="mb-4">
             <h2 className="text-lg font-bold text-[hsl(var(--primary))] mb-1 flex items-center gap-2">
               {!showUSD && <EthereumLogo className="w-4 h-4" />}
@@ -138,7 +138,7 @@ export default function CategoryReserveChart({
 
   return (
     <div className="w-full">
-      <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-3 h-full">
+      <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-3 h-full institutional-shadow-lg">
         <div className="h-[225px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
