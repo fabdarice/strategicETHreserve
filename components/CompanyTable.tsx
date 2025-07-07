@@ -17,7 +17,7 @@ import { ChevronUp, ChevronDown, Filter, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 // Sorting types
-type SortField = "name" | "reserve" | "pctDiff" | "rank";
+type SortField = "name" | "reserve" | "reserveUSD" | "pctDiff" | "rank";
 type SortDirection = "asc" | "desc";
 
 // Tier system with minimal left accent styling
@@ -177,6 +177,10 @@ export default function CompanyTable({
           aValue = a.reserve;
           bValue = b.reserve;
           break;
+        case "reserveUSD":
+          aValue = a.reserve * ethPrice;
+          bValue = b.reserve * ethPrice;
+          break;
         case "rank":
           // For rank, we sort by reserve but flip the direction
           // asc rank order (1,2,3...) needs desc reserve order (highest first)
@@ -212,7 +216,9 @@ export default function CompanyTable({
     } else {
       setSortField(field);
       setSortDirection(
-        field === "reserve" || field === "pctDiff" ? "desc" : "asc"
+        field === "reserve" || field === "reserveUSD" || field === "pctDiff"
+          ? "desc"
+          : "asc"
       );
     }
   };
@@ -230,35 +236,6 @@ export default function CompanyTable({
   };
 
   const sortedCompanies = sortCompanies(filteredCompanies);
-
-  // Helper function to get the display category for a company based on current filter
-  const getDisplayCategory = (company: Company) => {
-    if (selectedCategories.length === 0) {
-      return company.category;
-    }
-
-    // If filtering, show the category that matched the filter
-    if (selectedCategories.includes(company.category)) {
-      return company.category;
-    }
-
-    // Check secondary categories (handle both array and string formats)
-    const secondaryCategories = Array.isArray(company.secondaryCategory)
-      ? company.secondaryCategory
-      : company.secondaryCategory
-        ? [company.secondaryCategory]
-        : [];
-
-    const matchingSecondaryCategory = secondaryCategories.find((cat) =>
-      selectedCategories.includes(cat)
-    );
-
-    if (matchingSecondaryCategory) {
-      return matchingSecondaryCategory;
-    }
-
-    return company.category;
-  };
 
   return (
     <div className="rounded-lg border border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border overflow-hidden flex-1 institutional-shadow-lg">
@@ -296,52 +273,112 @@ export default function CompanyTable({
         </div>
       </div>
 
-      {/* Tier Legend - Hidden in institutional mode */}
-      {!showUSD && (
-        <div className="px-6 py-4 border-b border-[hsl(var(--primary)/0.3)]">
-          {/* Mobile Legend - Simplified */}
-          <div className="sm:hidden">
-            <div className="flex flex-wrap gap-3 justify-center text-xs text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <div className="w-4 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
-                <span>6-digits</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-4 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
-                <span>5-digits</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-4 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
-                <span>4-digits</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-4 h-3 border-l-4 border-l-gray-400 bg-muted/30"></div>
-                <span>3-digits</span>
-              </div>
-            </div>
-          </div>
+      {/* Category Filter */}
+      <div className="px-6 pb-2 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-muted-foreground">
+            {filteredCompanies.length} of {activeCompanies.length} entities
+          </span>
+          <div className="flex items-center gap-2">
+            <div className="relative" ref={filterRef}>
+              <button
+                onClick={() => setShowCategoryFilter(!showCategoryFilter)}
+                className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded border transition-colors ${
+                  selectedCategories.length > 0
+                    ? "bg-[hsl(var(--primary))] text-secondary border-[hsl(var(--primary))]"
+                    : "bg-background text-muted-foreground border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
+                }`}
+              >
+                <Filter className="w-3 h-3" />
+                <span>
+                  {selectedCategories.length > 0
+                    ? `${selectedCategories.length} categor${selectedCategories.length === 1 ? "y" : "ies"}`
+                    : "Filter"}
+                </span>
+              </button>
 
-          {/* Desktop Legend - Full */}
-          <div className="hidden sm:flex flex-wrap gap-4 justify-center text-xs text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-3 border-l-4 border-l-yellow-500 bg-muted/30"></div>
-              <span>6-digits (100,000+ ETH)</span>
+              {showCategoryFilter && (
+                <div className="absolute top-full left-0 mt-1 bg-card border border-[hsl(var(--primary)/0.3)] rounded-lg shadow-lg z-50 w-96 p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-[hsl(var(--primary))]">
+                      Filter by Category
+                    </span>
+                    {selectedCategories.length > 0 && (
+                      <button
+                        onClick={clearFilters}
+                        className="text-xs text-muted-foreground hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1"
+                      >
+                        <X className="w-3 h-3" />
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    {availableCategories.map((category) => {
+                      const isSelected = selectedCategories.includes(category);
+                      const count = activeCompanies.filter((c) => {
+                        // Count if primary category matches
+                        if (c.category === category) {
+                          return true;
+                        }
+
+                        // Count if any secondary category matches
+                        const secondaryCategories = Array.isArray(
+                          c.secondaryCategory
+                        )
+                          ? c.secondaryCategory
+                          : c.secondaryCategory
+                            ? [c.secondaryCategory]
+                            : [];
+
+                        return secondaryCategories.includes(category);
+                      }).length;
+
+                      return (
+                        <button
+                          key={category}
+                          onClick={() => toggleCategory(category)}
+                          className={`w-full text-left px-2 py-1.5 rounded text-xs transition-all duration-200 flex items-center justify-between ${
+                            isSelected
+                              ? "bg-[hsl(var(--primary))] text-secondary"
+                              : "hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
+                          }`}
+                        >
+                          <span className="truncate">{category}</span>
+                          <span className="text-xs opacity-70 ml-1">
+                            ({count})
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-3 border-l-4 border-l-blue-500 bg-muted/30"></div>
-              <span>5-digits (10,000+ ETH)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-3 border-l-4 border-l-emerald-500 bg-muted/30"></div>
-              <span>4-digits (1,000+ ETH)</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-3 border-l-4 border-l-gray-400 bg-muted/30"></div>
-              <span>3-digits (100+ ETH)</span>
-            </div>
+
+            {/* Selected Category Chips */}
+            {selectedCategories.length > 0 && (
+              <div className="flex items-center gap-1 flex-wrap">
+                {selectedCategories.map((category) => (
+                  <span
+                    key={category}
+                    className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-[hsl(var(--primary)/0.2)] text-[hsl(var(--primary))] border border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary)/0.3)] transition-colors"
+                  >
+                    {category}
+                    <button
+                      onClick={() => toggleCategory(category)}
+                      className="ml-1 hover:text-[hsl(var(--primary-foreground))] transition-colors"
+                      aria-label={`Remove ${category} filter`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      )}
+      </div>
 
       <Table>
         <TableHeader>
@@ -366,101 +403,25 @@ export default function CompanyTable({
             <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
               TICKER
             </TableHead>
-            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center relative">
-              <div className="flex items-center justify-center">
-                <span>CATEGORY</span>
-                <div className="relative ml-2" ref={filterRef}>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShowCategoryFilter(!showCategoryFilter);
-                    }}
-                    className={`p-1 rounded hover:bg-[hsl(var(--primary)/0.1)] transition-colors ${
-                      selectedCategories.length > 0
-                        ? "text-[hsl(var(--primary))]"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    <Filter className="w-3 h-3" />
-                  </button>
-
-                  {showCategoryFilter && (
-                    <div className="absolute top-full right-0 mt-2 bg-card border border-[hsl(var(--primary)/0.3)] rounded-lg shadow-lg z-50 min-w-[200px] p-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-medium text-[hsl(var(--primary))]">
-                          Filter Categories
-                        </span>
-                        {selectedCategories.length > 0 && (
-                          <button
-                            onClick={clearFilters}
-                            className="text-xs text-muted-foreground hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1"
-                          >
-                            <X className="w-3 h-3" />
-                            Clear
-                          </button>
-                        )}
-                      </div>
-                      <div className="space-y-1">
-                        {availableCategories.map((category) => {
-                          const isSelected =
-                            selectedCategories.includes(category);
-                          const count = activeCompanies.filter((c) => {
-                            // Count if primary category matches
-                            if (c.category === category) {
-                              return true;
-                            }
-
-                            // Count if any secondary category matches
-                            const secondaryCategories = Array.isArray(
-                              c.secondaryCategory
-                            )
-                              ? c.secondaryCategory
-                              : c.secondaryCategory
-                                ? [c.secondaryCategory]
-                                : [];
-
-                            return secondaryCategories.includes(category);
-                          }).length;
-
-                          return (
-                            <button
-                              key={category}
-                              onClick={() => toggleCategory(category)}
-                              className={`w-full text-left px-2 py-1 rounded text-xs transition-all duration-200 flex items-center justify-between ${
-                                isSelected
-                                  ? "bg-[hsl(var(--primary))] text-secondary"
-                                  : "hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
-                              }`}
-                            >
-                              <span>{category}</span>
-                              <span className="text-xs opacity-70">
-                                ({count})
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                      {selectedCategories.length > 0 && (
-                        <div className="mt-2 pt-2 border-t border-[hsl(var(--primary)/0.3)]">
-                          <div className="text-xs text-muted-foreground">
-                            Showing {filteredCompanies.length} of{" "}
-                            {activeCompanies.length} entities
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </TableHead>
             <TableHead
               className="text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
               onClick={() => handleSort("reserve")}
             >
               <div className="flex items-center justify-end">
                 <div className="flex items-center gap-2">
-                  {showUSD ? "USD" : "ETH"}
+                  ETH
                   {getSortIcon("reserve")}
+                </div>
+              </div>
+            </TableHead>
+            <TableHead
+              className="text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              onClick={() => handleSort("reserveUSD")}
+            >
+              <div className="flex items-center justify-end">
+                <div className="flex items-center gap-2">
+                  USD
+                  {getSortIcon("reserveUSD")}
                 </div>
               </div>
             </TableHead>
@@ -478,9 +439,7 @@ export default function CompanyTable({
         <TableBody>
           {sortedCompanies.map((company, index) => {
             const tier = getContributionTier(company.reserve);
-            const displayValue = showUSD
-              ? company.reserve * ethPrice
-              : company.reserve;
+            const usdValue = company.reserve * ethPrice;
 
             // Calculate rank based on reserve amount (always use ETH, not USD)
             // Create a sorted list by reserve to get the true rank
@@ -493,7 +452,7 @@ export default function CompanyTable({
             return (
               <TableRow
                 key={company.id}
-                className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors h-8 ${!showUSD ? tier.accentClass : ""}`}
+                className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors h-8`}
               >
                 <TableCell className="text-center py-1 font-medium">
                   {rank}
@@ -504,11 +463,7 @@ export default function CompanyTable({
                       href={company.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`flex items-center gap-2 hover:text-[hsl(var(--primary))] transition-colors ${
-                        !showUSD && tier.name === "6-digits"
-                          ? "text-yellow-500 hover:text-yellow-400"
-                          : ""
-                      }`}
+                      className="flex items-center gap-2 hover:text-[hsl(var(--primary))] transition-colors"
                     >
                       <div className="w-[20px] h-[20px] relative flex-shrink-0">
                         <Image
@@ -526,13 +481,7 @@ export default function CompanyTable({
                       )}
                     </a>
                   ) : (
-                    <div
-                      className={`flex items-center gap-2 ${
-                        !showUSD && tier.name === "6-digits"
-                          ? "text-yellow-500"
-                          : ""
-                      }`}
-                    >
+                    <div className="flex items-center gap-2">
                       <div className="w-[20px] h-[20px] relative flex-shrink-0">
                         <Image
                           src={company.logo}
@@ -553,8 +502,31 @@ export default function CompanyTable({
                 <TableCell className="hidden sm:table-cell py-1 text-center">
                   {company.ticker || "-"}
                 </TableCell>
-                <TableCell className="hidden sm:table-cell py-1 text-center">
-                  {getDisplayCategory(company)}
+                <TableCell className="text-right py-1">
+                  {company.reserve === 0 ? (
+                    "-"
+                  ) : (
+                    <>
+                      {company.accountingType ===
+                        AccountingType.SELF_REPORTED && (
+                        <span className="mr-1 text-[hsl(var(--primary))]">
+                          *
+                        </span>
+                      )}
+                      {company.accountingType ===
+                        AccountingType.PUBLIC_REPORT && (
+                        <span className="mr-1 text-[hsl(var(--primary))]">
+                          **
+                        </span>
+                      )}
+                      <span className="font-medium">
+                        {company.reserve.toLocaleString(undefined, {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
+                      </span>
+                    </>
+                  )}
                 </TableCell>
                 <TableCell className="text-right py-1">
                   {company.reserve === 0 ? (
@@ -573,13 +545,11 @@ export default function CompanyTable({
                           **
                         </span>
                       )}
-                      <span
-                        className={!showUSD ? tier.textWeight : "font-medium"}
-                      >
-                        {showUSD && "$"}
-                        {displayValue.toLocaleString(undefined, {
+                      <span className="font-medium secondary-value-text">
+                        $
+                        {usdValue.toLocaleString(undefined, {
                           minimumFractionDigits: 0,
-                          maximumFractionDigits: showUSD ? 0 : 0,
+                          maximumFractionDigits: 0,
                         })}
                       </span>
                     </>

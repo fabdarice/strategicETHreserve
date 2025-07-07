@@ -89,22 +89,31 @@ export default function CategoryReserveChart({
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      const ethValue = data.reserve;
+      const usdValue = data.reserve * ethPrice;
+
       return (
         <div className="bg-card/95 backdrop-blur-sm border border-[hsl(var(--primary))] rounded-lg p-3 shadow-lg">
           <p className="text-sm font-semibold text-[hsl(var(--primary))] mb-2">
             {data.category}
           </p>
-          <div className="items-center mb-1 text-center">
+          {/* Always show ETH value first */}
+          <div className="flex items-center gap-0 mb-1">
+            <EthereumLogo className="w-4 h-4 text-[hsl(var(--primary))]" />
             <p className="text-[hsl(var(--primary))] font-semibold">
-              {showUSD
-                ? `$${data.displayValue.toLocaleString(undefined, {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })}`
-                : `${data.reserve.toLocaleString(undefined, {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })} ETH`}
+              {`${ethValue.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })} ETH`}
+            </p>
+          </div>
+          {/* Always show USD value below */}
+          <div className="items-center mb-1">
+            <p className="text-[hsl(var(--primary))] font-medium text-sm">
+              {`$${usdValue.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}`}
             </p>
           </div>
           <p className="text-xs text-muted-foreground mb-1">

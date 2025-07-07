@@ -80,7 +80,7 @@ export default function RecentPledges({
           return (
             <Card
               key={pledge.id}
-              className={`border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border institutional-shadow-lg ${tier.accentClass} ${
+              className={`border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm neon-border institutional-shadow-lg border-l-4 border-l-blue-500 ${
                 pledge.website
                   ? "cursor-pointer hover:bg-[hsl(var(--primary))/0.1] transition-colors"
                   : ""
@@ -116,16 +116,12 @@ export default function RecentPledges({
                     <div
                       className={`text-[hsl(var(--primary))] ${tier.textWeight} flex items-center gap-1`}
                     >
-                      {!showUSD && <EthereumLogo className="w-4 h-4" />}
-                      {showUSD && "$"}
-                      {(showUSD
-                        ? pledge.reserve * ethPrice
-                        : pledge.reserve
-                      ).toLocaleString(undefined, {
+                      <EthereumLogo className="w-4 h-4" />
+                      {pledge.reserve.toLocaleString(undefined, {
                         minimumFractionDigits: 0,
-                        maximumFractionDigits: showUSD ? 0 : 0,
+                        maximumFractionDigits: 0,
                       })}
-                      {!showUSD && " ETH"}
+                      {" ETH"}
                     </div>
                   )}
                   <div className="text-sm text-muted-foreground">

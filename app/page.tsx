@@ -18,13 +18,13 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [ethPrice, setEthPrice] = useState<number>(0);
-  const [showUSD, setShowUSD] = useState(true); // Default to USD mode
+  const [showUSD, setShowUSD] = useState(true); // Light mode (USD/institutional) by default
 
   // Load saved preference from localStorage
   useEffect(() => {
-    const savedPreference = localStorage.getItem("ser-display-mode");
+    const savedPreference = localStorage.getItem("ser-theme-mode");
     if (savedPreference !== null) {
-      setShowUSD(savedPreference === "USD");
+      setShowUSD(savedPreference === "light");
     }
   }, []);
 
@@ -38,7 +38,7 @@ export default function Home() {
     }
 
     // Save preference to localStorage
-    localStorage.setItem("ser-display-mode", showUSD ? "USD" : "ETH");
+    localStorage.setItem("ser-theme-mode", showUSD ? "light" : "dark");
 
     // Cleanup function to remove class when component unmounts
     return () => {
@@ -110,24 +110,12 @@ export default function Home() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="text-center mb-8 relative">
-          {/* ETH/USD Toggle - Top right */}
+          {/* Light/Dark Toggle - Top right */}
           <div className="absolute top-0 right-0">
             <div
               className={`bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] rounded-lg p-1 neon-border ${showUSD ? "institutional-shadow-lg" : ""}`}
             >
               <div className="flex">
-                <Button
-                  variant={!showUSD ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setShowUSD(false)}
-                  className={`text-xs font-semibold px-3 py-1 ${
-                    !showUSD
-                      ? "bg-[hsl(var(--primary))] text-black"
-                      : "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1]"
-                  }`}
-                >
-                  ETH
-                </Button>
                 <Button
                   variant={showUSD ? "default" : "ghost"}
                   size="sm"
@@ -138,7 +126,19 @@ export default function Home() {
                       : "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1]"
                   }`}
                 >
-                  USD
+                  Light
+                </Button>
+                <Button
+                  variant={!showUSD ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setShowUSD(false)}
+                  className={`text-xs font-semibold px-3 py-1 ${
+                    !showUSD
+                      ? "bg-[hsl(var(--primary))] text-black"
+                      : "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1]"
+                  }`}
+                >
+                  Dark
                 </Button>
               </div>
             </div>

@@ -22,45 +22,26 @@ export default function TotalReserveStats({
           <p className="text-sm uppercase tracking-wider">
             Total Strategic ETH Reserve
           </p>
-          {showUSD ? (
-            <div className="flex items-center gap-2">
-              <p className="text-3xl font-bold text-[hsl(var(--primary))] leading-none">
-                $
-                {totalReserveUSD.toLocaleString(undefined, {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                })}
-              </p>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <EthereumLogo className="w-6 h-6 text-[hsl(var(--primary))]" />
-              <p className="text-3xl font-bold text-[hsl(var(--primary))] leading-none">
-                {showUSD && "$"}
-                {(showUSD ? totalReserveUSD : totalReserve).toLocaleString(
-                  undefined,
-                  {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  }
-                )}
-                {!showUSD && " ETH"}
-              </p>
-            </div>
-          )}
+          {/* Always show ETH as primary value */}
+          <div className="flex items-center gap-2">
+            <EthereumLogo className="w-6 h-6 text-[hsl(var(--primary))]" />
+            <p className="text-3xl font-bold text-[hsl(var(--primary))] leading-none">
+              {totalReserve.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
+              {" ETH"}
+            </p>
+          </div>
 
-          {/* Secondary Value Display */}
+          {/* Always show USD as secondary value */}
           <div className="mt-0 flex items-center gap-2 bg-[hsl(var(--primary))/0.05] p-2 rounded-xl backdrop-blur-sm">
             <p className="text-lg font-medium text-[hsl(var(--primary-foreground))] secondary-value-text leading-none">
-              {showUSD
-                ? `${totalReserve.toLocaleString(undefined, {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })} ETH`
-                : `$${totalReserveUSD.toLocaleString(undefined, {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })}`}
+              $
+              {totalReserveUSD.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
             </p>
           </div>
 

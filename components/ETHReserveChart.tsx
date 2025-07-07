@@ -70,33 +70,31 @@ export default function ETHReserveChart({
       const dataPoint = payload[0].payload;
       const increase = dataPoint.dayOverDayIncrease || 0;
       const isSignificantIncrease = increase >= 100000;
+      const ethValue = payload[0].value;
+      const usdValue = dataPoint.usd || payload[0].value * ethPrice;
 
       return (
         <div className="bg-card/95 backdrop-blur-sm border border-[hsl(var(--primary))] rounded-lg p-3 shadow-lg">
           <p className="text-sm text-muted-foreground mb-1">{label}</p>
-          {showUSD ? (
-            <div className="items-center gap-2 mb-1">
-              <p className="text-[hsl(var(--primary))] font-semibold">
-                {`$${(
-                  payload[0].payload.usd || payload[0].value * ethPrice
-                ).toLocaleString(undefined, {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                })}`}
-              </p>
-            </div>
-          ) : (
-            <div className="flex items-center gap-0 mb-1">
-              <EthereumLogo className="w-4 h-4 text-[hsl(var(--primary))]" />
-
-              <p className="text-[hsl(var(--primary))] font-semibold">
-                {`${payload[0].value.toLocaleString(undefined, {
-                  minimumFractionDigits: 0,
-                  maximumFractionDigits: 0,
-                })} ETH`}
-              </p>
-            </div>
-          )}
+          {/* Always show ETH value first */}
+          <div className="flex items-center gap-0 mb-1">
+            <EthereumLogo className="w-4 h-4 text-[hsl(var(--primary))]" />
+            <p className="text-[hsl(var(--primary))] font-semibold">
+              {`${ethValue.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })} ETH`}
+            </p>
+          </div>
+          {/* Always show USD value below */}
+          <div className="items-center gap-2 mb-1">
+            <p className="text-[hsl(var(--primary))] font-medium text-sm">
+              {`$${usdValue.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}`}
+            </p>
+          </div>
 
           {isSignificantIncrease && (
             <div className="mt-0 pt-0 border-t border-yellow-500/20">
@@ -151,9 +149,7 @@ export default function ETHReserveChart({
   const processedChartData = chartData.map((point, index) => {
     const dayOverDayIncrease =
       index === 0 ? 0 : point.reserve - chartData[index - 1].reserve;
-    const displayValue = showUSD
-      ? point.usd || point.reserve * ethPrice
-      : point.reserve;
+    const displayValue = point.reserve; // Always use ETH values
 
     return {
       ...point,
@@ -168,7 +164,7 @@ export default function ETHReserveChart({
         <div className="bg-card/80 backdrop-blur-sm border border-[hsl(var(--primary))] neon-border rounded-2xl p-6 h-full institutional-shadow-lg">
           <div className="mb-4">
             <h2 className="text-lg font-bold text-[hsl(var(--primary))] mb-1 flex items-center gap-2">
-              {!showUSD && <EthereumLogo className="w-4 h-4" />}
+              <EthereumLogo className="w-4 h-4" />
               Strategic ETH Reserve
             </h2>
             <p className="text-xs text-muted-foreground">
@@ -220,26 +216,14 @@ export default function ETHReserveChart({
                     fontSize={10}
                     tickLine={false}
                     tickFormatter={(value) => {
-                      if (showUSD) {
-                        const millions = value / 1000000;
-                        if (millions >= 1000) {
-                          const billions = millions / 1000;
-                          return `$${billions % 1 === 0 ? billions.toFixed(0) : billions.toFixed(1)}B`;
-                        } else if (millions >= 1) {
-                          return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(2)}M`;
-                        } else {
-                          return `$${(value / 1000).toFixed(0)}k`;
-                        }
+                      const thousands = value / 1000;
+                      if (thousands >= 1000) {
+                        const millions = thousands / 1000;
+                        return `${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(2)}M`;
+                      } else if (thousands >= 1) {
+                        return `${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}k`;
                       } else {
-                        const thousands = value / 1000;
-                        if (thousands >= 1000) {
-                          const millions = thousands / 1000;
-                          return `${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(2)}M`;
-                        } else if (thousands >= 1) {
-                          return `${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}k`;
-                        } else {
-                          return value.toString();
-                        }
+                        return value.toString();
                       }
                     }}
                   />
