@@ -250,8 +250,8 @@ export default function CompanyTable({
           <Image
             src={
               showUSD
-                ? "/images/seralignedcompanies_inst.svg"
-                : "/images/seralignedcompanies.svg"
+                ? "/images/strategicethreservexyz_light.svg"
+                : "/images/strategicethreservexyz_dark.svg"
             }
             alt="Ethereum Aligned Companies"
             width={300}
