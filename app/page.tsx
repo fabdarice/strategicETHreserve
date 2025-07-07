@@ -7,6 +7,7 @@ import CategoryReserveChart from "@/components/CategoryReserveChart";
 import TotalReserveStats from "@/components/TotalReserveStats";
 import { EthereumLogo } from "@/components/icons/EthereumLogo";
 import { Button } from "@/components/ui/button";
+import { Sun, Moon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Company } from "./interfaces/interface";
@@ -126,7 +127,7 @@ export default function Home() {
                       : "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1]"
                   }`}
                 >
-                  Light
+                  <Sun className="w-4 h-4" />
                 </Button>
                 <Button
                   variant={!showUSD ? "default" : "ghost"}
@@ -138,7 +139,7 @@ export default function Home() {
                       : "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1]"
                   }`}
                 >
-                  Dark
+                  <Moon className="w-4 h-4" />
                 </Button>
               </div>
             </div>

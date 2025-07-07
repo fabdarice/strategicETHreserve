@@ -90,6 +90,7 @@ export default function CompanyTable({
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const filterRef = useRef<HTMLDivElement>(null);
+  const mobileFilterRef = useRef<HTMLDivElement>(null);
 
   const activeCompanies = companies.filter(
     (company) => company.status === "ACTIVE"
@@ -150,10 +151,15 @@ export default function CompanyTable({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        filterRef.current &&
-        !filterRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as Node;
+
+      // Check if click is outside both desktop and mobile filter areas
+      const isOutsideDesktop =
+        !filterRef.current || !filterRef.current.contains(target);
+      const isOutsideMobile =
+        !mobileFilterRef.current || !mobileFilterRef.current.contains(target);
+
+      if (isOutsideDesktop && isOutsideMobile) {
         setShowCategoryFilter(false);
       }
     };
@@ -274,117 +280,225 @@ export default function CompanyTable({
       </div>
 
       {/* Category Filter */}
-      <div className="px-6 pb-2 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-muted-foreground">
-            {filteredCompanies.length} of {activeCompanies.length} entities
-          </span>
-          <div className="flex items-center gap-2">
-            <div className="relative" ref={filterRef}>
-              <button
-                onClick={() => setShowCategoryFilter(!showCategoryFilter)}
-                className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded border transition-colors ${
-                  selectedCategories.length > 0
-                    ? "bg-[hsl(var(--primary))] text-secondary border-[hsl(var(--primary))]"
-                    : "bg-background text-muted-foreground border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
-                }`}
-              >
-                <Filter className="w-3 h-3" />
-                <span>
-                  {selectedCategories.length > 0
-                    ? `${selectedCategories.length} categor${selectedCategories.length === 1 ? "y" : "ies"}`
-                    : "Filter"}
-                </span>
-              </button>
+      <div className="px-6 pb-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-xs text-muted-foreground hidden sm:inline">
+              {filteredCompanies.length} of {activeCompanies.length} entities
+            </span>
 
-              {showCategoryFilter && (
-                <div className="absolute top-full left-0 mt-1 bg-card border border-[hsl(var(--primary)/0.3)] rounded-lg shadow-lg z-50 w-96 p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-[hsl(var(--primary))]">
-                      Filter by Category
-                    </span>
-                    {selectedCategories.length > 0 && (
+            {/* Desktop filter layout - next to entity count */}
+            <div className="hidden sm:flex items-center gap-2 flex-wrap">
+              <div className="relative" ref={filterRef}>
+                <button
+                  onClick={() => setShowCategoryFilter(!showCategoryFilter)}
+                  className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded border transition-colors ${
+                    selectedCategories.length > 0
+                      ? "bg-[hsl(var(--primary))] text-secondary border-[hsl(var(--primary))]"
+                      : "bg-background text-muted-foreground border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
+                  }`}
+                >
+                  <Filter className="w-3 h-3" />
+                  <span>
+                    {selectedCategories.length > 0
+                      ? `${selectedCategories.length}`
+                      : "Filter"}
+                  </span>
+                </button>
+
+                {showCategoryFilter && (
+                  <div className="absolute top-full left-0 mt-1 bg-card border border-[hsl(var(--primary)/0.3)] rounded-lg shadow-lg z-50 w-96 p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium text-[hsl(var(--primary))]">
+                        Filter by Category
+                      </span>
+                      {selectedCategories.length > 0 && (
+                        <button
+                          onClick={clearFilters}
+                          className="text-xs text-muted-foreground hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1"
+                        >
+                          <X className="w-3 h-3" />
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-2 gap-1">
+                      {availableCategories.map((category) => {
+                        const isSelected =
+                          selectedCategories.includes(category);
+                        const count = activeCompanies.filter((c) => {
+                          // Count if primary category matches
+                          if (c.category === category) {
+                            return true;
+                          }
+
+                          // Count if any secondary category matches
+                          const secondaryCategories = Array.isArray(
+                            c.secondaryCategory
+                          )
+                            ? c.secondaryCategory
+                            : c.secondaryCategory
+                              ? [c.secondaryCategory]
+                              : [];
+
+                          return secondaryCategories.includes(category);
+                        }).length;
+
+                        return (
+                          <button
+                            key={category}
+                            onClick={() => toggleCategory(category)}
+                            className={`w-full text-left px-2 py-1.5 rounded text-xs transition-all duration-200 flex items-center justify-between ${
+                              isSelected
+                                ? "bg-[hsl(var(--primary))] text-secondary"
+                                : "hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
+                            }`}
+                          >
+                            <span className="truncate">{category}</span>
+                            <span className="text-xs opacity-70 ml-1">
+                              ({count})
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Desktop Category Chips */}
+              {selectedCategories.length > 0 && (
+                <div className="flex items-center gap-1 flex-wrap">
+                  {selectedCategories.map((category) => (
+                    <span
+                      key={category}
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-[hsl(var(--primary)/0.2)] text-[hsl(var(--primary))] border border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary)/0.3)] transition-colors"
+                    >
+                      {category}
                       <button
-                        onClick={clearFilters}
-                        className="text-xs text-muted-foreground hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1"
+                        onClick={() => toggleCategory(category)}
+                        className="ml-1 hover:text-[hsl(var(--primary-foreground))] transition-colors"
+                        aria-label={`Remove ${category} filter`}
                       >
                         <X className="w-3 h-3" />
-                        Clear
                       </button>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-1">
-                    {availableCategories.map((category) => {
-                      const isSelected = selectedCategories.includes(category);
-                      const count = activeCompanies.filter((c) => {
-                        // Count if primary category matches
-                        if (c.category === category) {
-                          return true;
-                        }
-
-                        // Count if any secondary category matches
-                        const secondaryCategories = Array.isArray(
-                          c.secondaryCategory
-                        )
-                          ? c.secondaryCategory
-                          : c.secondaryCategory
-                            ? [c.secondaryCategory]
-                            : [];
-
-                        return secondaryCategories.includes(category);
-                      }).length;
-
-                      return (
-                        <button
-                          key={category}
-                          onClick={() => toggleCategory(category)}
-                          className={`w-full text-left px-2 py-1.5 rounded text-xs transition-all duration-200 flex items-center justify-between ${
-                            isSelected
-                              ? "bg-[hsl(var(--primary))] text-secondary"
-                              : "hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
-                          }`}
-                        >
-                          <span className="truncate">{category}</span>
-                          <span className="text-xs opacity-70 ml-1">
-                            ({count})
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                    </span>
+                  ))}
                 </div>
               )}
             </div>
 
-            {/* Selected Category Chips */}
-            {selectedCategories.length > 0 && (
-              <div className="flex items-center gap-1 flex-wrap">
-                {selectedCategories.map((category) => (
-                  <span
-                    key={category}
-                    className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-[hsl(var(--primary)/0.2)] text-[hsl(var(--primary))] border border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary)/0.3)] transition-colors"
-                  >
-                    {category}
-                    <button
-                      onClick={() => toggleCategory(category)}
-                      className="ml-1 hover:text-[hsl(var(--primary-foreground))] transition-colors"
-                      aria-label={`Remove ${category} filter`}
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
+            {/* Mobile filter layout - inline with selected categories */}
+            <div className="sm:hidden flex items-center gap-2 flex-wrap">
+              <div className="relative" ref={mobileFilterRef}>
+                <button
+                  onClick={() => setShowCategoryFilter(!showCategoryFilter)}
+                  className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded border transition-colors ${
+                    selectedCategories.length > 0
+                      ? "bg-[hsl(var(--primary))] text-secondary border-[hsl(var(--primary))]"
+                      : "bg-background text-muted-foreground border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
+                  }`}
+                >
+                  <Filter className="w-3 h-3" />
+                  <span>
+                    {selectedCategories.length > 0
+                      ? `${selectedCategories.length}`
+                      : "Filter"}
                   </span>
-                ))}
+                </button>
+
+                {showCategoryFilter && (
+                  <div className="absolute top-full left-0 mt-1 bg-card border border-[hsl(var(--primary)/0.3)] rounded-lg shadow-lg z-50 w-[calc(100vw-3rem)] max-w-96 p-3 right-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium text-[hsl(var(--primary))]">
+                        Filter by Category
+                      </span>
+                      {selectedCategories.length > 0 && (
+                        <button
+                          onClick={clearFilters}
+                          className="text-xs text-muted-foreground hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1"
+                        >
+                          <X className="w-3 h-3" />
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 gap-1">
+                      {availableCategories.map((category) => {
+                        const isSelected =
+                          selectedCategories.includes(category);
+                        const count = activeCompanies.filter((c) => {
+                          // Count if primary category matches
+                          if (c.category === category) {
+                            return true;
+                          }
+
+                          // Count if any secondary category matches
+                          const secondaryCategories = Array.isArray(
+                            c.secondaryCategory
+                          )
+                            ? c.secondaryCategory
+                            : c.secondaryCategory
+                              ? [c.secondaryCategory]
+                              : [];
+
+                          return secondaryCategories.includes(category);
+                        }).length;
+
+                        return (
+                          <button
+                            key={category}
+                            onClick={() => toggleCategory(category)}
+                            className={`w-full text-left px-2 py-1.5 rounded text-xs transition-all duration-200 flex items-center justify-between ${
+                              isSelected
+                                ? "bg-[hsl(var(--primary))] text-secondary"
+                                : "hover:bg-[hsl(var(--primary)/0.1)] hover:text-[hsl(var(--primary))]"
+                            }`}
+                          >
+                            <span className="truncate">{category}</span>
+                            <span className="text-xs opacity-70 ml-1">
+                              ({count})
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* Mobile Category Chips - inline with filter button */}
+              {selectedCategories.length > 0 && (
+                <div className="flex items-center gap-1 flex-wrap">
+                  {selectedCategories.map((category) => (
+                    <span
+                      key={category}
+                      className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-[hsl(var(--primary)/0.2)] text-[hsl(var(--primary))] border border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary)/0.3)] transition-colors"
+                    >
+                      {category}
+                      <button
+                        onClick={() => toggleCategory(category)}
+                        className="ml-1 hover:text-[hsl(var(--primary-foreground))] transition-colors"
+                        aria-label={`Remove ${category} filter`}
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       <Table>
         <TableHeader>
-          <TableRow className="border-[hsl(var(--primary)/0.3)]">
+          <TableRow
+            className={`border-[hsl(var(--primary)/0.3)] ${showUSD ? "bg-gradient-to-r from-slate-50 via-white to-slate-50 shadow-sm" : ""}`}
+          >
             <TableHead
-              className="text-[hsl(var(--primary))] text-center w-16 cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              className={`text-[hsl(var(--primary))] text-center w-16 cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none hidden sm:table-cell ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
               onClick={() => handleSort("rank")}
             >
               <div className="flex items-center justify-center">
@@ -392,7 +506,7 @@ export default function CompanyTable({
               </div>
             </TableHead>
             <TableHead
-              className="text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              className={`text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
               onClick={() => handleSort("name")}
             >
               <div className="flex items-center">
@@ -400,11 +514,13 @@ export default function CompanyTable({
                 {getSortIcon("name")}
               </div>
             </TableHead>
-            <TableHead className="text-[hsl(var(--primary))] hidden sm:table-cell text-center">
+            <TableHead
+              className={`text-[hsl(var(--primary))] hidden sm:table-cell text-center ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
+            >
               TICKER
             </TableHead>
             <TableHead
-              className="text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              className={`text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
               onClick={() => handleSort("reserve")}
             >
               <div className="flex items-center justify-end">
@@ -415,7 +531,7 @@ export default function CompanyTable({
               </div>
             </TableHead>
             <TableHead
-              className="text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              className={`text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none hidden sm:table-cell ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
               onClick={() => handleSort("reserveUSD")}
             >
               <div className="flex items-center justify-end">
@@ -426,7 +542,7 @@ export default function CompanyTable({
               </div>
             </TableHead>
             <TableHead
-              className="text-center text-[hsl(var(--primary))] hidden sm:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-colors select-none"
+              className={`text-center text-[hsl(var(--primary))] hidden sm:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm font-semibold tracking-wide" : ""}`}
               onClick={() => handleSort("pctDiff")}
             >
               <div className="flex items-center justify-center">
@@ -454,7 +570,7 @@ export default function CompanyTable({
                 key={company.id}
                 className={`border-[hsl(var(--primary)/0.3)] hover:bg-[hsl(var(--primary))/0.1] transition-colors h-8`}
               >
-                <TableCell className="text-center py-1 font-medium">
+                <TableCell className="text-center py-1 font-medium hidden sm:table-cell">
                   {rank}
                 </TableCell>
                 <TableCell className="font-medium py-1">
@@ -474,6 +590,18 @@ export default function CompanyTable({
                         />
                       </div>
                       <span>{company.name}</span>
+                      {company.accountingType ===
+                        AccountingType.SELF_REPORTED && (
+                        <span className="text-[hsl(var(--primary))] text-xs">
+                          *
+                        </span>
+                      )}
+                      {company.accountingType ===
+                        AccountingType.PUBLIC_REPORT && (
+                        <span className="text-[hsl(var(--primary))] text-xs">
+                          **
+                        </span>
+                      )}
                       {isNew(company.createdAt) && (
                         <span className="ml-2 text-emerald-500 text-[10px] font-bold uppercase tracking-wider align-middle">
                           New
@@ -491,6 +619,18 @@ export default function CompanyTable({
                         />
                       </div>
                       <span>{company.name}</span>
+                      {company.accountingType ===
+                        AccountingType.SELF_REPORTED && (
+                        <span className="text-[hsl(var(--primary))] text-xs">
+                          *
+                        </span>
+                      )}
+                      {company.accountingType ===
+                        AccountingType.PUBLIC_REPORT && (
+                        <span className="text-[hsl(var(--primary))] text-xs">
+                          **
+                        </span>
+                      )}
                       {isNew(company.createdAt) && (
                         <span className="ml-2 text-emerald-500 text-[10px] font-bold uppercase tracking-wider align-middle">
                           New
@@ -506,53 +646,25 @@ export default function CompanyTable({
                   {company.reserve === 0 ? (
                     "-"
                   ) : (
-                    <>
-                      {company.accountingType ===
-                        AccountingType.SELF_REPORTED && (
-                        <span className="mr-1 text-[hsl(var(--primary))]">
-                          *
-                        </span>
-                      )}
-                      {company.accountingType ===
-                        AccountingType.PUBLIC_REPORT && (
-                        <span className="mr-1 text-[hsl(var(--primary))]">
-                          **
-                        </span>
-                      )}
-                      <span className="font-medium">
-                        {company.reserve.toLocaleString(undefined, {
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
-                        })}
-                      </span>
-                    </>
+                    <span className="font-medium">
+                      {company.reserve.toLocaleString(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
                   )}
                 </TableCell>
-                <TableCell className="text-right py-1">
+                <TableCell className="text-right py-1 hidden sm:table-cell">
                   {company.reserve === 0 ? (
                     "-"
                   ) : (
-                    <>
-                      {company.accountingType ===
-                        AccountingType.SELF_REPORTED && (
-                        <span className="mr-1 text-[hsl(var(--primary))]">
-                          *
-                        </span>
-                      )}
-                      {company.accountingType ===
-                        AccountingType.PUBLIC_REPORT && (
-                        <span className="mr-1 text-[hsl(var(--primary))]">
-                          **
-                        </span>
-                      )}
-                      <span className="font-medium secondary-value-text">
-                        $
-                        {usdValue.toLocaleString(undefined, {
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
-                        })}
-                      </span>
-                    </>
+                    <span className="font-medium secondary-value-text">
+                      $
+                      {usdValue.toLocaleString(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
                   )}
                 </TableCell>
                 <TableCell className="hidden sm:table-cell text-center py-2">

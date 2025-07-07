@@ -326,7 +326,7 @@ export default function SubmitCompanyDialog({
                       <div className="mt-3 bg-gradient-to-r from-primary/10 to-primary/20 border border-primary/30 rounded-lg p-4 shadow-md space-y-2 backdrop-blur-sm relative overflow-hidden">
                         <div className="absolute inset-0 bg-[url('/images/eth-pattern.svg')] opacity-5"></div>
                         <div className="relative z-10">
-                          <p className="text-sm font-medium text-primary-foreground/90 flex items-center">
+                          <p className="text-sm font-medium text-primary-foreground/90 flex items-center [body.institutional_&]:text-black">
                             <span className="mr-2 text-primary">✦</span>
                             We track ETH assets across:
                           </p>
