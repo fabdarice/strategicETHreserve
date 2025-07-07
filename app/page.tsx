@@ -123,7 +123,7 @@ export default function Home() {
                   onClick={() => setShowUSD(true)}
                   className={`text-xs font-semibold px-3 py-1 ${
                     showUSD
-                      ? "bg-[hsl(var(--primary))] text-black"
+                      ? "bg-[hsl(var(--primary))] text-white hover:!bg-[hsl(var(--primary))] hover:text-black"
                       : "text-[hsl(var(--primary))] hover:bg-[hsl(var(--primary))/0.1]"
                   }`}
                 >
