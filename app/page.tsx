@@ -212,7 +212,11 @@ export default function Home() {
         <div className="space-y-12">
           {isLoading ? (
             <div className="text-center">
-              <CircleLoader color="#00FFAA" size={80} speedMultiplier={0.5} />
+              <CircleLoader
+                color="hsl(var(--primary))"
+                size={80}
+                speedMultiplier={0.5}
+              />
             </div>
           ) : (
             <div className="flex flex-col gap-12 lg:flex-row">
