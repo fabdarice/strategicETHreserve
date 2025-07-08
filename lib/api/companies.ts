@@ -18,7 +18,7 @@ export async function getCompaniesWithSnapshots(isAdmin: boolean = false) {
       logo: true,
       website: true,
       status: true,
-      contact: true,
+      contact: isAdmin,
       accountingType: true,
       news: true,
       createdAt: true,
@@ -34,7 +34,7 @@ export async function getCompaniesWithSnapshots(isAdmin: boolean = false) {
         orderBy: {
           snapshotDate: "desc",
         },
-        take: 7,
+        take: 1,
       },
     },
     where: isAdmin
