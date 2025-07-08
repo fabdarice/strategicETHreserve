@@ -283,17 +283,22 @@ export function MarketingModal({
 
               {/* Footer */}
               <div className="mt-8 pt-6 border-border/30 w-full max-w-2xl mx-auto animate-fade-in-delayed">
-                <p className="text-sm text-muted-foreground text-center">
-                  Join the movement at{" "}
+                <div className="flex justify-center">
                   <a
                     href="https://StrategicETHReserve.xyz"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`font-semibold ${tier.colors.text} hover:underline underline-offset-2 neon-text-primary shadow-primary/50 transition-all duration-300 hover:scale-105`}
+                    className="transition-all duration-300 hover:scale-105"
                   >
-                    StrategicETHReserve.xyz
+                    <Image
+                      src="/images/strategicethreservexyz_dark.svg"
+                      alt="Strategic ETH Reserve"
+                      width={300}
+                      height={50}
+                      className="h-auto"
+                    />
                   </a>
-                </p>
+                </div>
               </div>
             </div>
           </div>

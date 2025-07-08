@@ -234,17 +234,22 @@ export function ReserveIncreaseModal({
             </div>
 
             {/* Footer */}
-            <p className="text-sm text-muted-foreground text-center">
-              Join the movement at{" "}
+            <div className="flex justify-center">
               <a
                 href="https://StrategicETHReserve.xyz"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-[hsl(var(--primary))] hover:underline"
+                className="transition-all duration-300 hover:scale-105"
               >
-                StrategicETHReserve.xyz
+                <Image
+                  src="/images/strategicethreservexyz_dark.svg"
+                  alt="Strategic ETH Reserve"
+                  width={300}
+                  height={50}
+                  className="h-auto"
+                />
               </a>
-            </p>
+            </div>
           </div>
         )}
       </CustomDialogContent>
