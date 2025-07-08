@@ -8,11 +8,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "Strategic ETH Reserve - Real-Time Institutional ETH Tracking",
+    default: "Strategic ETH Reserve (SER)",
     template: "%s | Strategic ETH Reserve",
   },
   description:
-    "Follow the Strategic Ethereum Reserve (SER): Companies accumulating ETH as a strategic reserve asset. Real-time tracking of institutional ETH holdings across all networks.",
+    "Follow the Strategic Ethereum Reserve (SER): Companies accumulating ETH as a strategic reserve asset.",
   keywords: [
     "Strategic Ethereum Reserve",
     "ETH reserves",
@@ -41,13 +41,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://strategicethreserve.xyz",
-    title: "Strategic ETH Reserve - Real-Time Institutional ETH Tracking",
+    title: "Strategic ETH Reserve (SER)",
     description:
-      "Follow the Strategic Ethereum Reserve movement: Companies accumulating ETH as a strategic reserve asset. Real-time tracking of institutional ETH holdings.",
+      "Follow the Strategic Ethereum Reserve (SER): Companies accumulating ETH as a strategic reserve asset.",
     siteName: "Strategic ETH Reserve",
     images: [
       {
-        url: "/images/strategicethreserve.svg",
+        url: "/images/socialgraph.png",
         width: 507,
         height: 400,
         alt: "Strategic ETH Reserve Logo",
@@ -56,10 +56,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Strategic ETH Reserve - Institutional ETH Tracking",
+    title: "Strategic ETH Reserve (SER)",
     description:
-      "Follow companies accumulating ETH as a strategic reserve asset. Real-time institutional ETH holdings tracking.",
-    images: ["/images/strategicethreserve.svg"],
+      "Follow the Strategic Ethereum Reserve (SER): Companies accumulating ETH as a strategic reserve asset.",
+    images: ["/images/socialgraph.png"],
     creator: "@StrategicETHRes",
     site: "@StrategicETHRes",
   },
