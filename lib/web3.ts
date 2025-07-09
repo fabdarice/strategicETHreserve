@@ -129,6 +129,13 @@ export const getValidatorBalance = async (
       offset += limit;
     }
 
+    // If there are more than 30 validators, use simplified calculation
+    if (allValidators.length > 30) {
+      return (
+        parseEther(CONSTANTS.ETH_PER_VALIDATOR) * BigInt(allValidators.length)
+      );
+    }
+
     // Now fetch balance history for each validator and sum effective balances
     const baseUrl = API_ENDPOINTS.BEACON_CHAIN.replace(
       "/api/v1/validator/withdrawalCredentials",

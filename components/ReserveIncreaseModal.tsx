@@ -114,7 +114,7 @@ export function ReserveIncreaseModal({
     ];
 
     // Fire confetti just a few times instead of continuously
-    const fireTimes = [0, 500, 1000]; // Fire at 0ms, 500ms, and 1000ms
+    const fireTimes = [500]; // Fire at 0ms, 500ms, and 1000ms
 
     fireTimes.forEach((delay) => {
       setTimeout(() => {
@@ -142,7 +142,7 @@ export function ReserveIncreaseModal({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <CustomDialogContent className="p-0 overflow-hidden bg-background/95 backdrop-blur-sm ">
+      <CustomDialogContent className="max-w-3xl p-0 overflow-hidden bg-background/95 backdrop-blur-sm">
         {/* Canvas for fireworks contained within modal */}
         <canvas
           id="fireworks-canvas"
@@ -156,16 +156,16 @@ export function ReserveIncreaseModal({
             <p className="text-lg">Loading reserve data...</p>
           </div>
         ) : (
-          <div className="p-6 space-y-6 relative z-20">
+          <div className="p-8 space-y-6 relative z-20">
             {/* Logo */}
-            <div className="flex flex-col items-center gap-3">
-              <div className="relative flex items-center justify-center">
-                <EthereumLogo className="w-14 h-14 text-[hsl(var(--primary))]" />
-                <div className="absolute flex items-center justify-center w-6 h-6 rounded-full bg-[hsl(var(--primary))] -right-1 -bottom-1">
-                  <span className="text-background text-lg font-bold">+</span>
+            <div className="flex flex-col items-center mb-6">
+              <div className="relative mb-4 animate-bounce-slow">
+                <EthereumLogo className="w-20 h-20 text-[hsl(var(--primary))] transition-all duration-500" />
+                <div className="absolute flex items-center justify-center w-8 h-8 rounded-full bg-[hsl(var(--primary))] -right-2 -bottom-2">
+                  <span className="text-background text-xl font-bold">+</span>
                 </div>
               </div>
-              <div className="w-full max-w-[240px]">
+              <div className="w-full max-w-md animate-slide-in">
                 <Image
                   src="/images/strategicethreserve.svg"
                   alt="Strategic Ethereum Reserve"
@@ -178,58 +178,62 @@ export function ReserveIncreaseModal({
             </div>
 
             {/* Company Info */}
-            <div className="flex items-center justify-center gap-3 py-1">
+            <div className="flex items-center justify-center gap-6 py-1 animate-slide-in-delayed">
               {company.logo && (
-                <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-border/30">
+                <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 border-2 border-[hsl(var(--primary))] bg-card/80 backdrop-blur-sm shadow-lg transition-all duration-500 hover:scale-105">
                   <Image
                     src={company.logo}
                     alt={`${company.name} logo`}
                     fill
-                    className="object-contain"
+                    className="object-contain p-2"
                     quality={100}
                   />
                 </div>
               )}
-              <h4 className="text-xl font-medium">{company.name}</h4>
+              <h4 className="text-3xl font-bold text-foreground tracking-tight">
+                {company.name}
+              </h4>
             </div>
 
             {/* Reserve Data */}
-            <div className="w-[350px] mx-auto bg-card/50 rounded-xl p-5 border border-border/30 shadow-sm">
-              <div className="flex justify-between items-center mb-3">
-                <div>
-                  <p className="text-sm text-muted-foreground">Previous</p>
-                  <p className="text-2xl font-semibold flex items-center">
-                    <EthereumLogo className="w-4 h-4 mr-1 text-[hsl(var(--primary))]" />
-                    {previousReserve.toLocaleString(undefined, {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}
-                  </p>
+            <div className="w-full max-w-xl mx-auto mt-8 animate-slide-up">
+              <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border border-[hsl(var(--primary))]/20 shadow-lg transition-all duration-500 hover:scale-105">
+                <div className="flex justify-center items-center gap-8 mb-3">
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Previous</p>
+                    <p className="text-3xl font-bold flex items-center">
+                      <EthereumLogo className="w-6 h-6 mr-2 text-[hsl(var(--primary))]" />
+                      {previousReserve.toLocaleString(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </p>
+                  </div>
+                  <div className="text-3xl font-bold text-[hsl(var(--primary))]">
+                    →
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-muted-foreground">Current</p>
+                    <p className="text-3xl font-bold flex items-center">
+                      <EthereumLogo className="w-6 h-6 mr-2 text-[hsl(var(--primary))]" />
+                      {totalReserve.toLocaleString(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-xl font-semibold text-[hsl(var(--primary))]">
-                  →
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Current</p>
-                  <p className="text-2xl font-semibold flex items-center">
-                    <EthereumLogo className="w-4 h-4 mr-1 text-[hsl(var(--primary))]" />
-                    {totalReserve.toLocaleString(undefined, {
-                      minimumFractionDigits: 0,
-                      maximumFractionDigits: 0,
-                    })}
-                  </p>
-                </div>
-              </div>
 
-              <div className="bg-[hsl(var(--primary))/0.1] rounded-lg py-3 flex items-center justify-center shadow-inner">
-                <p className="text-[hsl(var(--primary))] text-lg font-bold">
-                  +
-                  {increase.toLocaleString(undefined, {
-                    minimumFractionDigits: 0,
-                    maximumFractionDigits: 0,
-                  })}{" "}
-                  ETH (+{increasePercentage.toFixed(1)}%)
-                </p>
+                <div className="bg-[hsl(var(--primary))/0.1] rounded-lg py-3 flex items-center justify-center shadow-inner">
+                  <p className="text-[hsl(var(--primary))] text-lg font-bold">
+                    +
+                    {increase.toLocaleString(undefined, {
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    })}{" "}
+                    ETH (+{increasePercentage.toFixed(1)}%)
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -252,6 +256,63 @@ export function ReserveIncreaseModal({
             </div>
           </div>
         )}
+
+        {/* Custom CSS for animations */}
+        <style jsx>{`
+          @keyframes bounce-slow {
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+              transform: translateY(0);
+            }
+            40% {
+              transform: translateY(-10px);
+            }
+            60% {
+              transform: translateY(-5px);
+            }
+          }
+
+          @keyframes slide-in {
+            from {
+              opacity: 0;
+              transform: translateX(-20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+
+          @keyframes slide-up {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          .animate-bounce-slow {
+            animation: bounce-slow 3s infinite;
+          }
+
+          .animate-slide-in {
+            animation: slide-in 0.8s ease-out 0.2s both;
+          }
+
+          .animate-slide-in-delayed {
+            animation: slide-in 1s ease-out 0.4s both;
+          }
+
+          .animate-slide-up {
+            animation: slide-up 1s ease-out 0.6s both;
+          }
+        `}</style>
       </CustomDialogContent>
     </Dialog>
   );

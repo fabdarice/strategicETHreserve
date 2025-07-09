@@ -13,6 +13,8 @@ import Image from "next/image";
 import { Company } from "@/app/interfaces/interface";
 import { EthereumLogo } from "@/components/icons/EthereumLogo";
 import { targetGoal } from "@/lib/constants";
+import { useState, useEffect } from "react";
+import confetti from "canvas-confetti";
 
 // Custom DialogContent without close button
 const CustomDialogContent = React.forwardRef<
@@ -64,13 +66,12 @@ const CONTRIBUTION_TIERS: ContributionTier[] = [
     name: "6-digits",
     minAmount: 100000, // 6 digits
     colors: {
-      gradient: "from-yellow-500/20 via-yellow-400/15 to-orange-500/20",
-      radial: "from-yellow-400/25 via-orange-400/15 to-transparent",
-      border: "border-yellow-400/50 shadow-yellow-400/30",
-      text: "text-yellow-400",
-      accent: "bg-yellow-400/10",
-      background:
-        "bg-gradient-to-br from-yellow-500/5 via-orange-400/5 to-red-500/5",
+      gradient: "from-background via-background/95 to-card",
+      radial: "from-[hsl(var(--primary))/0.15] via-transparent to-transparent",
+      border: "border-[hsl(var(--primary))] neon-border",
+      text: "text-[hsl(var(--primary))]",
+      accent: "bg-[hsl(var(--primary))/0.05]",
+      background: "bg-card/80",
     },
     animation: "",
     badge: "💎",
@@ -79,13 +80,12 @@ const CONTRIBUTION_TIERS: ContributionTier[] = [
     name: "5-digits",
     minAmount: 10000, // 5 digits
     colors: {
-      gradient: "from-blue-500/25 via-purple-400/20 to-indigo-500/25",
-      radial: "from-blue-400/30 via-purple-400/20 to-cyan-400/15",
-      border: "border-blue-400/60 shadow-blue-400/40 shadow-lg",
-      text: "text-blue-300",
-      accent: "bg-gradient-to-r from-blue-400/15 to-purple-400/15",
-      background:
-        "bg-gradient-to-br from-blue-500/8 via-purple-400/8 to-indigo-500/8",
+      gradient: "from-background via-background/95 to-card",
+      radial: "from-[hsl(var(--primary))/0.15] via-transparent to-transparent",
+      border: "border-[hsl(var(--primary))] neon-border",
+      text: "text-[hsl(var(--primary))]",
+      accent: "bg-[hsl(var(--primary))/0.05]",
+      background: "bg-card/80",
     },
     animation: "",
     badge: "🏆",
@@ -94,15 +94,14 @@ const CONTRIBUTION_TIERS: ContributionTier[] = [
     name: "4-digits",
     minAmount: 1000, // 4 digits
     colors: {
-      gradient: "from-green-500/20 via-emerald-400/15 to-teal-500/20",
-      radial: "from-green-400/25 via-emerald-400/15 to-transparent",
-      border: "border-green-400/50 shadow-green-400/30",
-      text: "text-green-400",
-      accent: "bg-green-400/10",
-      background:
-        "bg-gradient-to-br from-green-500/5 via-emerald-400/5 to-teal-500/5",
+      gradient: "from-background via-background/95 to-card",
+      radial: "from-[hsl(var(--primary))/0.15] via-transparent to-transparent",
+      border: "border-[hsl(var(--primary))] neon-border",
+      text: "text-[hsl(var(--primary))]",
+      accent: "bg-[hsl(var(--primary))/0.05]",
+      background: "bg-card/80",
     },
-    animation: "animate-pulse",
+    animation: "",
     badge: "🥇",
   },
   {
@@ -134,14 +133,71 @@ export function MarketingModal({
   totalReserve,
   totalReserveUSD,
 }: MarketingModalProps) {
+  const [open, setOpen] = useState(false);
   const newTotalReserve = totalReserve || 0;
   const safeReserveUSD = totalReserveUSD || 0;
   const tier = getContributionTier(company.reserve);
 
+  // Fireworks function
+  const triggerFireworks = () => {
+    const canvas = document.getElementById(
+      "fireworks-canvas"
+    ) as HTMLCanvasElement;
+    if (!canvas) return;
+
+    // Create a confetti instance bound to the canvas
+    const myConfetti = confetti.create(canvas, {
+      resize: true,
+      useWorker: true,
+    });
+
+    const colors = [
+      "#FFD700",
+      "#FF6B6B",
+      "#4ECDC4",
+      "#45B7D1",
+      "#96CEB4",
+      "#FFEAA7",
+    ];
+
+    // Fire confetti just a few times instead of continuously
+    const fireTimes = [500]; // Fire at 0ms, 500ms, and 1000ms
+
+    fireTimes.forEach((delay) => {
+      setTimeout(() => {
+        myConfetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: colors,
+        });
+      }, delay);
+    });
+  };
+
+  // Trigger fireworks when modal opens for 5-digits and 6-digits tiers
+  useEffect(() => {
+    if (open && (tier.name === "5-digits" || tier.name === "6-digits")) {
+      const timer = setTimeout(() => {
+        triggerFireworks();
+      }, 300); // Small delay to let modal fully open
+
+      return () => clearTimeout(timer);
+    }
+  }, [open, tier.name]);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <CustomDialogContent className="max-w-3xl p-0 overflow-hidden border-none">
+        {/* Canvas for fireworks contained within modal */}
+        <canvas
+          id="fireworks-canvas"
+          className="absolute inset-0 pointer-events-none z-10"
+          width={800}
+          height={600}
+        />
+
         <div className="relative">
           {/* Dynamic Background with tier-specific gradient overlay */}
           <div
@@ -151,20 +207,8 @@ export function MarketingModal({
             className={`absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] ${tier.colors.radial} transition-all duration-1000`}
           />
 
-          {/* Floating Tier Label */}
-          {tier.name !== "3-digits" && (
-            <div className="absolute top-4 right-4 z-10 animate-fade-in">
-              <div
-                className={`px-4 py-2 text-sm font-bold rounded-full ${tier.colors.accent} ${tier.colors.text} border ${tier.colors.border} backdrop-blur-sm shadow-lg`}
-              >
-                <span className="mr-1">{tier.badge}</span>
-                {tier.name.toUpperCase()}
-              </div>
-            </div>
-          )}
-
           {/* Content */}
-          <div className="relative p-8 animate-fade-in-up">
+          <div className="relative p-8 animate-fade-in-up z-20">
             {/* Header Section */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative mb-4 animate-bounce-slow">
@@ -174,11 +218,9 @@ export function MarketingModal({
                 <div
                   className={`absolute inset-0 ${tier.colors.background} blur-2xl opacity-30`}
                 />
-                {tier.name === "6-digits" && (
-                  <div className="absolute -top-2 -right-2 text-2xl animate-bounce">
-                    {tier.badge}
-                  </div>
-                )}
+                <div className="absolute -top-2 -right-2 text-2xl animate-bounce">
+                  {tier.badge}
+                </div>
               </div>
               <div className="w-full max-w-md animate-slide-in">
                 <Image
@@ -207,35 +249,13 @@ export function MarketingModal({
                   </div>
                 )}
                 <div className="flex flex-col gap-1">
-                  <h2
-                    className={`text-3xl font-bold ${
-                      tier.name === "6-digits"
-                        ? "bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent animate-shimmer"
-                        : tier.name === "5-digits"
-                          ? "bg-gradient-to-r from-blue-300 to-purple-300 bg-clip-text text-transparent animate-shimmer"
-                          : "text-foreground"
-                    } tracking-tight truncate transition-all duration-500`}
-                  >
+                  <h2 className="text-3xl font-bold text-foreground tracking-tight truncate transition-all duration-500">
                     {company.name}
                   </h2>
-                  <p
-                    className={`text-xl font-medium ${
-                      tier.name === "6-digits"
-                        ? "text-yellow-300"
-                        : tier.name === "5-digits"
-                          ? "text-blue-200"
-                          : "text-muted-foreground"
-                    } animate-fade-in-delayed transition-all duration-500`}
-                  >
+                  <p className="text-xl font-medium text-muted-foreground animate-fade-in-delayed transition-all duration-500">
                     Contributing{" "}
                     <span
-                      className={`${tier.colors.text} font-semibold ${
-                        tier.name === "6-digits"
-                          ? "text-2xl"
-                          : tier.name === "5-digits"
-                            ? "text-xl"
-                            : ""
-                      } transition-all duration-500`}
+                      className={`${tier.colors.text} font-semibold transition-all duration-500`}
                     >
                       {company.reserve.toLocaleString(undefined, {
                         minimumFractionDigits: 0,
@@ -251,7 +271,7 @@ export function MarketingModal({
               <div className="w-full max-w-xl mx-auto mt-8 flex flex-col items-center gap-8 animate-slide-up">
                 {/* Total Reserve Block with tier-specific styling */}
                 <div
-                  className={`inline-block p-6 rounded-2xl ${tier.colors.background} backdrop-blur-sm border ${tier.colors.border} ${tier.name === "6-digits" ? "shadow-2xl shadow-yellow-400/20" : ""} transition-all duration-500 hover:scale-105`}
+                  className={`inline-block p-6 rounded-2xl ${tier.colors.background} backdrop-blur-sm border ${tier.colors.border} transition-all duration-500 hover:scale-105`}
                 >
                   <div className="flex flex-col items-center gap-3">
                     <p className="text-sm uppercase tracking-wider text-muted-foreground animate-fade-in">
