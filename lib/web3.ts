@@ -102,9 +102,10 @@ export const getValidatorBalance = async (
 ): Promise<bigint> => {
   const limit = CONSTANTS.VALIDATOR_FETCH_LIMIT;
   let offset = 0;
-  let totalValidators = 0;
+  const allValidators: { publickey: string; validatorindex: number }[] = [];
 
   try {
+    // First, get all validators
     while (true) {
       const url = `${API_ENDPOINTS.BEACON_CHAIN}/${walletAddress}?limit=${limit}&offset=${offset}`;
       const response = await fetch(url, {
@@ -122,13 +123,56 @@ export const getValidatorBalance = async (
       }
 
       const data = json.data;
-      totalValidators += data.length;
+      allValidators.push(...data);
 
       if (data.length < limit) break;
       offset += limit;
     }
 
-    return parseEther(CONSTANTS.ETH_PER_VALIDATOR) * BigInt(totalValidators);
+    // Now fetch balance history for each validator and sum effective balances
+    const baseUrl = API_ENDPOINTS.BEACON_CHAIN.replace(
+      "/api/v1/validator/withdrawalCredentials",
+      ""
+    );
+    let totalEffectiveBalance = BigInt(0);
+
+    for (const validator of allValidators) {
+      try {
+        const balanceUrl = `${baseUrl}/api/v1/validator/${validator.publickey}`;
+        const balanceResponse = await fetch(balanceUrl, {
+          method: "GET",
+          headers: { Accept: "application/json" },
+        });
+
+        if (!balanceResponse.ok) {
+          console.warn(
+            `Failed to fetch balance for validator ${validator.publickey}: ${balanceResponse.status}`
+          );
+          continue;
+        }
+
+        const balanceJson = await balanceResponse.json();
+        if (balanceJson.status !== "OK") {
+          console.warn(
+            `API error for validator ${validator.publickey}: ${balanceJson.status}`
+          );
+          continue;
+        }
+
+        // Sum all effective balances for this validator
+        const validatorBalance = balanceJson.data;
+        totalEffectiveBalance +=
+          BigInt(validatorBalance.effectivebalance) * BigInt(10 ** 9);
+      } catch (error) {
+        console.error(
+          `Error fetching balance history for validator ${validator.publickey}:`,
+          error
+        );
+        // Continue with other validators even if one fails
+      }
+    }
+
+    return totalEffectiveBalance;
   } catch (error) {
     console.error("Error fetching validators:", error);
     throw error;
