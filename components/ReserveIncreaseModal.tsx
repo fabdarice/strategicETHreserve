@@ -201,8 +201,8 @@ export function ReserveIncreaseModal({
                 <div className="flex justify-center items-center gap-8 mb-3">
                   <div className="text-center">
                     <p className="text-sm text-muted-foreground">Previous</p>
-                    <p className="text-3xl font-bold flex items-center">
-                      <EthereumLogo className="w-6 h-6 mr-2 text-[hsl(var(--primary))]" />
+                    <p className="text-3xl font-bold flex items-center text-gray-500">
+                      <EthereumLogo className="w-6 h-6 mr-2 text-gray-500" />
                       {previousReserve.toLocaleString(undefined, {
                         minimumFractionDigits: 0,
                         maximumFractionDigits: 0,
