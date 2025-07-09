@@ -218,9 +218,6 @@ export function MarketingModal({
                 <div
                   className={`absolute inset-0 ${tier.colors.background} blur-2xl opacity-30`}
                 />
-                <div className="absolute -top-2 -right-2 text-2xl animate-bounce">
-                  {tier.badge}
-                </div>
               </div>
               <div className="w-full max-w-md animate-slide-in">
                 <Image
