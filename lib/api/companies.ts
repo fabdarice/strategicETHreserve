@@ -25,6 +25,7 @@ export async function getCompaniesWithSnapshots(isAdmin: boolean = false) {
       updatedAt: true,
       addresses: isAdmin,
       twitter: true,
+      marketCapTracking: true,
       snapshots: {
         select: {
           reserve: true,

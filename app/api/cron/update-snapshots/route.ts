@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { AccountingType, CompanyStatus } from "@/app/interfaces/interface";
 import { getETHPrice } from "@/lib/web3";
+import { fetchMarketCap } from "@/lib/marketcap";
 import { validateCronToken, createAuthErrorResponse } from "@/lib/api/auth";
 import {
   createErrorResponse,
@@ -37,6 +38,8 @@ export async function GET(request: NextRequest) {
         select: {
           id: true,
           name: true,
+          ticker: true,
+          marketCapTracking: true,
           currentReserve: true,
           accountingType: true,
           status: true,
@@ -102,6 +105,26 @@ async function processCompanySnapshot(
       ? companyWalletBalances.get(companyId)!
       : company.currentReserve;
 
+  // Fetch market cap if company qualifies (ACTIVE, has ticker, marketCapTracking is "Public Listing")
+  let marketCap: number | null = null;
+  if (
+    company.status === CompanyStatus.ACTIVE &&
+    company.ticker &&
+    company.marketCapTracking === "Public Listing"
+  ) {
+    try {
+      marketCap = await fetchMarketCap(company.ticker);
+      console.log(
+        `Fetched market cap for ${company.name} (${company.ticker}): ${marketCap}`
+      );
+    } catch (error) {
+      console.error(
+        `Failed to fetch market cap for ${company.name} (${company.ticker}):`,
+        error
+      );
+    }
+  }
+
   // Find most recent previous company snapshot
   const prevCompanySnapshot = await prisma.snapshotCompany.findFirst({
     where: {
@@ -133,7 +156,11 @@ async function processCompanySnapshot(
   if (existingCompanySnapshot) {
     await prisma.snapshotCompany.update({
       where: { id: existingCompanySnapshot.id },
-      data: { reserve: currentReserve, pctDiff },
+      data: {
+        reserve: currentReserve,
+        pctDiff,
+        marketCap: marketCap ?? undefined,
+      },
     });
     if (Math.abs(existingCompanySnapshot.reserve - currentReserve) > 10) {
       await sendChangeAlert(
@@ -152,6 +179,7 @@ async function processCompanySnapshot(
         companyId,
         reserve: currentReserve,
         pctDiff,
+        marketCap: marketCap ?? undefined,
         snapshotDate,
       },
     });

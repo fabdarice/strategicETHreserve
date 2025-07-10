@@ -154,6 +154,7 @@ export function CompaniesTable({
               <TableHead className="w-[100px]">Snapshot Reserve</TableHead>
               <TableHead className="w-[100px]">Status</TableHead>
               <TableHead className="w-[110px]">Accounting</TableHead>
+              <TableHead className="w-[120px]">Market Cap Tracking</TableHead>
               <TableHead className="w-[130px]">News URL</TableHead>
               <TableHead className="w-[130px]">Website</TableHead>
               <TableHead className="w-[120px]">Twitter</TableHead>

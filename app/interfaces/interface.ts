@@ -13,6 +13,7 @@ export interface Company {
   status: CompanyStatus;
   contact: string | null;
   accountingType: AccountingType;
+  marketCapTracking: MarketCapTracking;
   news: string | null;
 
   createdAt: Date;
@@ -52,4 +53,9 @@ export enum AccountingType {
   SELF_REPORTED = "SELF_REPORTED",
   PUBLIC_REPORT = "PUBLIC_REPORT",
   WALLET_TRACKING = "WALLET_TRACKING",
+}
+
+export enum MarketCapTracking {
+  CRYPTO = "Crypto",
+  PUBLIC_LISTING = "Public Listing",
 }

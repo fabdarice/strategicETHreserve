@@ -9,6 +9,7 @@ import {
   Company,
   CompanyStatus,
   AccountingType,
+  MarketCapTracking,
   AdminCompany,
 } from "@/app/interfaces/interface";
 import { useState, useRef, useEffect } from "react";
@@ -239,6 +240,21 @@ export function CompanyRow({
           {Object.values(AccountingType).map((type) => (
             <option key={type} value={type}>
               {type.replace("_", " ")}
+            </option>
+          ))}
+        </select>
+      </TableCell>
+      <TableCell className="p-1">
+        <select
+          value={displayCompany.marketCapTracking ?? MarketCapTracking.CRYPTO}
+          onChange={(e) =>
+            onInputChange(company.id, "marketCapTracking", e.target.value)
+          }
+          className="w-full rounded-md border border-input bg-background px-2 py-1 text-xs"
+        >
+          {Object.values(MarketCapTracking).map((type) => (
+            <option key={type} value={type}>
+              {type}
             </option>
           ))}
         </select>

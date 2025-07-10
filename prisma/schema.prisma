@@ -23,6 +23,7 @@ model Company {
   news                 String?  
   contact              String?
   accountingType       String? @default("SELF_REPORTED")
+  marketCapTracking    String? @default("Crypto")
   wallets              CompanyWallet[]
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
@@ -63,6 +64,7 @@ model SnapshotCompany {
   companyId            String
   company              Company  @relation(fields: [companyId], references: [id])  
   reserve              Float
+  marketCap            Float?
   pctDiff              Float?
   snapshotDate         DateTime @default(now())
   createdAt            DateTime @default(now())

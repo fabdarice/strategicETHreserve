@@ -69,6 +69,90 @@ tsx scripts/test-validator-balance.ts 0x010000000000000000000000b9d7934878b5fb96
 
 ---
 
+## Market Cap Test
+
+This script allows you to test the `fetchMarketCap` function with a specific ticker symbol to fetch and display stock market capitalization data from Alpha Vantage API.
+
+### Usage
+
+```bash
+# Install dependencies first (if not already done)
+npm install
+
+# Run the script with a ticker symbol
+npm run test-marketcap <ticker>
+
+# Or run directly with tsx
+tsx scripts/test-marketcap.ts <ticker>
+```
+
+### Examples
+
+```bash
+# Test market cap for Apple Inc.
+npm run test-marketcap AAPL
+
+# Test market cap for Microsoft
+npm run test-marketcap MSFT
+
+# Test market cap for Tesla
+npm run test-marketcap TSLA
+
+# If no ticker is provided, it defaults to AAPL
+npm run test-marketcap
+```
+
+### What it does
+
+1. **Validates the ticker symbol** input (or uses AAPL as default)
+2. **Fetches market cap data** from Alpha Vantage API
+3. **Displays formatted results** with market cap value and execution time
+4. **Handles API errors** gracefully with troubleshooting tips
+
+### Output Format
+
+```
+🚀 Starting market cap test...
+
+🔍 Testing market cap for ticker: AAPL
+================================================================================
+🔄 Fetching market cap data...
+
+📊 RESULTS:
+💰 Market Cap: $3,456,789,012,345
+🔢 Raw Market Cap: 3456789012345
+📈 Ticker: AAPL
+⏱️  Execution Time: 1234ms
+✅ Successfully retrieved market cap data
+
+================================================================================
+```
+
+### Features
+
+- **Input validation**: Ensures proper ticker symbol format
+- **Performance timing**: Shows execution time for API call
+- **Error handling**: Graceful error handling with troubleshooting tips
+- **Formatted output**: Shows both formatted and raw market cap values
+- **Default ticker**: Uses AAPL as default if no ticker provided
+
+### API Requirements
+
+- Valid Alpha Vantage API key set in environment variable `ALPHAVANTAGE_API_KEY`
+- Internet connection to access Alpha Vantage API
+- Valid stock ticker symbol (e.g., AAPL, MSFT, TSLA)
+
+### Error Handling
+
+The script provides detailed error messages and troubleshooting tips for common issues:
+
+- Missing or invalid API key
+- Invalid ticker symbols
+- Network connectivity issues
+- API rate limit exceeded
+
+---
+
 ## ETH Balance All Networks Test
 
 This script allows you to test the `getETHBalanceAllNetworks` function with a specific wallet address to fetch and display ETH balances across all supported networks.
