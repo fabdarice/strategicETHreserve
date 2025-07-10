@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MarketingModal } from "@/components/MarketingModal";
 import { ReserveIncreaseModal } from "@/components/ReserveIncreaseModal";
+import { AddReserveModal } from "@/components/AddReserveModal";
 import {
   Company,
   CompanyStatus,
@@ -210,6 +211,22 @@ export function CompanyRow({
         />
       </TableCell>
       <TableCell className="p-1">
+        <Input
+          type="number"
+          min="0"
+          step="any"
+          value={displayCompany.costbasis ?? ""}
+          onChange={(e) =>
+            onInputChange(
+              company.id,
+              "costbasis",
+              e.target.value === "" ? null : parseFloat(e.target.value)
+            )
+          }
+          className="bg-background h-8 text-xs"
+        />
+      </TableCell>
+      <TableCell className="p-1">
         <div className="bg-background h-8 px-3 py-1 text-xs rounded-md border border-input flex items-center">
           {displayCompany.reserve != null
             ? displayCompany.reserve.toFixed(2)
@@ -328,6 +345,23 @@ export function CompanyRow({
             Growth
           </Button>
         </ReserveIncreaseModal>
+      </TableCell>
+      <TableCell className="p-1">
+        <AddReserveModal
+          company={displayCompany}
+          onUpdate={(companyId, newReserve, newCostBasis) => {
+            onInputChange(companyId, "currentReserve", newReserve);
+            onInputChange(companyId, "costbasis", newCostBasis);
+          }}
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs px-2 py-1 h-7 bg-green-100 hover:bg-green-200 text-green-700"
+          >
+            Add Reserve
+          </Button>
+        </AddReserveModal>
       </TableCell>
       <TableCell className="p-1">
         <Button

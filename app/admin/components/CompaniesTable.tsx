@@ -151,6 +151,7 @@ export function CompaniesTable({
               <TableHead className="w-[100px]">Category</TableHead>
               <TableHead className="w-[100px]">Secondary Category</TableHead>
               <TableHead className="w-[100px]">Reserve</TableHead>
+              <TableHead className="w-[100px]">Cost Basis</TableHead>
               <TableHead className="w-[100px]">Snapshot Reserve</TableHead>
               <TableHead className="w-[100px]">Status</TableHead>
               <TableHead className="w-[110px]">Accounting</TableHead>
@@ -162,6 +163,7 @@ export function CompaniesTable({
               <TableHead className="w-[120px]">Contact</TableHead>
               <TableHead className="w-[80px]">Marketing</TableHead>
               <TableHead className="w-[80px]">Growth</TableHead>
+              <TableHead className="w-[90px]">Add Reserve</TableHead>
               <TableHead className="w-[60px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
