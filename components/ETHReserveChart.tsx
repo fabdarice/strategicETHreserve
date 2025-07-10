@@ -23,6 +23,7 @@ interface ChartDataPoint {
   reserve: number;
   usd: number;
   date: string;
+  totalCompanies: number;
 }
 
 export default function ETHReserveChart({
@@ -54,6 +55,7 @@ export default function ETHReserveChart({
             reserve: totalReserve,
             usd: totalReserveUSD,
             date: new Date().toISOString(),
+            totalCompanies: 0, // Placeholder for totalCompanies
           },
         ]);
       } finally {
@@ -68,8 +70,7 @@ export default function ETHReserveChart({
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const dataPoint = payload[0].payload;
-      const increase = dataPoint.dayOverDayIncrease || 0;
-      const isSignificantIncrease = increase >= 100000;
+      const crossedMilestone = dataPoint.crossedMilestone;
       const ethValue = payload[0].value;
       const usdValue = dataPoint.usd || payload[0].value * ethPrice;
 
@@ -95,30 +96,24 @@ export default function ETHReserveChart({
               })}`}
             </p>
           </div>
-
-          {isSignificantIncrease && (
-            <div className="mt-0 pt-0 border-t border-yellow-500/20">
-              <div className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <p className="text-xs text-yellow-500 font-medium">
-                  new 6-digit member!
-                </p>
-              </div>
-            </div>
-          )}
+          {/* Show entity count */}
+          <div className="items-center gap-2 mb-1">
+            <p className="text-[hsl(var(--primary))] font-medium text-sm">
+              {`${dataPoint.totalCompanies} entities`}
+            </p>
+          </div>
         </div>
       );
     }
     return null;
   };
 
-  // Custom dot component for significant increases
+  // Custom dot component for entity count milestones (when crossing multiples of 10)
   const CustomDot = (props: any) => {
     const { cx, cy, payload } = props;
-    const increase = payload.dayOverDayIncrease || 0;
-    const isSignificantIncrease = increase >= 100000;
+    const crossedMilestone = payload.crossedMilestone;
 
-    if (!isSignificantIncrease) return null;
+    if (!crossedMilestone) return null;
 
     return (
       <g>
@@ -145,16 +140,40 @@ export default function ETHReserveChart({
     );
   };
 
-  // Process chart data to calculate day-over-day increases and prepare display values
+  // Helper function to find the highest multiple of 10 crossed between two numbers
+  const findCrossedMilestone = (
+    prev: number,
+    current: number
+  ): number | null => {
+    if (prev >= current) return null; // Only check for increases
+
+    const prevMilestone = Math.floor(prev / 10) * 10;
+    const currentMilestone = Math.floor(current / 10) * 10;
+
+    // If we crossed into a new milestone bracket
+    if (currentMilestone > prevMilestone) {
+      // Return the highest milestone we crossed
+      return currentMilestone;
+    }
+
+    return null;
+  };
+
+  // Process chart data to check for crossed milestones
   const processedChartData = chartData.map((point, index) => {
-    const dayOverDayIncrease =
-      index === 0 ? 0 : point.reserve - chartData[index - 1].reserve;
     const displayValue = point.reserve; // Always use ETH values
+
+    let crossedMilestone = null;
+    if (index > 0) {
+      const prevCompanies = chartData[index - 1].totalCompanies;
+      const currentCompanies = point.totalCompanies;
+      crossedMilestone = findCrossedMilestone(prevCompanies, currentCompanies);
+    }
 
     return {
       ...point,
-      dayOverDayIncrease,
       displayValue,
+      crossedMilestone,
     };
   });
 

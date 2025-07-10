@@ -5,6 +5,7 @@ export interface ChartDataPoint {
   reserve: number;
   usd: number;
   date: Date;
+  totalCompanies: number;
 }
 
 export interface ChartResponse {
@@ -20,6 +21,7 @@ export async function getChartData(): Promise<ChartResponse> {
     select: {
       totalReserve: true,
       totalReserveUSD: true,
+      totalCompanies: true,
       snapshotDate: true,
     },
   });
@@ -93,6 +95,7 @@ function aggregateWeeklyData(snapshots: any[]): ChartDataPoint[] {
       }),
       reserve: snapshot.totalReserve,
       usd: snapshot.totalReserveUSD,
+      totalCompanies: snapshot.totalCompanies,
       date: snapshot.snapshotDate,
     }));
 }
@@ -131,6 +134,7 @@ function aggregateMonthlyData(snapshots: any[]): ChartDataPoint[] {
       }),
       reserve: snapshot.totalReserve,
       usd: snapshot.totalReserveUSD,
+      totalCompanies: snapshot.totalCompanies,
       date: snapshot.snapshotDate,
     }));
 }

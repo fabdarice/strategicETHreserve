@@ -98,6 +98,13 @@ export function ReserveIncreaseModal({
     ) as HTMLCanvasElement;
     if (!canvas) return;
 
+    // Set canvas dimensions to match modal size
+    const modalContent = canvas.parentElement;
+    if (modalContent) {
+      canvas.width = modalContent.clientWidth;
+      canvas.height = modalContent.clientHeight;
+    }
+
     // Create a confetti instance bound to the canvas
     const myConfetti = confetti.create(canvas, {
       resize: true,
@@ -121,7 +128,7 @@ export function ReserveIncreaseModal({
         myConfetti({
           particleCount: 100,
           spread: 70,
-          origin: { y: 0.6 },
+          origin: { x: 0.5, y: 0.5 }, // Center the confetti in the modal
           colors: colors,
         });
       }, delay);
@@ -146,9 +153,7 @@ export function ReserveIncreaseModal({
         {/* Canvas for fireworks contained within modal */}
         <canvas
           id="fireworks-canvas"
-          className="absolute inset-0 pointer-events-none z-10"
-          width={600}
-          height={600}
+          className="absolute inset-0 pointer-events-none z-10 w-full h-full"
         />
 
         {loading ? (
