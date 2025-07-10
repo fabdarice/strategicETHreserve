@@ -46,6 +46,7 @@ export interface Influencer {
 
 export enum CompanyStatus {
   PENDING = "PENDING",
+  IN_REVIEW = "IN_REVIEW",
   ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
 }

@@ -407,3 +407,7 @@ The script automatically finds the next available number based on existing manua
 - Manual adjustments for complex treasury structures
 - Temporary entries for pending transactions
 - Testing and development purposes
+
+### PG DUMP
+
+pg_dump -v -d <source_database_connection_string> -f <dump_file_name>.sql

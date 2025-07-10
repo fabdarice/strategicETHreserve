@@ -12,7 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import SubmitCompanyDialog from "@/components/SubmitCompanyDialog";
 import Image from "next/image";
-import { Company, AccountingType } from "@/app/interfaces/interface";
+import {
+  Company,
+  AccountingType,
+  CompanyStatus,
+} from "@/app/interfaces/interface";
 import { ChevronUp, ChevronDown, Filter, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
@@ -93,7 +97,7 @@ export default function CompanyTable({
   const mobileFilterRef = useRef<HTMLDivElement>(null);
 
   const activeCompanies = companies.filter(
-    (company) => company.status === "ACTIVE"
+    (company) => company.status === "ACTIVE" || company.status === "PENDING"
   );
 
   // Get unique categories from active companies
@@ -643,7 +647,9 @@ export default function CompanyTable({
                   {company.ticker || "-"}
                 </TableCell>
                 <TableCell className="text-right py-1">
-                  {company.reserve === 0 ? (
+                  {company.status === CompanyStatus.PENDING ? (
+                    "Pending"
+                  ) : company.reserve === 0 ? (
                     "-"
                   ) : (
                     <span className="font-medium tabular-nums">
@@ -655,7 +661,9 @@ export default function CompanyTable({
                   )}
                 </TableCell>
                 <TableCell className="text-right py-1 hidden sm:table-cell">
-                  {company.reserve === 0 ? (
+                  {company.status === CompanyStatus.PENDING ? (
+                    "Pending"
+                  ) : company.reserve === 0 ? (
                     "-"
                   ) : (
                     <span className="font-medium tabular-nums secondary-value-text">
