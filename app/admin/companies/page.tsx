@@ -88,11 +88,11 @@ export default function AdminCompaniesPage() {
   }
 
   // Split companies by status
-  const pendingCompanies = companies.filter(
-    (company) => company.status === CompanyStatus.PENDING
+  const inReviewCompanies = companies.filter(
+    (company) => company.status === CompanyStatus.IN_REVIEW
   );
   const activeCompanies = companies.filter(
-    (company) => company.status !== CompanyStatus.PENDING
+    (company) => company.status !== CompanyStatus.IN_REVIEW
   );
 
   // Calculate totals from active companies only
@@ -121,8 +121,8 @@ export default function AdminCompaniesPage() {
       />
 
       <CompaniesTable
-        companies={pendingCompanies}
-        title="Pending Companies"
+        companies={inReviewCompanies}
+        title="In Review Companies"
         totalReserve={totalReserve}
         totalReserveUSD={totalReserveUSD}
         onCompaniesUpdate={fetchData}
@@ -130,7 +130,7 @@ export default function AdminCompaniesPage() {
 
       <CompaniesTable
         companies={activeCompanies}
-        title="Active & Inactive Companies"
+        title="Active & Pending Companies"
         totalReserve={totalReserve}
         totalReserveUSD={totalReserveUSD}
         onCompaniesUpdate={fetchData}

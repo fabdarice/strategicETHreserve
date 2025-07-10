@@ -25,9 +25,10 @@ export async function GET() {
     // Sort by reserve in descending order
     transformedCompanies.sort((a, b) => b.reserve - a.reserve);
 
-    // Filter out companies with reserve less than 100
+    // Filter companies: include all PENDING companies, but only ACTIVE companies with reserve > 100
     const filteredCompanies = transformedCompanies.filter(
-      (company) => company.reserve > 100
+      (company) =>
+        company.status === CompanyStatus.PENDING || company.reserve > 100
     );
 
     const lastETHPrice = await getLatestETHPrice();
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
         twitter,
         currentReserve,
         addresses: addressesArray,
-        status: CompanyStatus.PENDING.toString(),
+        status: CompanyStatus.IN_REVIEW.toString(),
         contact,
       },
     });
