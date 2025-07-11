@@ -666,7 +666,7 @@ export default function CompanyTable({
                   <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded mr-1">
                     T
                   </span>
-                  PNL ($)
+                  P&L ($)
                   {getSortIcon("pnl")}
                 </div>
               </TableHead>
