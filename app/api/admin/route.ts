@@ -69,6 +69,9 @@ export async function PUT(request: NextRequest) {
     delete data.reserve;
     delete data.pctDiff;
     delete data.snapshotDate;
+    delete data.marketCap;
+    delete data.sharesOutstanding;
+    delete data.totalCostAccumulated;
 
     let result;
 
@@ -125,13 +128,8 @@ export async function POST(request: NextRequest) {
 }
 
 async function updateCompany(id: string, data: any) {
-  // Remove null values from data object
-  const cleanData = Object.fromEntries(
-    Object.entries(data).filter(([_, value]) => value !== null)
-  );
-
   // Validate addresses array
-  const addresses = cleanData.addresses;
+  const addresses = data.addresses;
   if (!Array.isArray(addresses)) {
     throw new Error("Addresses must be an array");
   }
@@ -146,7 +144,7 @@ async function updateCompany(id: string, data: any) {
     // Update company record
     const updatedCompany = await tx.company.update({
       where: { id },
-      data: cleanData,
+      data: data,
     });
 
     if (data.status === CompanyStatus.INACTIVE) {
