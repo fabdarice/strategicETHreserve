@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { companyId, amount, totalCost, type } = body;
+    const { companyId, amount, totalCost, type, purchaseDate } = body;
 
     // Validate required fields
     if (!companyId || !amount || !totalCost || !type) {
@@ -167,6 +167,15 @@ export async function POST(request: NextRequest) {
       return createValidationErrorResponse(
         "Type must be either 'buy' or 'yield'"
       );
+    }
+
+    // Validate purchaseDate if provided
+    let validPurchaseDate = new Date();
+    if (purchaseDate) {
+      validPurchaseDate = new Date(purchaseDate);
+      if (isNaN(validPurchaseDate.getTime())) {
+        return createValidationErrorResponse("Invalid purchase date provided");
+      }
     }
 
     // Verify company exists
@@ -196,6 +205,7 @@ export async function POST(request: NextRequest) {
           amount,
           totalCost,
           type,
+          purchaseDate: validPurchaseDate,
         },
       });
 

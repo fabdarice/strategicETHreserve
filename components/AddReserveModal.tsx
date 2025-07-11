@@ -55,6 +55,9 @@ export function AddReserveModal({
   const [amount, setAmount] = useState<string>("");
   const [totalCost, setTotalCost] = useState<string>("");
   const [type, setType] = useState<string>("buy");
+  const [purchaseDate, setPurchaseDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
   const [loading, setLoading] = useState(false);
 
   const calculateNewReserve = () => {
@@ -92,6 +95,7 @@ export function AddReserveModal({
           amount: addedAmount,
           totalCost: purchaseTotalCost,
           type: type,
+          purchaseDate: purchaseDate,
         }),
       });
 
@@ -112,6 +116,7 @@ export function AddReserveModal({
       setAmount("");
       setTotalCost("");
       setType("buy");
+      setPurchaseDate(new Date().toISOString().split("T")[0]);
       setOpen(false);
     } catch (error) {
       console.error("Error creating purchase:", error);
@@ -186,6 +191,16 @@ export function AddReserveModal({
                 <option value="yield">Yield</option>
               </select>
             </div>
+
+            <div>
+              <Label htmlFor="purchaseDate">Purchase Date</Label>
+              <Input
+                id="purchaseDate"
+                type="date"
+                value={purchaseDate}
+                onChange={(e) => setPurchaseDate(e.target.value)}
+              />
+            </div>
           </div>
 
           {/* Purchase Preview */}
@@ -214,6 +229,12 @@ export function AddReserveModal({
                   </div>
                 </div>
                 <div>
+                  <span className="text-muted-foreground">Purchase Date:</span>
+                  <div className="font-mono text-primary">
+                    {new Date(purchaseDate).toLocaleDateString()}
+                  </div>
+                </div>
+                <div className="col-span-2">
                   <span className="text-muted-foreground">Avg Price:</span>
                   <div className="font-mono text-primary">
                     ${(parseFloat(totalCost) / parseFloat(amount)).toFixed(2)}
