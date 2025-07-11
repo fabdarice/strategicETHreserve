@@ -89,7 +89,7 @@ export default function Home() {
       <main
         className={`min-h-screen cyber-grid ${showUSD ? "institutional" : ""}`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center text-red-500">Error: {error}</div>
         </div>
       </main>
@@ -100,7 +100,7 @@ export default function Home() {
     <main
       className={`min-h-screen cyber-grid ${showUSD ? "institutional" : ""}`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div className="max-w-[1380px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="text-center mb-8 relative">
           {/* Light/Dark Toggle - Top right */}
           <div className="absolute top-0 right-0">

@@ -128,8 +128,13 @@ export async function POST(request: NextRequest) {
 }
 
 async function updateCompany(id: string, data: any) {
+  // Remove null values from data object
+  const cleanData = Object.fromEntries(
+    Object.entries(data).filter(([_, value]) => value !== null)
+  );
+
   // Validate addresses array
-  const addresses = data.addresses;
+  const addresses = cleanData.addresses;
   if (!Array.isArray(addresses)) {
     throw new Error("Addresses must be an array");
   }
@@ -144,7 +149,7 @@ async function updateCompany(id: string, data: any) {
     // Update company record
     const updatedCompany = await tx.company.update({
       where: { id },
-      data,
+      data: cleanData,
     });
 
     if (data.status === CompanyStatus.INACTIVE) {

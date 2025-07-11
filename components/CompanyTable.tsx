@@ -590,10 +590,10 @@ export default function CompanyTable({
               TICKER
             </TableHead>
             <TableHead
-              className={`text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
+              className={`text-center text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
               onClick={() => handleSort("reserve")}
             >
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-center">
                 <div className="flex items-center gap-2">
                   ETH
                   {getSortIcon("reserve")}
@@ -601,10 +601,10 @@ export default function CompanyTable({
               </div>
             </TableHead>
             <TableHead
-              className={`text-right text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none hidden sm:table-cell ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
+              className={`text-center text-[hsl(var(--primary))] cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none hidden sm:table-cell ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
               onClick={() => handleSort("reserveUSD")}
             >
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-center">
                 <div className="flex items-center gap-2">
                   USD
                   {getSortIcon("reserveUSD")}
@@ -621,10 +621,10 @@ export default function CompanyTable({
               </div>
             </TableHead>
             <TableHead
-              className={`text-right text-[hsl(var(--primary))] hidden md:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
+              className={`text-center text-[hsl(var(--primary))] hidden md:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
               onClick={() => handleSort("marketCap")}
             >
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-center">
                 MARKET CAP
                 {getSortIcon("marketCap")}
               </div>
@@ -659,10 +659,10 @@ export default function CompanyTable({
             )}
             {hasTreasuryCompanies && (
               <TableHead
-                className={`text-right text-[hsl(var(--primary))] hidden lg:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm font-semibold tracking-wide" : ""}`}
+                className={`text-center text-[hsl(var(--primary))] hidden lg:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm font-semibold tracking-wide" : ""}`}
                 onClick={() => handleSort("pnl")}
               >
-                <div className="flex items-center justify-end">
+                <div className="flex items-center justify-center">
                   <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded mr-1">
                     T
                   </span>
@@ -735,11 +735,12 @@ export default function CompanyTable({
                                 **
                               </span>
                             )}
-                          {isNew(company.createdAt) && (
-                            <span className="hidden sm:inline text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
-                              New
-                            </span>
-                          )}
+                          {isNew(company.createdAt) &&
+                            company.name.length <= 15 && (
+                              <span className="hidden sm:inline text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
+                                New
+                              </span>
+                            )}
                         </div>
                       </div>
                     </a>
@@ -760,7 +761,7 @@ export default function CompanyTable({
                         <div className="flex items-center gap-1 flex-shrink-0">
                           {isTreasuryCompany(company) &&
                             hasTreasuryCompanies && (
-                              <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded">
+                              <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-2 py-0.5 rounded">
                                 T
                               </span>
                             )}
@@ -778,11 +779,12 @@ export default function CompanyTable({
                                 **
                               </span>
                             )}
-                          {isNew(company.createdAt) && (
-                            <span className="hidden sm:inline text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
-                              New
-                            </span>
-                          )}
+                          {isNew(company.createdAt) &&
+                            company.name.length <= 25 && (
+                              <span className="hidden sm:inline text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
+                                New
+                              </span>
+                            )}
                         </div>
                       </div>
                     </div>
@@ -899,7 +901,7 @@ export default function CompanyTable({
                     %
                   </span>
                 </TableCell>
-                <TableCell className="text-right py-1 hidden md:table-cell">
+                <TableCell className="text-center py-1 hidden md:table-cell">
                   {company.marketCap ? (
                     <span className="font-medium tabular-nums secondary-value-text">
                       $
@@ -944,7 +946,7 @@ export default function CompanyTable({
                   </TableCell>
                 )}
                 {hasTreasuryCompanies && (
-                  <TableCell className="text-right py-1 hidden lg:table-cell">
+                  <TableCell className="text-center py-1 hidden lg:table-cell">
                     {isTreasuryCompany(company) &&
                     company.totalCostAccumulated !== null ? (
                       <span
