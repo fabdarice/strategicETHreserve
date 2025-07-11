@@ -146,7 +146,11 @@ export function AddReserveModal({
             <div className="text-sm">
               <span className="text-muted-foreground">Reserve:</span>
               <div className="font-mono">
-                {company.currentReserve?.toFixed(4) || 0} ETH
+                {(company.currentReserve || 0).toLocaleString(undefined, {
+                  minimumFractionDigits: 4,
+                  maximumFractionDigits: 4,
+                })}{" "}
+                ETH
               </div>
             </div>
           </div>
@@ -213,13 +217,22 @@ export function AddReserveModal({
                 <div>
                   <span className="text-muted-foreground">Amount:</span>
                   <div className="font-mono text-primary">
-                    {parseFloat(amount).toFixed(4)} ETH
+                    {parseFloat(amount).toLocaleString(undefined, {
+                      minimumFractionDigits: 4,
+                      maximumFractionDigits: 4,
+                    })}{" "}
+                    ETH
                   </div>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Total Cost:</span>
                   <div className="font-mono text-primary">
-                    ${parseFloat(totalCost).toFixed(2)} USD
+                    $
+                    {parseFloat(totalCost).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    USD
                   </div>
                 </div>
                 <div>
@@ -237,7 +250,13 @@ export function AddReserveModal({
                 <div className="col-span-2">
                   <span className="text-muted-foreground">Avg Price:</span>
                   <div className="font-mono text-primary">
-                    ${(parseFloat(totalCost) / parseFloat(amount)).toFixed(2)}
+                    $
+                    {(
+                      parseFloat(totalCost) / parseFloat(amount)
+                    ).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
                     /ETH
                   </div>
                 </div>
