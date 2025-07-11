@@ -43,11 +43,7 @@ CustomDialogContent.displayName = DialogPrimitive.Content.displayName;
 interface AddReserveModalProps {
   company: AdminCompany;
   children: React.ReactNode;
-  onUpdate: (
-    companyId: string,
-    newReserve: number,
-    newCostBasis: number
-  ) => void;
+  onUpdate: () => void;
 }
 
 export function AddReserveModal({
@@ -57,55 +53,75 @@ export function AddReserveModal({
 }: AddReserveModalProps) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState<string>("");
-  const [costBasis, setCostBasis] = useState<string>("");
+  const [totalCost, setTotalCost] = useState<string>("");
+  const [type, setType] = useState<string>("buy");
   const [loading, setLoading] = useState(false);
 
-  const calculateNewValues = () => {
+  const calculateNewReserve = () => {
     const addedAmount = parseFloat(amount) || 0;
-    const addedCostBasis = parseFloat(costBasis) || 0;
     const currentReserve = company.currentReserve || 0;
-    const currentCostBasis = company.costbasis || 0;
 
     if (addedAmount <= 0) return null;
 
-    const newReserve = currentReserve + addedAmount;
-
-    // Weighted average cost basis calculation
-    const newCostBasis =
-      currentReserve > 0
-        ? (currentReserve * currentCostBasis + addedAmount * addedCostBasis) /
-          newReserve
-        : addedCostBasis;
-
-    return {
-      newReserve,
-      newCostBasis,
-    };
+    return currentReserve + addedAmount;
   };
 
   const handleSubmit = async () => {
-    const calculations = calculateNewValues();
-    if (!calculations) return;
+    const addedAmount = parseFloat(amount) || 0;
+    const purchaseTotalCost = parseFloat(totalCost) || 0;
+
+    if (addedAmount <= 0 || purchaseTotalCost <= 0) return;
 
     setLoading(true);
     try {
-      // Call the parent's update function
-      onUpdate(company.id, calculations.newReserve, calculations.newCostBasis);
+      // Get admin token for authentication
+      const adminToken = localStorage.getItem("admin_token");
+      if (!adminToken) {
+        throw new Error("Admin authentication required");
+      }
+
+      // Call API to create purchase record
+      const response = await fetch("/api/purchases", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({
+          companyId: company.id,
+          amount: addedAmount,
+          totalCost: purchaseTotalCost,
+          type: type,
+        }),
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem("admin_token");
+        window.location.href = "/admin/login";
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Failed to create purchase");
+      }
+
+      // Call the parent's update function to refresh data
+      onUpdate();
 
       // Reset form
       setAmount("");
-      setCostBasis("");
+      setTotalCost("");
+      setType("buy");
       setOpen(false);
     } catch (error) {
-      console.error("Error updating reserve:", error);
+      console.error("Error creating purchase:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const calculations = calculateNewValues();
-  const isValid =
-    calculations && parseFloat(amount) > 0 && parseFloat(costBasis) > 0;
+  const newReserve = calculateNewReserve();
+  const isValid = parseFloat(amount) > 0 && parseFloat(totalCost) > 0;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -113,27 +129,19 @@ export function AddReserveModal({
       <CustomDialogContent>
         <div className="space-y-6">
           <div>
-            <h2 className="text-lg font-semibold">Add Reserve & Cost Basis</h2>
+            <h2 className="text-lg font-semibold">Add Purchase</h2>
             <p className="text-sm text-muted-foreground">
-              Add new ETH amount with its cost basis for {company.name}
+              Record a new ETH purchase for {company.name}
             </p>
           </div>
 
           {/* Current State */}
           <div className="p-4 bg-muted/50 rounded-lg space-y-2">
             <h3 className="text-sm font-medium">Current State</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-muted-foreground">Reserve:</span>
-                <div className="font-mono">
-                  {company.currentReserve?.toFixed(4) || 0} ETH
-                </div>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Cost Basis:</span>
-                <div className="font-mono">
-                  ${company.costbasis?.toFixed(2) || 0}/ETH
-                </div>
+            <div className="text-sm">
+              <span className="text-muted-foreground">Reserve:</span>
+              <div className="font-mono">
+                {company.currentReserve?.toFixed(4) || 0} ETH
               </div>
             </div>
           </div>
@@ -141,7 +149,7 @@ export function AddReserveModal({
           {/* Input Form */}
           <div className="space-y-4">
             <div>
-              <Label htmlFor="amount">Amount to Add (ETH)</Label>
+              <Label htmlFor="amount">Amount (ETH)</Label>
               <Input
                 id="amount"
                 type="number"
@@ -154,36 +162,62 @@ export function AddReserveModal({
             </div>
 
             <div>
-              <Label htmlFor="costBasis">Cost Basis (USD per ETH)</Label>
+              <Label htmlFor="totalCost">Total Cost (USD)</Label>
               <Input
-                id="costBasis"
+                id="totalCost"
                 type="number"
                 min="0"
                 step="any"
                 placeholder="0.00"
-                value={costBasis}
-                onChange={(e) => setCostBasis(e.target.value)}
+                value={totalCost}
+                onChange={(e) => setTotalCost(e.target.value)}
               />
+            </div>
+
+            <div>
+              <Label htmlFor="type">Type</Label>
+              <select
+                id="type"
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              >
+                <option value="buy">Buy</option>
+                <option value="yield">Yield</option>
+              </select>
             </div>
           </div>
 
-          {/* Calculation Preview */}
-          {calculations && (
+          {/* Purchase Preview */}
+          {parseFloat(amount) > 0 && parseFloat(totalCost) > 0 && (
             <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg space-y-2">
               <h3 className="text-sm font-medium text-primary">
-                New State (Preview)
+                Purchase Preview
               </h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="text-muted-foreground">New Reserve:</span>
+                  <span className="text-muted-foreground">Amount:</span>
                   <div className="font-mono text-primary">
-                    {calculations.newReserve.toFixed(4)} ETH
+                    {parseFloat(amount).toFixed(4)} ETH
                   </div>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">New Cost Basis:</span>
+                  <span className="text-muted-foreground">Total Cost:</span>
                   <div className="font-mono text-primary">
-                    ${calculations.newCostBasis.toFixed(2)}/ETH
+                    ${parseFloat(totalCost).toFixed(2)} USD
+                  </div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Type:</span>
+                  <div className="font-mono text-primary capitalize">
+                    {type}
+                  </div>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Avg Price:</span>
+                  <div className="font-mono text-primary">
+                    ${(parseFloat(totalCost) / parseFloat(amount)).toFixed(2)}
+                    /ETH
                   </div>
                 </div>
               </div>
@@ -200,7 +234,7 @@ export function AddReserveModal({
               Cancel
             </Button>
             <Button onClick={handleSubmit} disabled={!isValid || loading}>
-              {loading ? "Updating..." : "Add Reserve"}
+              {loading ? "Creating..." : "Add Purchase"}
             </Button>
           </div>
         </div>

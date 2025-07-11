@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { AccountingType, CompanyStatus } from "@/app/interfaces/interface";
 import { getETHPrice } from "@/lib/web3";
-import { fetchMarketCap } from "@/lib/marketcap";
+import { fetchCompanyInfo, CompanyInfo } from "@/lib/companyinfo";
 import { validateCronToken, createAuthErrorResponse } from "@/lib/api/auth";
 import {
   createErrorResponse,
@@ -104,21 +104,21 @@ async function processCompanySnapshot(
       ? companyWalletBalances.get(companyId)!
       : company.currentReserve;
 
-  // Fetch market cap if company qualifies (ACTIVE, has ticker, marketCapTracking is "Public Listing")
-  let marketCap: number | null = null;
+  // Fetch company info if company qualifies (ACTIVE, has ticker, marketCapTracking is "Public Listing")
+  let companyInfo: CompanyInfo = { marketCap: null, sharesOutstanding: null };
   if (
     company.status === CompanyStatus.ACTIVE &&
     company.ticker &&
     company.marketCapTracking === "Public Listing"
   ) {
     try {
-      marketCap = await fetchMarketCap(company.ticker);
+      companyInfo = await fetchCompanyInfo(company.ticker);
       console.log(
-        `Fetched market cap for ${company.name} (${company.ticker}): ${marketCap}`
+        `Fetched company info for ${company.name} (${company.ticker}): MarketCap: ${companyInfo.marketCap}, SharesOutstanding: ${companyInfo.sharesOutstanding}`
       );
     } catch (error) {
       console.error(
-        `Failed to fetch market cap for ${company.name} (${company.ticker}):`,
+        `Failed to fetch company info for ${company.name} (${company.ticker}):`,
         error
       );
     }
@@ -158,7 +158,8 @@ async function processCompanySnapshot(
       data: {
         reserve: currentReserve,
         pctDiff,
-        marketCap: marketCap ?? undefined,
+        marketCap: companyInfo.marketCap ?? undefined,
+        sharesOutstanding: companyInfo.sharesOutstanding ?? undefined,
       },
     });
     if (Math.abs(existingCompanySnapshot.reserve - currentReserve) > 10) {
@@ -178,7 +179,8 @@ async function processCompanySnapshot(
         companyId,
         reserve: currentReserve,
         pctDiff,
-        marketCap: marketCap ?? undefined,
+        marketCap: companyInfo.marketCap ?? undefined,
+        sharesOutstanding: companyInfo.sharesOutstanding ?? undefined,
         snapshotDate,
       },
     });

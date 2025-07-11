@@ -15,7 +15,6 @@ export interface Company {
   accountingType: AccountingType;
   marketCapTracking: MarketCapTracking;
   news: string | null;
-  costbasis?: number | null;
 
   createdAt: Date;
   updatedAt: Date;

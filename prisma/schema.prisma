@@ -15,7 +15,6 @@ model Company {
   secondaryCategory    String[]
   ticker               String?
   currentReserve       Float
-  costbasis            Float?
   addresses            String[]
   logo                 String
   website              String?
@@ -26,6 +25,7 @@ model Company {
   accountingType       String? @default("SELF_REPORTED")
   marketCapTracking    String? @default("Crypto")
   wallets              CompanyWallet[]
+  purchases            Purchase[]
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
   snapshots            SnapshotCompany[]
@@ -43,6 +43,19 @@ model CompanyWallet {
   updatedAt            DateTime @updatedAt
 
   @@map("company_wallets")
+}
+
+model Purchase {
+  id                   String   @id @default(cuid())
+  companyId            String
+  company              Company  @relation(fields: [companyId], references: [id])
+  amount               Float
+  totalCost            Float
+  type                 String   @default("buy")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("purchases")
 }
 
 model Snapshot {
@@ -66,7 +79,8 @@ model SnapshotCompany {
   company              Company  @relation(fields: [companyId], references: [id])  
   reserve              Float
   marketCap            Float?
-  costbasis            Float?
+  sharesOutstanding    Float?
+  totalCostAccumulated Float?
   pctDiff              Float?
   snapshotDate         DateTime @default(now())
   createdAt            DateTime @default(now())

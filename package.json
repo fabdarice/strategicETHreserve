@@ -14,7 +14,8 @@
     "check-balances": "tsx scripts/check-company-balances.ts",
     "add-manual-wallet": "tsx scripts/add-manual-wallet.ts",
     "create-admin": "tsx scripts/create-admin.ts",
-    "test-marketcap": "tsx scripts/test-marketcap.ts"
+    "test-companyinfo": "dotenv -e .env -- tsx scripts/test-marketcap.ts",
+    "trigger-snapshots": "dotenv -e .env -- tsx scripts/trigger-snapshots.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -99,6 +100,7 @@
   "devDependencies": {
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.13.14",
+    "dotenv-cli": "^8.0.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.7.0",
     "typescript": "^5.8.2"

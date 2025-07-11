@@ -151,7 +151,7 @@ export function CompaniesTable({
               <TableHead className="w-[100px]">Category</TableHead>
               <TableHead className="w-[100px]">Secondary Category</TableHead>
               <TableHead className="w-[100px]">Reserve</TableHead>
-              <TableHead className="w-[100px]">Cost Basis</TableHead>
+
               <TableHead className="w-[100px]">Snapshot Reserve</TableHead>
               <TableHead className="w-[100px]">Status</TableHead>
               <TableHead className="w-[110px]">Accounting</TableHead>
