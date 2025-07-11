@@ -65,7 +65,8 @@ export const tokensPerNetwork: {
     dsTVL?: string;
     sfrxETH?: string;
     frxETH?: string;
-    fWETH?: string; // Fluid WETH
+    fWETH?: string;
+    iETHv2?: string;
   };
 } = {
   [Network.ETH_MAINNET]: {
@@ -100,6 +101,7 @@ export const tokensPerNetwork: {
     dsTVL: "0x1ce8aAfb51e79F6BDc0EF2eBd6fD34b00620f6dB",
     frxETH: "0x5E8422345238F34275888049021821E8E08CAa1f",
     sfrxETH: "0xac3E018457B222d93114458476f3E3416Abbe38F",
+    iETHv2: "0xA0D3707c569ff8C87FA923d3823eC5D81c98Be78",
   },
   [Network.BASE_MAINNET]: {
     wstETH: "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452",
