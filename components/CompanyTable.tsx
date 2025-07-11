@@ -710,7 +710,7 @@ export default function CompanyTable({
                           className="object-contain"
                         />
                       </div>
-                      <div className="flex items-center gap-1 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="whitespace-nowrap">
                           {company.name}
                         </span>
@@ -754,7 +754,7 @@ export default function CompanyTable({
                           className="object-contain"
                         />
                       </div>
-                      <div className="flex items-center gap-1 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="whitespace-nowrap">
                           {company.name}
                         </span>
