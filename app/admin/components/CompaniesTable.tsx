@@ -56,9 +56,10 @@ export function CompaniesTable({
       return;
     }
 
-    // Check if status is changing from PENDING to ACTIVE and set createdAt if needed
+    // Check if status is changing from PENDING or IN_REVIEW to ACTIVE and set createdAt if needed
     if (
-      originalCompany.status === CompanyStatus.PENDING &&
+      (originalCompany.status === CompanyStatus.PENDING ||
+        originalCompany.status === CompanyStatus.IN_REVIEW) &&
       companyUpdates.status === CompanyStatus.ACTIVE &&
       !companyUpdates.createdAt
     ) {
