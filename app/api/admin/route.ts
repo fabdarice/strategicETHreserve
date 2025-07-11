@@ -32,10 +32,7 @@ export async function GET(request: NextRequest) {
     const filteredCompanies = companies.filter((company) => {
       const reserve = company.currentReserve || 0;
       // Only apply reserve filter to ACTIVE and IN_REVIEW companies
-      if (
-        company.status === CompanyStatus.ACTIVE ||
-        company.status === CompanyStatus.IN_REVIEW
-      ) {
+      if (company.status === CompanyStatus.IN_REVIEW) {
         return reserve >= 100;
       }
       // For PENDING and INACTIVE companies, include all regardless of reserve

@@ -57,7 +57,7 @@ const formSchema = z.object({
       return num;
     }),
   addresses: z.string().optional(),
-  contact: z.string().optional(),
+  contact: z.string().min(1, "Contact is required"),
 });
 
 export default function SubmitCompanyDialog({
@@ -293,12 +293,13 @@ export default function SubmitCompanyDialog({
                     name="contact"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Submitter&apos;s Contact</FormLabel>
+                        <FormLabel>Submitter&apos;s Contact *</FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             className="bg-background"
                             placeholder="Telegram/Email"
+                            required
                           />
                         </FormControl>
                         <FormMessage />
