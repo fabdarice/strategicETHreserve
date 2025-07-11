@@ -1,7 +1,9 @@
-interface AlphaVantageResponse {
-  MarketCapitalization?: string;
-  SharesOutstanding?: string;
-  Symbol?: string;
+import yahooFinance from "yahoo-finance2";
+
+interface YahooFinanceQuote {
+  symbol: string;
+  marketCap?: number;
+  sharesOutstanding?: number;
   [key: string]: any;
 }
 
@@ -11,62 +13,40 @@ export interface CompanyInfo {
 }
 
 export async function fetchCompanyInfo(ticker: string): Promise<CompanyInfo> {
-  const apiKey = process.env.ALPHAVANTAGE_API_KEY;
-
-  if (!apiKey) {
-    console.error("ALPHAVANTAGE_API_KEY not found in environment variables");
-    return { marketCap: null, sharesOutstanding: null };
-  }
-
-  const url = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${ticker}&apikey=${apiKey}`;
+  const result: CompanyInfo = {
+    marketCap: null,
+    sharesOutstanding: null,
+  };
 
   try {
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "Strategic ETH Reserve",
-      },
-    });
+    console.log(`Fetching company info for ticker: ${ticker}`);
 
-    if (!response.ok) {
-      console.error(`API request failed with status: ${response.status}`);
-      return { marketCap: null, sharesOutstanding: null };
+    const quote = (await yahooFinance.quote(ticker)) as YahooFinanceQuote;
+
+    if (!quote) {
+      console.warn(`No data found for ticker: ${ticker}`);
+      return result;
     }
 
-    const data: AlphaVantageResponse = await response.json();
-
-    console.log(data);
-
-    const result: CompanyInfo = {
-      marketCap: null,
-      sharesOutstanding: null,
-    };
-
-    // Parse market cap
-    if (data.MarketCapitalization) {
-      const marketCapStr = data.MarketCapitalization.replace(/,/g, "");
-      const marketCap = parseFloat(marketCapStr);
-
-      if (!isNaN(marketCap)) {
-        result.marketCap = marketCap;
-      } else {
-        console.error(
-          `Invalid market cap value for ${ticker}: ${data.MarketCapitalization}`
-        );
-      }
+    // Extract market cap
+    if (quote.marketCap && typeof quote.marketCap === "number") {
+      result.marketCap = quote.marketCap;
+      console.log(`Market cap for ${ticker}: ${result.marketCap}`);
+    } else {
+      console.warn(`No market cap data found for ticker: ${ticker}`);
     }
 
-    // Parse shares outstanding
-    if (data.SharesOutstanding) {
-      const sharesOutstandingStr = data.SharesOutstanding.replace(/,/g, "");
-      const sharesOutstanding = parseFloat(sharesOutstandingStr);
-
-      if (!isNaN(sharesOutstanding)) {
-        result.sharesOutstanding = sharesOutstanding;
-      } else {
-        console.error(
-          `Invalid shares outstanding value for ${ticker}: ${data.SharesOutstanding}`
-        );
-      }
+    // Extract shares outstanding
+    if (
+      quote.sharesOutstanding &&
+      typeof quote.sharesOutstanding === "number"
+    ) {
+      result.sharesOutstanding = quote.sharesOutstanding;
+      console.log(
+        `Shares outstanding for ${ticker}: ${result.sharesOutstanding}`
+      );
+    } else {
+      console.warn(`No shares outstanding data found for ticker: ${ticker}`);
     }
 
     if (result.marketCap === null && result.sharesOutstanding === null) {

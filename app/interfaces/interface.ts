@@ -7,6 +7,9 @@ export interface Company {
   reserve: number;
   pctDiff?: number | null;
   snapshotDate: Date | null;
+  marketCap?: number | null;
+  sharesOutstanding?: number | null;
+  totalCostAccumulated?: number | null;
   logo: string;
   website: string | null;
   twitter: string | null;

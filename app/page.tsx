@@ -1,7 +1,6 @@
 "use client";
 
 import CompanyTable from "@/components/CompanyTable";
-import RecentPledges from "@/components/RecentPledges";
 import ETHReserveChart from "@/components/ETHReserveChart";
 import CategoryReserveChart from "@/components/CategoryReserveChart";
 import TotalReserveStats from "@/components/TotalReserveStats";
@@ -69,14 +68,6 @@ export default function Home() {
 
     fetchData();
   }, []);
-
-  const recentPledges = companies
-    .filter((company: Company) => company.status === "ACTIVE")
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-    .slice(0, 3);
 
   const totalReserve = companies
     .filter((company: Company) => company.status === "ACTIVE")
@@ -219,18 +210,13 @@ export default function Home() {
               />
             </div>
           ) : (
-            <div className="flex flex-col gap-12 lg:flex-row">
+            <div className="w-full">
               <CompanyTable
                 companies={companies}
                 totalReserve={totalReserve}
                 totalReserveUSD={totalReserveUSD}
                 ethPrice={ethPrice}
                 showUSD={showUSD}
-              />
-              <RecentPledges
-                pledges={recentPledges}
-                showUSD={showUSD}
-                ethPrice={ethPrice}
               />
             </div>
           )}

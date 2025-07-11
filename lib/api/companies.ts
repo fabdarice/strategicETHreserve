@@ -31,6 +31,9 @@ export async function getCompaniesWithSnapshots(isAdmin: boolean = false) {
           reserve: true,
           pctDiff: true,
           snapshotDate: true,
+          marketCap: true,
+          sharesOutstanding: true,
+          totalCostAccumulated: true,
         },
         orderBy: {
           snapshotDate: "desc",
@@ -66,6 +69,9 @@ export async function transformCompaniesForAdmin(
       ...companyData,
       reserve,
       snapshotDate: latestSnapshot?.snapshotDate || null,
+      marketCap: latestSnapshot?.marketCap || null,
+      sharesOutstanding: latestSnapshot?.sharesOutstanding || null,
+      totalCostAccumulated: latestSnapshot?.totalCostAccumulated || null,
       status: companyData.status as CompanyStatus,
       accountingType: companyData.accountingType as AccountingType,
     };
@@ -140,6 +146,9 @@ export async function transformCompaniesForPublic(
         reserve,
         pctDiff,
         snapshotDate: latestSnapshot?.snapshotDate || null,
+        marketCap: latestSnapshot?.marketCap || null,
+        sharesOutstanding: latestSnapshot?.sharesOutstanding || null,
+        totalCostAccumulated: latestSnapshot?.totalCostAccumulated || null,
         status: companyData.status as CompanyStatus,
         accountingType: companyData.accountingType as AccountingType,
       };

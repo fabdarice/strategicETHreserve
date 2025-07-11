@@ -21,7 +21,16 @@ import { ChevronUp, ChevronDown, Filter, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 // Sorting types
-type SortField = "name" | "reserve" | "reserveUSD" | "pctDiff" | "rank";
+type SortField =
+  | "name"
+  | "reserve"
+  | "reserveUSD"
+  | "pctDiff"
+  | "rank"
+  | "marketCap"
+  | "nav"
+  | "ethPerShare"
+  | "pnl";
 type SortDirection = "asc" | "desc";
 
 // Tier system with minimal left accent styling
@@ -65,6 +74,15 @@ function getContributionTier(amount: number): ContributionTier {
     CONTRIBUTION_TIERS[CONTRIBUTION_TIERS.length - 1]
   );
 }
+
+// Helper function to check if a company is a treasury company
+const isTreasuryCompany = (company: Company): boolean => {
+  return (
+    company.category === "Treasuries" ||
+    (Array.isArray(company.secondaryCategory) &&
+      company.secondaryCategory.includes("Treasuries"))
+  );
+};
 
 // Helper function to check if a date is within the last 7 days
 const isNew = (date: Date): boolean => {
@@ -138,6 +156,11 @@ export default function CompanyTable({
         })
       : activeCompanies;
 
+  // Check if there are any treasury companies in the filtered results
+  const hasTreasuryCompanies = filteredCompanies.some((company) =>
+    isTreasuryCompany(company)
+  );
+
   // Toggle category selection
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -207,6 +230,43 @@ export default function CompanyTable({
           aValue = a.pctDiff ?? -Infinity;
           bValue = b.pctDiff ?? -Infinity;
           break;
+        case "marketCap":
+          aValue = a.marketCap ?? -Infinity;
+          bValue = b.marketCap ?? -Infinity;
+          break;
+        case "nav":
+          // NAV = Market Cap / (ETH Price * ETH Reserve)
+          aValue =
+            a.marketCap && a.reserve
+              ? a.marketCap / (ethPrice * a.reserve)
+              : -Infinity;
+          bValue =
+            b.marketCap && b.reserve
+              ? b.marketCap / (ethPrice * b.reserve)
+              : -Infinity;
+          break;
+        case "ethPerShare":
+          // ETH per Share = ETH Reserve / Shares Outstanding
+          aValue =
+            a.sharesOutstanding && a.sharesOutstanding > 0
+              ? a.reserve / a.sharesOutstanding
+              : -Infinity;
+          bValue =
+            b.sharesOutstanding && b.sharesOutstanding > 0
+              ? b.reserve / b.sharesOutstanding
+              : -Infinity;
+          break;
+        case "pnl":
+          // PNL = (ETH Price * ETH Reserve) - Total Cost Accumulated
+          aValue =
+            a.totalCostAccumulated !== null
+              ? ethPrice * a.reserve - (a.totalCostAccumulated || 0)
+              : -Infinity;
+          bValue =
+            b.totalCostAccumulated !== null
+              ? ethPrice * b.reserve - (b.totalCostAccumulated || 0)
+              : -Infinity;
+          break;
         default:
           return 0;
       }
@@ -226,7 +286,13 @@ export default function CompanyTable({
     } else {
       setSortField(field);
       setSortDirection(
-        field === "reserve" || field === "reserveUSD" || field === "pctDiff"
+        field === "reserve" ||
+          field === "reserveUSD" ||
+          field === "pctDiff" ||
+          field === "marketCap" ||
+          field === "nav" ||
+          field === "ethPerShare" ||
+          field === "pnl"
           ? "desc"
           : "asc"
       );
@@ -554,6 +620,57 @@ export default function CompanyTable({
                 {getSortIcon("pctDiff")}
               </div>
             </TableHead>
+            <TableHead
+              className={`text-right text-[hsl(var(--primary))] hidden md:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
+              onClick={() => handleSort("marketCap")}
+            >
+              <div className="flex items-center justify-end">
+                MARKET CAP
+                {getSortIcon("marketCap")}
+              </div>
+            </TableHead>
+            {hasTreasuryCompanies && (
+              <TableHead
+                className={`text-center text-[hsl(var(--primary))] hidden lg:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
+                onClick={() => handleSort("nav")}
+              >
+                <div className="flex items-center justify-center">
+                  <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded mr-1">
+                    T
+                  </span>
+                  mNAV
+                  {getSortIcon("nav")}
+                </div>
+              </TableHead>
+            )}
+            {hasTreasuryCompanies && (
+              <TableHead
+                className={`text-center text-[hsl(var(--primary))] hidden lg:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
+                onClick={() => handleSort("ethPerShare")}
+              >
+                <div className="flex items-center justify-center">
+                  <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded mr-1">
+                    T
+                  </span>
+                  ETH/SHARE
+                  {getSortIcon("ethPerShare")}
+                </div>
+              </TableHead>
+            )}
+            {hasTreasuryCompanies && (
+              <TableHead
+                className={`text-right text-[hsl(var(--primary))] hidden lg:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm font-semibold tracking-wide" : ""}`}
+                onClick={() => handleSort("pnl")}
+              >
+                <div className="flex items-center justify-end">
+                  <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded mr-1">
+                    T
+                  </span>
+                  PNL ($)
+                  {getSortIcon("pnl")}
+                </div>
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -593,24 +710,38 @@ export default function CompanyTable({
                           className="object-contain"
                         />
                       </div>
-                      <span>{company.name}</span>
-                      {company.accountingType ===
-                        AccountingType.SELF_REPORTED && (
-                        <span className="text-[hsl(var(--primary))] text-xs">
-                          *
+                      <div className="flex items-center gap-1 flex-wrap">
+                        <span className="whitespace-nowrap">
+                          {company.name}
                         </span>
-                      )}
-                      {company.accountingType ===
-                        AccountingType.PUBLIC_REPORT && (
-                        <span className="text-[hsl(var(--primary))] text-xs">
-                          **
-                        </span>
-                      )}
-                      {isNew(company.createdAt) && (
-                        <span className="ml-2 text-emerald-500 text-[10px] font-bold uppercase tracking-wider align-middle">
-                          New
-                        </span>
-                      )}
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {isTreasuryCompany(company) &&
+                            hasTreasuryCompanies && (
+                              <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded">
+                                T
+                              </span>
+                            )}
+                          {!isTreasuryCompany(company) &&
+                            company.accountingType ===
+                              AccountingType.SELF_REPORTED && (
+                              <span className="text-[hsl(var(--primary))] text-xs">
+                                *
+                              </span>
+                            )}
+                          {!isTreasuryCompany(company) &&
+                            company.accountingType ===
+                              AccountingType.PUBLIC_REPORT && (
+                              <span className="text-[hsl(var(--primary))] text-xs">
+                                **
+                              </span>
+                            )}
+                          {isNew(company.createdAt) && (
+                            <span className="hidden sm:inline text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
+                              New
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </a>
                   ) : (
                     <div className="flex items-center gap-2">
@@ -622,24 +753,38 @@ export default function CompanyTable({
                           className="object-contain"
                         />
                       </div>
-                      <span>{company.name}</span>
-                      {company.accountingType ===
-                        AccountingType.SELF_REPORTED && (
-                        <span className="text-[hsl(var(--primary))] text-xs">
-                          *
+                      <div className="flex items-center gap-1 flex-wrap">
+                        <span className="whitespace-nowrap">
+                          {company.name}
                         </span>
-                      )}
-                      {company.accountingType ===
-                        AccountingType.PUBLIC_REPORT && (
-                        <span className="text-[hsl(var(--primary))] text-xs">
-                          **
-                        </span>
-                      )}
-                      {isNew(company.createdAt) && (
-                        <span className="ml-2 text-emerald-500 text-[10px] font-bold uppercase tracking-wider align-middle">
-                          New
-                        </span>
-                      )}
+                        <div className="flex items-center gap-1 flex-shrink-0">
+                          {isTreasuryCompany(company) &&
+                            hasTreasuryCompanies && (
+                              <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded">
+                                T
+                              </span>
+                            )}
+                          {!isTreasuryCompany(company) &&
+                            company.accountingType ===
+                              AccountingType.SELF_REPORTED && (
+                              <span className="text-[hsl(var(--primary))] text-xs">
+                                *
+                              </span>
+                            )}
+                          {!isTreasuryCompany(company) &&
+                            company.accountingType ===
+                              AccountingType.PUBLIC_REPORT && (
+                              <span className="text-[hsl(var(--primary))] text-xs">
+                                **
+                              </span>
+                            )}
+                          {isNew(company.createdAt) && (
+                            <span className="hidden sm:inline text-emerald-500 text-[10px] font-bold uppercase tracking-wider">
+                              New
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   )}
                 </TableCell>
@@ -754,6 +899,82 @@ export default function CompanyTable({
                     %
                   </span>
                 </TableCell>
+                <TableCell className="text-right py-1 hidden md:table-cell">
+                  {company.marketCap ? (
+                    <span className="font-medium tabular-nums secondary-value-text">
+                      $
+                      {company.marketCap.toLocaleString(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0,
+                      })}
+                    </span>
+                  ) : (
+                    "-"
+                  )}
+                </TableCell>
+                {hasTreasuryCompanies && (
+                  <TableCell className="text-center py-1 hidden lg:table-cell">
+                    {isTreasuryCompany(company) &&
+                    company.marketCap &&
+                    company.reserve > 0 ? (
+                      <span className="font-medium tabular-nums">
+                        {(
+                          company.marketCap /
+                          (ethPrice * company.reserve)
+                        ).toFixed(2)}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
+                )}
+                {hasTreasuryCompanies && (
+                  <TableCell className="text-center py-1 hidden lg:table-cell">
+                    {isTreasuryCompany(company) &&
+                    company.sharesOutstanding &&
+                    company.sharesOutstanding > 0 ? (
+                      <span className="font-medium tabular-nums">
+                        {(company.reserve / company.sharesOutstanding).toFixed(
+                          6
+                        )}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
+                )}
+                {hasTreasuryCompanies && (
+                  <TableCell className="text-right py-1 hidden lg:table-cell">
+                    {isTreasuryCompany(company) &&
+                    company.totalCostAccumulated !== null ? (
+                      <span
+                        className={`font-medium tabular-nums ${
+                          ethPrice * company.reserve -
+                            (company.totalCostAccumulated || 0) >=
+                          0
+                            ? "text-emerald-500"
+                            : "text-rose-500"
+                        }`}
+                      >
+                        {ethPrice * company.reserve -
+                          (company.totalCostAccumulated || 0) >=
+                        0
+                          ? "+"
+                          : ""}
+                        $
+                        {(
+                          ethPrice * company.reserve -
+                          (company.totalCostAccumulated || 0)
+                        ).toLocaleString(undefined, {
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        })}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">-</span>
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
             );
           })}
@@ -770,6 +991,15 @@ export default function CompanyTable({
           <span className="font-bold text-[hsl(var(--primary))]">**</span>{" "}
           Amount extracted from public filings or reports.
         </p>
+        {hasTreasuryCompanies && (
+          <p className="mt-2 pt-2 border-t border-[hsl(var(--primary)/0.2)]">
+            <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded mr-1">
+              T
+            </span>
+            Treasury-specific metrics (NAV, ETH/Share, PnL) - only applicable to
+            treasury entities.
+          </p>
+        )}
       </div>
     </div>
   );
