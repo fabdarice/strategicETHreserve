@@ -126,7 +126,7 @@ async function processCompanySnapshot(
   } else if (
     company.status === CompanyStatus.ACTIVE &&
     company.ticker &&
-    company.marketCapTracking === "crypto"
+    company.marketCapTracking === "Crypto"
   ) {
     try {
       const cryptoInfo = await fetchCryptoInfo(company.ticker);
