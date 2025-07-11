@@ -8,11 +8,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "Strategic ETH Reserve (SER)",
+    default: "Strategic ETH Reserve (SΞR)",
     template: "%s | Strategic ETH Reserve",
   },
   description:
-    "Follow the Strategic Ethereum Reserve (SER): Companies accumulating ETH as a strategic reserve asset.",
+    "Follow the Strategic Ethereum Reserve (SΞR): Companies accumulating ETH as a strategic reserve asset.",
   keywords: [
     "Strategic Ethereum Reserve",
     "ETH reserves",
@@ -41,9 +41,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://strategicethreserve.xyz",
-    title: "Strategic ETH Reserve (SER)",
+    title: "Strategic ETH Reserve (SΞR)",
     description:
-      "Follow the Strategic Ethereum Reserve (SER): Companies accumulating ETH as a strategic reserve asset.",
+      "Follow the Strategic Ethereum Reserve (SΞR): Companies accumulating ETH as a strategic reserve asset.",
     siteName: "Strategic ETH Reserve",
     images: [
       {
@@ -56,9 +56,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Strategic ETH Reserve (SER)",
+    title: "Strategic ETH Reserve (SΞR)",
     description:
-      "Follow the Strategic Ethereum Reserve (SER): Companies accumulating ETH as a strategic reserve asset.",
+      "Follow the Strategic Ethereum Reserve (SΞR): Companies accumulating ETH as a strategic reserve asset.",
     images: ["/images/socialgraph.png"],
     creator: "@StrategicETHRes",
     site: "@StrategicETHRes",
