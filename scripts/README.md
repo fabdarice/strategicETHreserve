@@ -71,7 +71,7 @@ tsx scripts/test-validator-balance.ts 0x010000000000000000000000b9d7934878b5fb96
 
 ## Market Cap Test
 
-This script allows you to test the `fetchMarketCap` function with a specific ticker symbol to fetch and display stock market capitalization data from Alpha Vantage API.
+This script allows you to test the `fetchCompanyInfo` function with a specific ticker symbol to fetch and display company information (market cap and shares outstanding) from Alpha Vantage API.
 
 ### Usage
 
@@ -80,7 +80,7 @@ This script allows you to test the `fetchMarketCap` function with a specific tic
 npm install
 
 # Run the script with a ticker symbol
-npm run test-marketcap <ticker>
+npm run test-companyinfo <ticker>
 
 # Or run directly with tsx
 tsx scripts/test-marketcap.ts <ticker>
@@ -89,41 +89,43 @@ tsx scripts/test-marketcap.ts <ticker>
 ### Examples
 
 ```bash
-# Test market cap for Apple Inc.
-npm run test-marketcap AAPL
+# Test company info for Apple Inc.
+npm run test-companyinfo AAPL
 
-# Test market cap for Microsoft
-npm run test-marketcap MSFT
+# Test company info for Microsoft
+npm run test-companyinfo MSFT
 
-# Test market cap for Tesla
-npm run test-marketcap TSLA
+# Test company info for Tesla
+npm run test-companyinfo TSLA
 
 # If no ticker is provided, it defaults to AAPL
-npm run test-marketcap
+npm run test-companyinfo
 ```
 
 ### What it does
 
 1. **Validates the ticker symbol** input (or uses AAPL as default)
-2. **Fetches market cap data** from Alpha Vantage API
-3. **Displays formatted results** with market cap value and execution time
+2. **Fetches company information** from Alpha Vantage API (market cap and shares outstanding)
+3. **Displays formatted results** with market cap, shares outstanding, and execution time
 4. **Handles API errors** gracefully with troubleshooting tips
 
 ### Output Format
 
 ```
-🚀 Starting market cap test...
+🚀 Starting company info test...
 
-🔍 Testing market cap for ticker: AAPL
+🔍 Testing company info for ticker: AAPL
 ================================================================================
-🔄 Fetching market cap data...
+🔄 Fetching company info data...
 
 📊 RESULTS:
 💰 Market Cap: $3,456,789,012,345
 🔢 Raw Market Cap: 3456789012345
+📈 Shares Outstanding: 15,728,543,210
+🔢 Raw Shares Outstanding: 15728543210
 📈 Ticker: AAPL
 ⏱️  Execution Time: 1234ms
-✅ Successfully retrieved market cap data
+✅ Successfully retrieved company info data
 
 ================================================================================
 ```
@@ -133,7 +135,7 @@ npm run test-marketcap
 - **Input validation**: Ensures proper ticker symbol format
 - **Performance timing**: Shows execution time for API call
 - **Error handling**: Graceful error handling with troubleshooting tips
-- **Formatted output**: Shows both formatted and raw market cap values
+- **Formatted output**: Shows both formatted and raw values for market cap and shares outstanding
 - **Default ticker**: Uses AAPL as default if no ticker provided
 
 ### API Requirements
@@ -410,4 +412,4 @@ The script automatically finds the next available number based on existing manua
 
 ### PG DUMP
 
-pg_dump -v -d <source_database_connection_string> -f <dump_file_name>.sql
+pg_dump -F p -v -d <source_database_connection_string> -f snapshots/<dump_file_name>.sql

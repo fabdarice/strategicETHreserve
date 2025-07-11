@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MarketingModal } from "@/components/MarketingModal";
 import { ReserveIncreaseModal } from "@/components/ReserveIncreaseModal";
+import { AddReserveModal } from "@/components/AddReserveModal";
 import {
   Company,
   CompanyStatus,
@@ -209,6 +210,7 @@ export function CompanyRow({
           className="bg-background h-8 text-xs"
         />
       </TableCell>
+
       <TableCell className="p-1">
         <div className="bg-background h-8 px-3 py-1 text-xs rounded-md border border-input flex items-center">
           {displayCompany.reserve != null
@@ -328,6 +330,23 @@ export function CompanyRow({
             Growth
           </Button>
         </ReserveIncreaseModal>
+      </TableCell>
+      <TableCell className="p-1">
+        <AddReserveModal
+          company={displayCompany}
+          onUpdate={() => {
+            // Trigger a refresh of the company data
+            window.location.reload();
+          }}
+        >
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs px-2 py-1 h-7 bg-green-100 hover:bg-green-200 text-green-700"
+          >
+            ADD BUYS
+          </Button>
+        </AddReserveModal>
       </TableCell>
       <TableCell className="p-1">
         <Button

@@ -1,7 +1,7 @@
-import { fetchMarketCap } from "../lib/marketcap";
+import { fetchCompanyInfo } from "../lib/companyinfo";
 
-async function testMarketCap() {
-  console.log("🚀 Starting market cap test...\n");
+async function testCompanyInfo() {
+  console.log("🚀 Starting company info test...\n");
 
   // Get ticker from command line arguments or use default
   const ticker = process.argv[2] || "AAPL";
@@ -13,30 +13,45 @@ async function testMarketCap() {
     process.exit(1);
   }
 
-  console.log(`🔍 Testing market cap for ticker: ${ticker.toUpperCase()}`);
+  console.log(`🔍 Testing company info for ticker: ${ticker.toUpperCase()}`);
   console.log(
     "================================================================================"
   );
-  console.log("🔄 Fetching market cap data...\n");
+  console.log("🔄 Fetching company info data...\n");
 
   const startTime = Date.now();
 
   try {
-    const marketCap = await fetchMarketCap(ticker);
+    const companyInfo = await fetchCompanyInfo(ticker);
     const endTime = Date.now();
     const executionTime = endTime - startTime;
 
     console.log("📊 RESULTS:");
 
-    if (marketCap !== null) {
-      console.log(`💰 Market Cap: $${marketCap.toLocaleString()}`);
-      console.log(`🔢 Raw Market Cap: ${marketCap}`);
+    if (
+      companyInfo.marketCap !== null ||
+      companyInfo.sharesOutstanding !== null
+    ) {
+      if (companyInfo.marketCap !== null) {
+        console.log(
+          `💰 Market Cap: $${companyInfo.marketCap.toLocaleString()}`
+        );
+        console.log(`🔢 Raw Market Cap: ${companyInfo.marketCap}`);
+      }
+      if (companyInfo.sharesOutstanding !== null) {
+        console.log(
+          `📈 Shares Outstanding: ${companyInfo.sharesOutstanding.toLocaleString()}`
+        );
+        console.log(
+          `🔢 Raw Shares Outstanding: ${companyInfo.sharesOutstanding}`
+        );
+      }
       console.log(`📈 Ticker: ${ticker.toUpperCase()}`);
       console.log(`⏱️  Execution Time: ${executionTime}ms`);
-      console.log("✅ Successfully retrieved market cap data");
+      console.log("✅ Successfully retrieved company info data");
     } else {
       console.log(
-        `❌ No market cap data found for ticker: ${ticker.toUpperCase()}`
+        `❌ No company info data found for ticker: ${ticker.toUpperCase()}`
       );
       console.log(`⏱️  Execution Time: ${executionTime}ms`);
       console.log("ℹ️  This could mean:");
@@ -53,7 +68,7 @@ async function testMarketCap() {
     const endTime = Date.now();
     const executionTime = endTime - startTime;
 
-    console.error("❌ Error occurred during market cap fetch:");
+    console.error("❌ Error occurred during company info fetch:");
     console.error(error);
     console.log(`⏱️  Execution Time: ${executionTime}ms`);
     console.log("\n🔧 Troubleshooting:");
@@ -66,7 +81,7 @@ async function testMarketCap() {
 }
 
 // Run the test
-testMarketCap().catch((error) => {
+testCompanyInfo().catch((error) => {
   console.error("💥 Unexpected error:", error);
   process.exit(1);
 });
