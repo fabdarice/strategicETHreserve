@@ -15,6 +15,7 @@
     "add-manual-wallet": "tsx scripts/add-manual-wallet.ts",
     "create-admin": "tsx scripts/create-admin.ts",
     "test-companyinfo": "dotenv -e .env -- tsx scripts/test-marketcap.ts",
+    "test-cryptoinfo": "dotenv -e .env -- tsx scripts/test-cryptoinfo.ts",
     "trigger-snapshots": "dotenv -e .env -- tsx scripts/trigger-snapshots.ts"
   },
   "dependencies": {

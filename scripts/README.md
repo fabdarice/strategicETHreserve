@@ -232,6 +232,103 @@ tsx scripts/test-eth-balance-all-networks.ts 0xd8dA6BF26964aF9D7eEd9e03E53415D37
 
 ---
 
+## Crypto Info Test
+
+This script allows you to test the `fetchCryptoInfo` function with a specific crypto symbol to fetch and display cryptocurrency information (market cap, price, name, symbol) from CoinMarketCap API.
+
+### Usage
+
+```bash
+# Install dependencies first (if not already done)
+npm install
+
+# Run the script with a crypto symbol
+npm run test-cryptoinfo <symbol>
+
+# Or run directly with tsx
+tsx scripts/test-cryptoinfo.ts <symbol>
+```
+
+### Examples
+
+```bash
+# Test crypto info for Ethereum
+npm run test-cryptoinfo ETH
+
+# Test crypto info for Bitcoin
+npm run test-cryptoinfo BTC
+
+# Test crypto info for Dogecoin
+npm run test-cryptoinfo DOGE
+
+# If no symbol is provided, it defaults to ETH
+npm run test-cryptoinfo
+```
+
+### What it does
+
+1. **Validates the crypto symbol** input (or uses ETH as default)
+2. **Fetches cryptocurrency information** from CoinMarketCap API (market cap, price, name, symbol)
+3. **Displays formatted results** with name, symbol, price, market cap, and execution time
+4. **Handles API errors** gracefully with troubleshooting tips
+
+### Output Format
+
+```
+🚀 Starting crypto info test...
+
+🔍 Testing crypto info for symbol: ETH
+================================================================================
+🔄 Fetching crypto data...
+
+📊 RESULTS:
+🏷️  Name: Ethereum
+🔤 Symbol: ETH
+💲 Price: $3,031.56
+🔢 Raw Price: 3031.56
+💰 Market Cap: $370,059,103,420
+🔢 Raw Market Cap: 370059103420
+⏱️  Execution Time: 1234ms
+✅ Successfully retrieved crypto data
+
+================================================================================
+```
+
+### Features
+
+- **Input validation**: Ensures proper crypto symbol format
+- **Performance timing**: Shows execution time for API call
+- **Error handling**: Graceful error handling with troubleshooting tips
+- **Formatted output**: Shows both formatted and raw values for price and market cap
+- **Default symbol**: Uses ETH as default if no symbol provided
+- **Comprehensive data**: Includes name, symbol, price, and market cap
+
+### API Requirements
+
+- Valid CoinMarketCap API key set in environment variable `COINMARKETCAP_API_KEY`
+- Internet connection to access CoinMarketCap API
+- Valid cryptocurrency symbol (e.g., ETH, BTC, DOGE, ADA)
+
+### Error Handling
+
+The script provides detailed error messages and troubleshooting tips for common issues:
+
+- Missing or invalid API key (`COINMARKETCAP_API_KEY`)
+- Invalid cryptocurrency symbols
+- Network connectivity issues
+- API rate limit exceeded
+
+### Setup
+
+1. **Get a CoinMarketCap API Key**: Sign up at [CoinMarketCap Pro](https://pro.coinmarketcap.com/signup)
+2. **Set Environment Variable**:
+   ```bash
+   export COINMARKETCAP_API_KEY="your_api_key_here"
+   ```
+3. **Run the test** with your desired cryptocurrency symbol
+
+---
+
 ## Company Balance Checker
 
 This script allows you to check the live ETH balances for all wallet addresses associated with a company in the database.

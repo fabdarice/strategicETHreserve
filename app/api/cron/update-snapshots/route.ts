@@ -4,6 +4,7 @@ import { Resend } from "resend";
 import { AccountingType, CompanyStatus } from "@/app/interfaces/interface";
 import { getETHPrice } from "@/lib/web3";
 import { fetchCompanyInfo, CompanyInfo } from "@/lib/companyinfo";
+import { fetchCryptoInfo, CryptoInfo } from "@/lib/cryptoinfo";
 import { validateCronToken, createAuthErrorResponse } from "@/lib/api/auth";
 import {
   createErrorResponse,
@@ -104,7 +105,7 @@ async function processCompanySnapshot(
       ? companyWalletBalances.get(companyId)!
       : company.currentReserve;
 
-  // Fetch company info if company qualifies (ACTIVE, has ticker, marketCapTracking is "Public Listing")
+  // Fetch company info if company qualifies (ACTIVE, has ticker, marketCapTracking is "Public Listing" or "crypto")
   let companyInfo: CompanyInfo = { marketCap: null, sharesOutstanding: null };
   if (
     company.status === CompanyStatus.ACTIVE &&
@@ -119,6 +120,27 @@ async function processCompanySnapshot(
     } catch (error) {
       console.error(
         `Failed to fetch company info for ${company.name} (${company.ticker}):`,
+        error
+      );
+    }
+  } else if (
+    company.status === CompanyStatus.ACTIVE &&
+    company.ticker &&
+    company.marketCapTracking === "crypto"
+  ) {
+    try {
+      const cryptoInfo = await fetchCryptoInfo(company.ticker);
+      // Convert CryptoInfo to CompanyInfo format
+      companyInfo = {
+        marketCap: cryptoInfo.marketCap,
+        sharesOutstanding: null, // Crypto doesn't have shares outstanding
+      };
+      console.log(
+        `Fetched crypto info for ${company.name} (${company.ticker}): MarketCap: ${cryptoInfo.marketCap}, Price: ${cryptoInfo.price}`
+      );
+    } catch (error) {
+      console.error(
+        `Failed to fetch crypto info for ${company.name} (${company.ticker}):`,
         error
       );
     }
