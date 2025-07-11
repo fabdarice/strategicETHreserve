@@ -161,6 +161,11 @@ export default function CompanyTable({
     isTreasuryCompany(company)
   );
 
+  // Check if there are any companies with market cap data
+  const hasMarketCapCompanies = filteredCompanies.some(
+    (company) => company.marketCap !== null && company.marketCap !== undefined
+  );
+
   // Toggle category selection
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -629,15 +634,12 @@ export default function CompanyTable({
                 {getSortIcon("marketCap")}
               </div>
             </TableHead>
-            {hasTreasuryCompanies && (
+            {hasMarketCapCompanies && (
               <TableHead
                 className={`text-center text-[hsl(var(--primary))] hidden lg:table-cell cursor-pointer hover:text-[hsl(var(--primary-foreground))] transition-all duration-200 select-none ${showUSD ? "bg-gradient-to-b from-white/80 to-slate-100/60 backdrop-blur-sm border-r border-slate-200/50 font-semibold tracking-wide" : ""}`}
                 onClick={() => handleSort("nav")}
               >
                 <div className="flex items-center justify-center">
-                  <span className="text-xs bg-[hsl(var(--primary))] text-secondary px-1 py-0.5 rounded mr-1">
-                    T
-                  </span>
                   mNAV
                   {getSortIcon("nav")}
                 </div>
@@ -914,11 +916,9 @@ export default function CompanyTable({
                     "-"
                   )}
                 </TableCell>
-                {hasTreasuryCompanies && (
+                {hasMarketCapCompanies && (
                   <TableCell className="text-center py-1 hidden lg:table-cell">
-                    {isTreasuryCompany(company) &&
-                    company.marketCap &&
-                    company.reserve > 0 ? (
+                    {company.marketCap && company.reserve > 0 ? (
                       <span className="font-medium tabular-nums">
                         {(
                           company.marketCap /
