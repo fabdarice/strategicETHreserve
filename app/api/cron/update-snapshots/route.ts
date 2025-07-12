@@ -162,6 +162,22 @@ async function processCompanySnapshot(
   const pctDiff =
     prevReserve > 0 ? Math.round((diff / prevReserve) * 100 * 100) / 100 : null;
 
+  // Calculate total cost accumulated from all "buy" purchases
+  const buyPurchases = await prisma.purchase.findMany({
+    where: {
+      companyId,
+      type: "buy",
+    },
+    select: {
+      totalCost: true,
+    },
+  });
+
+  const totalCostAccumulated = buyPurchases.reduce(
+    (sum, purchase) => sum + purchase.totalCost,
+    0
+  );
+
   // Find existing snapshot for today
   const existingCompanySnapshot = await prisma.snapshotCompany.findFirst({
     where: {
@@ -182,6 +198,8 @@ async function processCompanySnapshot(
         pctDiff,
         marketCap: companyInfo.marketCap ?? undefined,
         sharesOutstanding: companyInfo.sharesOutstanding ?? undefined,
+        totalCostAccumulated:
+          totalCostAccumulated > 0 ? totalCostAccumulated : null,
       },
     });
     if (Math.abs(existingCompanySnapshot.reserve - currentReserve) > 10) {
@@ -203,6 +221,8 @@ async function processCompanySnapshot(
         pctDiff,
         marketCap: companyInfo.marketCap ?? undefined,
         sharesOutstanding: companyInfo.sharesOutstanding ?? undefined,
+        totalCostAccumulated:
+          totalCostAccumulated > 0 ? totalCostAccumulated : null,
         snapshotDate,
       },
     });

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { MarketingModal } from "@/components/MarketingModal";
 import { ReserveIncreaseModal } from "@/components/ReserveIncreaseModal";
 import { AddReserveModal } from "@/components/AddReserveModal";
+import { CompanyProfileModal } from "@/components/CompanyProfileModal";
 import {
   Company,
   CompanyStatus,
@@ -24,6 +25,7 @@ interface CompanyRowProps {
   hasEdits: boolean;
   totalReserve?: number;
   totalReserveUSD?: number;
+  ethPrice?: number;
 }
 
 // Available secondary categories
@@ -50,6 +52,7 @@ export function CompanyRow({
   hasEdits,
   totalReserve = 0,
   totalReserveUSD = 0,
+  ethPrice = 0,
 }: CompanyRowProps) {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -347,6 +350,17 @@ export function CompanyRow({
             ADD BUYS
           </Button>
         </AddReserveModal>
+      </TableCell>
+      <TableCell className="p-1">
+        <CompanyProfileModal company={displayCompany} ethPrice={ethPrice}>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs px-2 py-1 h-7 bg-blue-100 hover:bg-blue-200 text-blue-700"
+          >
+            Profile
+          </Button>
+        </CompanyProfileModal>
       </TableCell>
       <TableCell className="p-1">
         <Button

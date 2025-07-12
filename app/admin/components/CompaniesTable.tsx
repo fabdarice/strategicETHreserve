@@ -21,6 +21,7 @@ interface CompaniesTableProps {
   title: string;
   totalReserve: number;
   totalReserveUSD: number;
+  ethPrice: number;
   onCompaniesUpdate: () => void;
 }
 
@@ -29,6 +30,7 @@ export function CompaniesTable({
   title,
   totalReserve,
   totalReserveUSD,
+  ethPrice,
   onCompaniesUpdate,
 }: CompaniesTableProps) {
   const [editedCompanies, setEditedCompanies] = useState<{
@@ -185,6 +187,7 @@ export function CompaniesTable({
                   hasEdits={!!editedCompanies[company.id]}
                   totalReserve={totalReserve}
                   totalReserveUSD={totalReserveUSD}
+                  ethPrice={ethPrice}
                 />
               );
             })}

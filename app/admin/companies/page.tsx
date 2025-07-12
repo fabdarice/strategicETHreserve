@@ -125,6 +125,7 @@ export default function AdminCompaniesPage() {
         title="In Review Companies"
         totalReserve={totalReserve}
         totalReserveUSD={totalReserveUSD}
+        ethPrice={ethPrice}
         onCompaniesUpdate={fetchData}
       />
 
@@ -133,6 +134,7 @@ export default function AdminCompaniesPage() {
         title="Active & Pending Companies"
         totalReserve={totalReserve}
         totalReserveUSD={totalReserveUSD}
+        ethPrice={ethPrice}
         onCompaniesUpdate={fetchData}
       />
     </div>
